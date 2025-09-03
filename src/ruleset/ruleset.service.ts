@@ -11,26 +11,26 @@ export class RuleSetService {
       new Rule({
         conditions: {
           all: [{ fact: 'gross', operator: 'greaterThan', value: 0 }],
-        },
+          },
         event: {
           type: 'net-salary',
           params: { message: 'Salary calculation rule triggered' },
-        },
-      }),
-    ];
+          },
+        }),
+      ];
 
     this.ruleSets['eligibility'] = [
       new Rule({
         conditions: {
           all: [{ fact: 'age', operator: 'greaterThan', value: 18 }],
-        },
+          },
         event: {
           type: 'adult',
           params: { message: 'User is an adult' },
-        },
-      }),
-    ];
-  }
+          },
+        }),
+      ];
+    }
 
   createRuleSet(name: string) {
     if (this.ruleSets[name]) {
@@ -38,26 +38,28 @@ export class RuleSetService {
     }
     this.ruleSets[name] = [];
     return { success: true, ruleSet: name };
-  }
+    }
 
   listRuleSets() {
     return Object.keys(this.ruleSets);
-  }
+    }
 
   getRules(setName: string) {
     const rules = this.ruleSets[setName];
-    if (!rules) throw new NotFoundException(`Rule set "${setName}" not found`);
-    return rules.map((r: any) => r.toJSON());
-  }
+    if (!rules) 
+        throw new NotFoundException(`Rule set "${setName}" not found`);
+    //return rules.map((r: any) => r.toJSON());
+    return rules
+    }
 
   addRule(setName: string, ruleObj: any) {
     if (!this.ruleSets[setName]) {
       this.ruleSets[setName] = [];
-    }
+      }
     const rule = new Rule(ruleObj);
     this.ruleSets[setName].push(rule);
     return { success: true, count: this.ruleSets[setName].length };
-  }
+    }
 
   async evaluate(setName: string, facts: Record<string, any>) {
     const rules = this.ruleSets[setName];
