@@ -1,0 +1,198 @@
+[
+    {
+      "conditions": {
+        "any": [
+            { "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}
+            ]
+        },
+      "event": {
+        "type": "validation",
+        "params": {"break": true, "message": "Vehicle model is blacklisted" }        
+        },
+      "priority": 100
+      },
+    {
+      "conditions": {
+        "all": [
+          {"fact": "yearOfManufacture", "operator": "lessThan", "value": 2000}
+          ]
+        },
+      "event": {
+        "type": "validation",
+        "params": {"break": true, "message": "Vehicle year of manufacture is below the allowed age (2000)."}
+        },
+      "priority": 100
+      },
+      {
+        "conditions": {
+          "any": [
+            {"fact": "grossValue", "operator": "lessThan", "value": 600000},
+            {"fact": "grossValue","operator": "greaterThan", "value": 50000000}
+            ]
+        },
+        "event": {
+          "type": "validation",
+            "params": { "break": true, "message": "Car value is NOT within the allowed range (600K - 50M)."}
+            
+          },
+      "priority": 100
+      },
+      
+      {
+        "conditions": {
+          "all": [
+            {"fact": "grossValue", "operator": "greaterThanInclusive", "value": 600000},
+            {"fact": "grossValue","operator": "lessThanInclusive", "value": 999999}
+            ]
+        },
+        "event": {
+            "type": "apply-adjustment", 
+            "params": { "item": "premium", "mode": "rate", "base": "grossValue", "rate": 0.0725, 
+              "message": "Charge 7.25% for sum insured (grossValue) between 6K - 999,999"}
+            },
+      "priority": 50
+      },
+
+      {
+        "conditions": {
+          "all": [
+            {"fact": "grossValue", "operator": "greaterThanInclusive", "value": 1000000},
+            {"fact": "grossValue","operator": "lessThanInclusive", "value": 1499999}
+            ]
+        },
+        "event": {
+            "type": "apply-adjustment", 
+            "params": { "item": "premium", "mode": "rate", "base": "grossValue", "rate": 0.0615, 
+              "message": "Charge 6.15% for sum insured (grossValue) between 1M - 1.49M"}
+            },
+      "priority": 50
+      },
+
+      {
+        "conditions": {
+          "all": [
+            {"fact": "grossValue", "operator": "greaterThanInclusive", "value": 1500000},
+            {"fact": "grossValue","operator": "lessThanInclusive", "value": 2499999}
+            ]
+        },
+        "event": {
+            "type": "apply-adjustment", 
+            "params": { "item": "premium", "mode": "rate", "base": "grossValue", "rate": 0.0475, 
+              "message": "Charge 4.75% for sum insured (grossValue) between 1.5M - 2.49M"}
+            },
+      "priority": 50
+      },
+
+      {
+        "conditions": {
+          "any": [
+            {"fact": "grossValue", "operator": "greaterThanInclusive", "value": 2500000}    
+            ]
+        },
+        "event": {
+            "type": "apply-adjustment", 
+            "params": { "item": "premium", "mode": "rate", "base": "grossValue", "rate": 0.03875, 
+              "message": "Charge 3.875% for sum insured (grossValue) greater than 2.5"}
+            },
+        "priority": 50
+      },
+      {
+        "conditions": { 
+          "all": [{ "fact": "grossValue", "operator": "greaterThan", "value": 1 }] },
+        "event": { 
+            "type": "apply-adjustment", 
+            "params": { "item": "stampDuty", "mode": "fixed", "amount": 40, "action": "add", 
+            "message":"Add stamp duty. 40/- fixed"  } 
+            },
+        "priority": 40
+      },
+      {
+        "conditions": { 
+          "all": [{ "fact": "grossValue", "operator": "greaterThan", "value": 1 }] },
+        "event": { 
+            "type": "apply-adjustment", 
+            "params": { "item": "itl", "mode": "rate", "base": "premium", "rate": 0.002, "action": "add", 
+            "message":"Add Training Levy. 0.2% of premium"  } 
+            },
+        "priority": 40
+      },
+      {
+        "conditions": { 
+          "all": [{ "fact": "grossValue", "operator": "greaterThan", "value": 1 }] },
+        "event": { 
+            "type": "apply-adjustment", 
+            "params": { "item": "phcf", "mode": "rate", "base": "premium", "rate": 0.0025, "action": "add", 
+              "message":"Add PHCF 0.25% of premium"  } 
+            },
+        "priority": 40
+      },
+
+     {
+      "conditions": {
+          "all": [{ "fact": "grossValue", "operator": "greaterThan", "value": 1 }] },
+      "event": {
+        "type": "advice",
+            "params": { "item": "pvt", "mode": "rate", "base": "premium", "rate": 0.0025, "action": "nop", 
+          "message": "Inclusive Post Election Violence and Terrorism Benefit. No extra charge "}
+        },
+        "priority": 20
+      },
+
+      {
+      "conditions": {
+          "all": [{ "fact": "grossValue", "operator": "greaterThan", "value": 1 }] },
+      "event": {
+        "type": "advice",
+            "params": { "item": "exp", "mode": "rate", "base": "premium", "rate": 0.0025, "action": "nop", 
+          "message": "Inclusive Excess Protector Benefit. No extra charge "}
+        },
+        "priority": 20
+      },
+
+      {
+      "conditions": {
+          "all": [{ "fact": "windscreenValue", "operator": "lessThan", "value": 50000 }] },
+      "event": {
+        "type": "advice",
+            "params": { "item": "windscreenValue", "mode": "rate", "base": "premium", "value": 0.0025, "action": "nop", 
+          "message": "Free windscreen benefit as long as it is below 50K. No extra charge "}
+        },
+        "priority": 20
+      },
+
+      {
+      "conditions": {
+          "all": [{ "fact": "entertainmentValue", "operator": "lessThan", "value": 50000 }] },
+      "event": {
+        "type": "advice",
+            "params": { "item": "entertainmentValue", "mode": "rate", "base": "premium", "value": 0.0025, "action": "nop", 
+          "message": "Free Entertainment benefit as long as it is below 50K. No extra charge "}
+        },
+        "priority": 20
+      },
+
+      {
+      "conditions": {
+          "all": [{ "fact": "courtesyCar", "operator": "lessThan", "value": 10 }] },
+      "event": {
+        "type": "advice",
+            "params": { "item": "courtesyCar", "mode": "fixed", "base": "premium", "value": 3000, "action": "nop", 
+          "message": "Charge 3k for 10 day Courtesy car"}
+        },
+        "priority": 10
+      },
+      {
+      "conditions": {
+          "all": [{ "fact": "courtesyCar", "operator": "greaterThan", "value": 20 }] },
+      "event": {
+        "type": "advice",
+            "params": { "item": "courtesyCar", "mode": "fixed", "base": "premium", "value": 6000, "action": "nop", 
+          "message": "Charge 6k for 20 day Courtesy car"}
+        },
+        "priority": 10
+      }
+      
+  ]
+
+  
+  

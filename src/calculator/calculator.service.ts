@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Engine } from 'json-rules-engine';
 import { RuleSetService } from '../ruleset/ruleset.service';
-import { Engine, Rule } from 'json-rules-engine';
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -104,9 +104,21 @@ export class CalculatorService {
         // clone facts to avoid mutating original - use spread syntax
         const baseFacts: Record<string, any> = { ...facts };
 
+        let total = 0;
+        engine.addFact('total', async () => total);
+
+        let stopped = false;
+
         engine.on('success', async (event, almanac, ruleResult) => {
+
+          if(event.params?.break){
+              stopped = true;
+              engine.stop();
+              }
+
             if (event.type !== 'apply-adjustment') return;
 
+            
             console.log('[DEBUG] Event triggered:', event);
 
             let value = 0;
@@ -121,24 +133,24 @@ export class CalculatorService {
                 console.log(`[DEBUG] Fixed mode: value=${value}`);
                 }
         
-            // always update almanac with 
             await almanac.addRuntimeFact(event.params.item, value);
             console.log(`[DEBUG] Added runtime fact: ${event.params.item}=${value}`);
 
-            // handle net (seed if missing, then adjust)
-            const gross = await almanac.factValue('gross') as number;
-            console.log(`[DEBUG] Gross salary = ${gross}`);
+            const gross = await almanac.factValue('grossValue') as number;
+            console.log(`[DEBUG] Gross value = ${gross}`);
 
-            let net = (await almanac.factValue('net').catch(() => gross) as number) ?? gross;
-            console.log(`[DEBUG] Net = ${net}`);
+            //let total = (await almanac.factValue('total').catch(() => gross) as number) ?? gross;
+            console.log(`[DEBUG] Total = ${total}`);
 
             if (event.params.action === 'subtract') {
-              net -= value;
+              total -= value;
               } 
             else if (event.params.action === 'add') {
-              net += value;
+              total += value;
               }
+
         
+            let net = gross - total;
             console.log(`[DEBUG] Updated net = ${net}`);
 
             await almanac.addRuntimeFact('net', net);
@@ -149,13 +161,31 @@ export class CalculatorService {
         const result = await engine.run(facts);
       
         // 🔑 collect all computed facts
-        const computedFacts: Record<string, any> = {};
-        computedFacts['net'] = await result.almanac.factValue('net');
+        const allFacts: Record<string, any> = {};
+        let derivedFacts: Record<string, any> = {};
+
+        for (const fact of [
+          ...Object.keys(facts),
+          ...result.events.map((e) => e.params.item),
+          'net', 
+          'total'
+        ]) {
+          try {
+            allFacts[fact] = await result.almanac.factValue(fact);
+              derivedFacts = Object.fromEntries(
+                Object.entries(allFacts).filter(([k]) => !(k in baseFacts))
+              );
+            } 
+          catch {
+            console.log(`Skipping = ${fact}`);
+            }
+          }
 
         return {
           ruleSet: setName,
+          stopped: stopped,
           baseFacts: baseFacts,
-          computedFacts: computedFacts,
+          derivedFacts: derivedFacts,
           events: result.events.map((e) => ({
             type: e.type,
             params: e.params.message,

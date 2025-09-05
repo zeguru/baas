@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Engine, Rule } from 'json-rules-engine';
 
 @Injectable()
@@ -70,12 +70,14 @@ export class RuleSetService {
     let stopped = false;
 
     // stop evaluation if a "break" rule fires
+
     engine.on('success', (event, almanac, ruleResult) => {
-        const originalRule = rules.find((r) => r.event.type === event.type);
-        if (originalRule && (originalRule as any).break) {
-        stopped = true;
-        engine.stop();
-        }
+        //const originalRule = rules.find((r) => r.event.type === event.type);
+        //if (originalRule && (originalRule as any).break) {
+        if(event.params?.break){
+          stopped = true;
+          engine.stop();
+          }
     });
 
     const result = await engine.run(facts);

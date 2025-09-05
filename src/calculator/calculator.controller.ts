@@ -16,15 +16,6 @@ export class CalculatorController {
         return this.calculatorService.loadFromFile(fileName);
         }
 
-    // @Post(':setName/simple/compute')
-    // async calculate(
-    //     @Param('setName') setName: string,
-    //     @Body() facts: Record<string, any>,
-    //     ) {
-    //       return this.calculatorService.naiveCalculate(setName, facts);
-    //     }
-
-
     @Post(':setName/custom/compute')
     async compute(
           @Param('setName') setName: string,
