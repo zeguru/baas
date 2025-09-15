@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { RuleSetService } from '../ruleset/ruleset.service';
-
+import { evaluate } from 'mathjs';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
@@ -36,85 +36,22 @@ export class CalculatorService {
     /**
      * Evaluate facts against a ruleset
      * - Supports fixed amounts or percentage rates
-     * - After the fact, might miss derived facts
-     */
-    // async naiveCalculate(setName: string, facts: Record<string, any>) {
-    //     const rules = this.ruleSetService.getRules(setName);
-    //     const engine = new Engine(rules, { allowUndefinedFacts: true });
-      
-    //     // clone facts to avoid mutating original - use spread syntax
-    //     // you can adjust just like koltin copy().... const adjusted = { ...facts, grossSalary: 6000 };
-    //     const computedFacts: Record<string, any> = { ...facts };
-      
-    //     const result = await engine.run(computedFacts);
-      
-    //     // apply adjustments
-    //     for (const event of result.events) {
-    //       if (event.type === 'apply-adjustment') {
-    //         const { item, mode, base, rate, amount, action } = event.params;
-      
-    //         let value = 0;
-      
-    //         if (mode === 'fixed') {
-    //           value = amount ?? 0;
-    //         } else if (mode === 'rate') {
-    //           const baseValue = computedFacts[base] ?? 0;
-    //           value = baseValue * (rate ?? 0);
-    //         }
-      
-    //         // save the adjustment fact itself
-    //         computedFacts[item] = value;
-      
-            
-    //         // apply to net
-    //         if (!('net' in computedFacts)) {
-    //           computedFacts.net = computedFacts.grossSalary ?? 0;
-    //         }
-      
-    //         if (action === 'subtract') {
-    //           computedFacts.net -= value;
-    //         } else if (action === 'add') {
-    //           computedFacts.net += value;
-    //         }
-    //       }
-    //     }
-      
-    //     return {
-    //       ruleSet: setName,
-    //       facts: computedFacts,
-    //       events: result.events.map((e) => ({
-    //         type: e.type,
-    //         params: e.params,
-    //       })),
-    //     };
-    //   }
-      
-
-
-
-    /**
-     * Evaluate facts against a ruleset
-     * - Supports fixed amounts or percentage rates
      * - Uses runtime facts...
      */
       async compute(setName: string, facts: Record<string, any>) {
         const rules = this.ruleSetService.getRules(setName);
-        const engine = new Engine(rules, { allowUndefinedFacts: true });
+        const engine = new Engine(rules, { allowUndefinedFacts: false });
       
-        // clone facts to avoid mutating original - use spread syntax
         const baseFacts: Record<string, any> = { ...facts };
-
-        let total = 0;
-        engine.addFact('total', async () => total);
 
         let stopped = false;
 
         engine.on('success', async (event, almanac, ruleResult) => {
 
-          if(event.params?.break){
-              stopped = true;
-              engine.stop();
-              }
+            if(event.params?.break){
+                stopped = true;
+                engine.stop();
+                }
 
             if (event.type !== 'apply-adjustment') return;
 
@@ -125,37 +62,38 @@ export class CalculatorService {
         
             if (event.params.mode === 'rate') {
                 const base = await almanac.factValue(event.params.base) as number;
-                value = base * (event.params.rate ?? 0);
+                value = base * (event.params.value ?? 0);
                 console.log(`[DEBUG] Rate mode: base=${base}, rate=${event.params.rate}, value=${value}`);
                 } 
             else if (event.params.mode === 'fixed') {
-                value = event.params.amount ?? 0;
+                //if there is a base kindly update accordingly
+                value = event.params.value ?? 0;
                 console.log(`[DEBUG] Fixed mode: value=${value}`);
+                }
+            else if(event.params.mode === 'expression') {
+                console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
+
+                const context: Record<string, any> = {};
+
+                  // only pull the facts listed in params.context
+                  for (const key of event.params.context ?? []) {
+                    try {
+                      context[key] = await almanac.factValue(key);
+                    } catch {
+                      context[key] = 0; // or 0, depending on your policy
+                    }
+                  }
+
+                  console.log(`context: value=${context}`);
+
+                  value = evaluate(event.params.value, context);
+                  console.log(`[DEBUG] Experssion mode: value=${value}`);
+
                 }
         
             await almanac.addRuntimeFact(event.params.item, value);
             console.log(`[DEBUG] Added runtime fact: ${event.params.item}=${value}`);
 
-            const gross = await almanac.factValue('grossValue') as number;
-            console.log(`[DEBUG] Gross value = ${gross}`);
-
-            //let total = (await almanac.factValue('total').catch(() => gross) as number) ?? gross;
-            console.log(`[DEBUG] Total = ${total}`);
-
-            if (event.params.action === 'subtract') {
-              total -= value;
-              } 
-            else if (event.params.action === 'add') {
-              total += value;
-              }
-
-        
-            let net = gross - total;
-            console.log(`[DEBUG] Updated net = ${net}`);
-
-            await almanac.addRuntimeFact('net', net);
-            console.log(`[DEBUG] Runtime fact 'net' updated = ${net}`);
-          
           });
 
         const result = await engine.run(facts);
@@ -167,8 +105,8 @@ export class CalculatorService {
         for (const fact of [
           ...Object.keys(facts),
           ...result.events.map((e) => e.params.item),
-          'net', 
-          'total'
+          // 'net', 
+          // 'total'
         ]) {
           try {
             allFacts[fact] = await result.almanac.factValue(fact);
@@ -184,7 +122,7 @@ export class CalculatorService {
         return {
           ruleSet: setName,
           stopped: stopped,
-          baseFacts: baseFacts,
+          // baseFacts: baseFacts,
           derivedFacts: derivedFacts,
           events: result.events.map((e) => ({
             type: e.type,

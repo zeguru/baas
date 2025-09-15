@@ -1,0 +1,39 @@
+[
+
+            
+    {
+    "conditions": {
+        "all": [{ "fact": "entertainmentValue", "operator": "greaterThan", "value": 50000 }] },
+    "event": {
+      "type": "apply-adjustment",
+          "params": { "item": "entertainmentValueExcess", "mode": "expression", "expression":"(entertainmentValue - 50000)", "context": ["entertainmentValue", "grossValue"], "action": "nop", 
+        "message": "Entertainment: Amount to be charged"}
+      },
+      "priority": 30
+    },
+     
+    {
+      "conditions": {
+          "all": [{ "fact": "entertainmentValueExcess", "operator": "greaterThan", "value": 5000 }] },
+      "event": {
+        "type": "apply-adjustment",
+            "params": { "item": "entertainmentRate", "mode": "expression", "value":"entertainmentValueExcess * 0.1", "context": ["entertainmentValue", "entertainmentValueExcess"], "action": "add", 
+          "message": "Entertainment: Charge 10% of the (extra) amount above 50k"}
+        },
+        "priority": 20
+      },
+
+      {
+      "conditions": {
+          "all": [{ "fact": "entertainmentValueExcess", "operator": "greaterThanInclusive", "value": 1 }] },
+      "event": {
+        "type": "apply-adjustment",
+            "params": { "item": "oneLiner", "mode": "expression", "value":"(entertainmentValue - 50000) * 0.1", "context": ["entertainmentValue", "entertainmentValueExcess"], "action": "add", 
+          "message": "One Liner"}
+        },
+        "priority": 10
+      }
+  ]
+
+  
+  

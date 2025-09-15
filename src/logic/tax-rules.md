@@ -14,7 +14,6 @@ Unemployed / aka zero gross salary. Stop further processing
   "event": {
     "type": "income-tax",
     "params": { "rate": 0.10, "base": "grossSalary", "operation": "subtract" }
-    
   },
   "priority": 100,
   "break": true
