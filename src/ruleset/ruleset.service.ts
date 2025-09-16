@@ -1,12 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { Engine, Rule } from 'json-rules-engine';
-
+import { promises as fs } from 'fs';
+import * as path from 'path';
 @Injectable()
-export class RuleSetService {
+export class RuleSetService implements OnModuleInit{
+
   private ruleSets: Record<string, Rule[]> = {};
 
   constructor() {
-    // Example preconfigured sets
+
     this.ruleSets['salary'] = [
       new Rule({
         conditions: {
@@ -31,6 +33,35 @@ export class RuleSetService {
         }),
       ];
     }
+
+
+  async onModuleInit() {
+    await this.loadFromFile('bima-bamba'); // ✅ safe, all deps ready
+  }
+
+  /**
+   * Load rules from a JSON file and register in RuleSetsService
+   */
+    async loadFromFile(fileName: string) {
+
+        const setName = fileName;
+        const fullFileName = `${fileName}.json`;
+        const absPath = path.resolve('src/logic', fullFileName);
+        const content = await fs.readFile(absPath, 'utf-8');
+    
+        const rules: any[] = JSON.parse(content);
+
+        for (const rule of rules) {
+            if (!rule.conditions || !rule.event) {
+              throw new Error(`Invalid rule format in ${fullFileName}`);
+              }
+
+            //await this.ruleSetService.addRule(setName, rule);
+            await this.addRule(setName, rule);
+            }
+
+        return { setName, count: rules.length };
+        }
 
   createRuleSet(name: string) {
     if (this.ruleSets[name]) {

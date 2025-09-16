@@ -1,9 +1,18 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { RuleSetService } from './ruleset.service';
 
-@Controller('rulesets')
+@Controller('ruleset')
 export class RuleSetController {
+  
   constructor(private readonly ruleSetsService: RuleSetService) {}
+
+    /**
+     * Load a predefined JSON ruleset into the calculator
+     */
+    @Post(':fileName/load')
+    async load(@Param('fileName') fileName: string) {
+        return this.ruleSetsService.loadFromFile(fileName);
+        }
 
   @Get()
   listRuleSets() {

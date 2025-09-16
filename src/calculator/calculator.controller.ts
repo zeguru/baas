@@ -6,15 +6,6 @@ export class CalculatorController {
 
     constructor(private readonly calculatorService: CalculatorService) {}
 
-    /**
-     * Load a predefined JSON ruleset into the calculator
-     */
-    @Post(':fileName/load')
-    async load(@Param('fileName') fileName: string) {
-        // hardcoded for now → can later make this dynamic or configurable
-        //const filePath = 'src/logic/net-rules.json';
-        return this.calculatorService.loadFromFile(fileName);
-        }
 
     @Post(':setName/custom/compute')
     async compute(

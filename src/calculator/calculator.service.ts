@@ -2,36 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { RuleSetService } from '../ruleset/ruleset.service';
 import { evaluate } from 'mathjs';
-import { promises as fs } from 'fs';
-import * as path from 'path';
+
 
 @Injectable()
 export class CalculatorService {
 
     constructor(private readonly ruleSetService: RuleSetService) {}
 
-    /**
-   * Load rules from a JSON file and register in RuleSetsService
-   */
-    async loadFromFile(fileName: string) {
-
-        const setName = fileName;
-        const fullFileName = `${fileName}.json`;
-        const absPath = path.resolve('src/logic', fullFileName);
-        const content = await fs.readFile(absPath, 'utf-8');
-    
-        const rules: any[] = JSON.parse(content);
-
-        for (const rule of rules) {
-            if (!rule.conditions || !rule.event) {
-              throw new Error(`Invalid rule format in ${fullFileName}`);
-              }
-
-            await this.ruleSetService.addRule(setName, rule);
-            }
-
-        return { setName, count: rules.length };
-        }
+ 
 
     /**
      * Evaluate facts against a ruleset
