@@ -1,0 +1,43 @@
+[
+    {
+      "conditions": { "all": [
+          { "fact": "units", "operator": "greaterThanInclusive", "value": 1 }
+        ] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": { "item": "billTier1", "mode": "expression", "value": "units * 0.1", "context": ["units"],
+              "message":"Apply 10% for units between 1-100" } }
+    },
+    {
+      "conditions": { "all": [
+          { "fact": "units", "operator": "greaterThanInclusive", "value": 100 }
+          ] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": { "item": "billTier2", "mode": "expression", "value": "(units - 100) * 0.15", "context": ["units"],
+              "message":"Apply 15% for units between 101-200 (next hundred)"  } }
+    },
+    {
+      "conditions": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 200 }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": { "item": "billTier3", "mode": "expression", "value": "(units - 200) * 0.2", "context": ["units"],
+              "message":"Apply 20% for units above 201"  } }
+    },
+    {
+      "conditions": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 1 }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": { "item": "meterCharge", "mode": "fixed", "value": 5, 
+              "message":"Charge 5/- fixed meter charge" } }
+    },
+    {
+      "conditions": { "all": [{ "fact": "units", "operator": "greaterThan", "value": 50 }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": { "item": "fuelSurcharge", "mode": "fixed", "value": 3, 
+              "message":"Charge 3/- fixed fuel charge" } }
+        }
+        
+  ]
+  

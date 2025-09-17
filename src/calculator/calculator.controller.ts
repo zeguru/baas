@@ -1,11 +1,10 @@
-import { Controller, Post, Param, Body } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { CalculatorService } from './calculator.service';
 
 @Controller('calculator')
 export class CalculatorController {
 
     constructor(private readonly calculatorService: CalculatorService) {}
-
 
     @Post(':setName/custom/compute')
     async compute(

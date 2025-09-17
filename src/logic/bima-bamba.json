@@ -84,7 +84,7 @@
         "conditions": {
           "all": [
             {"fact":"sumInsured", "operator": "greaterThanInclusive", "value": 1500000},
-            {"fact":"sumInsured","operator": "lessThanInclusive", "value": 2499999}
+            {"fact":"sumInsured", "operator": "lessThanInclusive", "value": 2499999}
             ]
         },
         "event": {
