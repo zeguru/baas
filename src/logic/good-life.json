@@ -1,0 +1,102 @@
+[
+  {
+    "conditions": {
+      "all": [
+        {
+          "fact": "coffeeCups",
+          "operator": "greaterThan",
+          "value": 3
+        }
+      ]
+    },
+    "event": {
+      "type": "advice",
+      "params": {
+        "message": "Too much coffee detected! Switch to water before you start coding in circles."
+      }
+    }
+  },
+  {
+    "conditions": {
+      "all": [
+        {
+          "fact": "commitsToday",
+          "operator": "lessThan",
+          "value": 1
+        }
+      ]
+    },
+    "event": {
+      "type": "advice",
+      "params": {
+        "message": "No commits yet? Time to make some magic happen ✨."
+      }
+    }
+  },
+  {
+    "conditions": {
+      "all": [
+        {
+          "fact": "productionIncidents",
+          "operator": "greaterThanInclusive",
+          "value": 1
+        }
+      ]
+    },
+    "event": {
+      "type": "advice",
+      "params": {
+        "message": "Tackling production incidents ? May the force be with you."
+      }
+    }
+  },
+  {
+    "conditions": {
+      "all": [
+        {
+          "fact": "releaseDay",
+          "operator": "equal",
+          "value": "Friday"
+        }
+      ]
+    },
+    "event": {
+      "type": "advice",
+      "params": {
+        "message": "Deploying on Friday? May the rollback odds be ever in your favor."
+      }
+    }
+  },
+  {
+    "conditions": {
+      "all": [
+        {
+          "fact": "coffeeCups",
+          "operator": "lessThanInclusive",
+          "value": 3
+        },
+        {
+          "fact": "commitsToday",
+          "operator": "greaterThanInclusive",
+          "value": 1
+        },
+        {
+          "fact": "productionIncidents",
+          "operator": "lessThan",
+          "value": 1
+        },
+        {
+          "fact": "releaseDay",
+          "operator": "notEqual",
+          "value": "Friday"
+        }
+      ]
+    },
+    "event": {
+      "type": "advice",
+      "params": {
+        "message": "Balanced caffeine, steady commits, no incidents and no Friday releases. You are living the dream."
+      }
+    }
+  }
+]

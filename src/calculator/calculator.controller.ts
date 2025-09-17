@@ -14,11 +14,4 @@ export class CalculatorController {
           return this.calculatorService.compute(setName, facts);
         }
 
-    @Post(':setName/tiered/compute')
-    async computeTiered(
-          @Param('setName') setName: string,
-          @Body() facts: Record<string, any>,
-        ) {
-          return this.calculatorService.computeTiered(setName, facts);
-        }    
 }

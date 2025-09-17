@@ -18,7 +18,6 @@ export class CalculatorService {
 
         const rules = this.ruleSetService.getRules(setName);
         const engine = new Engine(rules, { allowUndefinedFacts: false });
-      
         const baseFacts: Record<string, any> = { ...facts };
 
         let stopped = false;
@@ -94,7 +93,6 @@ export class CalculatorService {
         return {
           ruleSet: setName,
           stopped: stopped,
-          // baseFacts: baseFacts,
           derivedFacts: derivedFacts,
           events: result.events.map((e) => ({
             type: e.type,

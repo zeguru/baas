@@ -36,7 +36,18 @@ export class RuleSetService implements OnModuleInit{
 
 
   async onModuleInit() {
-    await this.loadFromFile('bima-bamba'); // ✅ safe, all deps ready
+    await this.loadFromFile('bima-bamba'); 
+    await this.loadFromFile('good-life'); 
+
+    const result = await this.evaluate('good-life', {
+      coffeeCups: 2,
+      commitsToday: 5,
+      productionIncidents: 0,
+      releaseDay: 'Thursday',
+      });
+      
+    console.log('Default evaluation result:', JSON.stringify(result, null, 2));
+
   }
 
   /**
