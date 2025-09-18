@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
-import { RuleSetService } from '../ruleset/ruleset.service';
 import { evaluate } from 'mathjs';
+import { RuleSetService } from '../ruleset/ruleset.service';
 
 
 @Injectable()
@@ -93,6 +93,7 @@ export class CalculatorService {
         return {
           ruleSet: setName,
           stopped: stopped,
+          baseFacts: baseFacts,
           derivedFacts: derivedFacts,
           events: result.events.map((e) => ({
             type: e.type,
@@ -101,5 +102,4 @@ export class CalculatorService {
           };
       }
       
-
 }

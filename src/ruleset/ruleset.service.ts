@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { Engine, Rule } from 'json-rules-engine';
 import { promises as fs } from 'fs';
+import { Engine, Rule } from 'json-rules-engine';
 import * as path from 'path';
 @Injectable()
 export class RuleSetService implements OnModuleInit{
@@ -33,7 +33,6 @@ export class RuleSetService implements OnModuleInit{
         }),
       ];
     }
-
 
   async onModuleInit() {
     await this.loadFromFile('bima-bamba'); 
@@ -90,7 +89,6 @@ export class RuleSetService implements OnModuleInit{
     const rules = this.ruleSets[setName];
     if (!rules) 
         throw new NotFoundException(`Rule set "${setName}" not found`);
-    //return rules.map((r: any) => r.toJSON());
     return rules
     }
 
@@ -111,17 +109,13 @@ export class RuleSetService implements OnModuleInit{
 
     let stopped = false;
 
-    // stop evaluation if a "break" rule fires
-
     engine.on('success', (event, almanac, ruleResult) => {
-        //const originalRule = rules.find((r) => r.event.type === event.type);
-        //if (originalRule && (originalRule as any).break) {
         if(event.params?.break){
           stopped = true;
           engine.stop();
           }
-    });
-
+      });
+      
     const result = await engine.run(facts);
 
     return {

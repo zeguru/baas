@@ -2,11 +2,7 @@
   {
     "conditions": {
       "all": [
-        {
-          "fact": "coffeeCups",
-          "operator": "greaterThan",
-          "value": 3
-        }
+        { "fact": "coffeeCups", "operator": "greaterThan", "value": 3 }
       ]
     },
     "event": {

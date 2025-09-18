@@ -5,39 +5,71 @@
         ] },
       "event": { 
           "type": "apply-adjustment", 
-          "params": { "item": "billTier1", "mode": "expression", "value": "units * 0.1", "context": ["units"],
-              "message":"Apply 10% for units between 1-100" } }
+          "params": { "item": "unitsTier1", "mode": "expression", "value": "min(units,100)", "context": ["units"],
+              "message":"Apply 10% for units between 1-100" } 
+            },
+      "priority": 500
     },
     {
       "conditions": { "all": [
-          { "fact": "units", "operator": "greaterThanInclusive", "value": 100 }
+          { "fact": "units", "operator": "greaterThanInclusive", "value": 101 }
           ] },
       "event": { 
           "type": "apply-adjustment", 
-          "params": { "item": "billTier2", "mode": "expression", "value": "(units - 100) * 0.15", "context": ["units"],
-              "message":"Apply 15% for units between 101-200 (next hundred)"  } }
+          "params": { "item": "unitsTier2", "mode": "expression", "value": "min(units-100,100)", "context": ["units"],
+              "message":"Apply 15% for units between 101-200 (next hundred)"  } 
+            },
+      "priority": 500
     },
-    {
-      "conditions": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 200 }] },
+        {
+      "conditions": { "all": [
+          { "fact": "units", "operator": "greaterThanInclusive", "value": 201 }
+          ] },
       "event": { 
           "type": "apply-adjustment", 
-          "params": { "item": "billTier3", "mode": "expression", "value": "(units - 200) * 0.2", "context": ["units"],
-              "message":"Apply 20% for units above 201"  } }
+          "params": { "item": "unitsTier3", "mode": "expression", "value": "min(units-200,100)", "context": ["units"],
+              "message":"Apply 20% for units between 101-200 (next hundred)"  } 
+            },
+      "priority": 500
+    },
+    {
+      "conditions": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 301 }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": { "item": "unitsTier4", "mode": "expression", "value": "units - 300", "context": ["units"],
+              "message":"Apply 25% for units above 300"  } 
+            },
+      "priority": 500
     },
     {
       "conditions": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 1 }] },
       "event": { 
           "type": "apply-adjustment", 
           "params": { "item": "meterCharge", "mode": "fixed", "value": 5, 
-              "message":"Charge 5/- fixed meter charge" } }
+              "message":"Charge 5/- fixed meter charge" } 
+            },
+      "priority": 400
     },
     {
-      "conditions": { "all": [{ "fact": "units", "operator": "greaterThan", "value": 50 }] },
+      "conditions": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 50 }] },
       "event": { 
           "type": "apply-adjustment", 
-          "params": { "item": "fuelSurcharge", "mode": "fixed", "value": 3, 
-              "message":"Charge 3/- fixed fuel charge" } }
-        }
+          "params": { "item": "fuelCharge", "mode": "fixed", "value": 3, 
+              "message":"Charge 3/- fixed fuel charge" } 
+            },
+      "priority": 400
+      },
+
+      {
+      "conditions": {
+          "all": [{ "fact":"units", "operator": "greaterThan", "value": 1 }] },
+      "event": {
+        "type": "apply-adjustment",
+            "params": { "item": "utilityBill", "mode": "expression", "value":"(unitsTier1 * 0.1) + (unitsTier2 * 0.15) + (unitsTier3 * 0.2) + (unitsTier4 * 0.25) + meterCharge + fuelCharge", "context": ["unitsTier1", "unitsTier2", "unitsTier3","unitsTier4", "meterCharge", "fuelCharge"], 
+          "message": "Compute utility bill"}
+        },
+        "priority": 300
+      }
         
   ]
   
