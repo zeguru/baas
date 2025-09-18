@@ -101,7 +101,7 @@
           "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
       "event": {
         "type": "apply-adjustment",
-            "params": { "item": "pvt", "mode": "fixed", "base": "total", "value": 0,
+            "params": { "item": "pvt", "mode": "fixed", "base": "total", "value": 0, "action": "nop", 
           "message": "Inclusive: Post Election Violence and Terrorism - PVT Benefit. No extra charge "}
         },
         "priority": 300
@@ -112,7 +112,7 @@
           "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
       "event": {
         "type": "apply-adjustment",
-            "params": { "item": "exp", "mode": "fixed", "base": "total", "value": 0.0,
+            "params": { "item": "exp", "mode": "fixed", "base": "total", "value": 0.0, "action": "nop", 
           "message": "Inclusive: Excess Protector Benefit. No extra charge "}
         },
         "priority": 300
@@ -146,7 +146,7 @@
           "all": [{ "fact": "entertainmentValue", "operator": "lessThan", "value": 50000 }] },
       "event": {
         "type": "apply-adjustment",
-            "params": { "item": "entertainmentCharge", "mode": "fixed", "base": "total", "value": 0, 
+            "params": { "item": "entertainmentCharge", "mode": "fixed", "base": "total", "value": 0, "action": "nop", 
           "message": "Free Benefit: Entertainment benefit because value is below 50K. No extra charge "}
         },
         "priority": 300
@@ -197,7 +197,7 @@
           "all": [{ "fact":"sumInsured", "operator": "greaterThanInclusive", "value": 1 }] },
       "event": {
         "type": "apply-adjustment",
-            "params": { "item": "grossPremium", "mode": "expression", "value":"basePremium + aaCharge + windscreenCharge + entertainmentCharge + courtesyCarCharge", "context": ["basePremium", "aaCharge", "windscreenCharge","entertainmentCharge", "courtesyCarCharge"], 
+            "params": { "item": "grossPremium", "mode": "expression", "value":"basePremium + aaCharge + windscreenCharge + entertainmentCharge + courtesyCarCharge", "context": ["basePremium", "aaCharge", "windscreenCharge","entertainmentCharge", "courtesyCarCharge"], "action": "nop", 
           "message": "Compute gross Premium"}
         },
         "priority": 250
@@ -240,7 +240,7 @@
           "all": [{ "fact":"sumInsured", "operator": "greaterThanInclusive", "value": 1 }] },
       "event": {
         "type": "apply-adjustment",
-            "params": { "item": "totalPremium", "mode": "expression", "value":"grossPremium + stampDuty + itl + phcf", "context": ["grossPremium", "stampDuty", "itl","phcf"], 
+            "params": { "item": "totalPremium", "mode": "expression", "value":"grossPremium + stampDuty + itl + phcf", "context": ["grossPremium", "stampDuty", "itl","phcf"], "action": "nop", 
           "message": "Compute gross Premium"}
         },
         "priority": 100

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { evaluate } from 'mathjs';
 import { RuleSetService } from '../ruleset/ruleset.service';
+import { CalcUtils } from '../common/util/calc-utils';
 
 
 @Injectable()
@@ -32,21 +33,30 @@ export class CalculatorService {
             if (event.type !== 'apply-adjustment') return;
 
             console.log('[DEBUG] Event triggered:', event);
-
+            
             let value = 0;
-        
+
             if (event.params.mode === 'rate') {
                 const base = await almanac.factValue(event.params.base) as number;
-                value = base * (event.params.value ?? 0);
+                value = base * event.params.value;
                 console.log(`[DEBUG] Rate mode: base=${base}, rate=${event.params.rate}, value=${value}`);
                 } 
             else if (event.params.mode === 'fixed') {
                 value = event.params.value ?? 0;
                 console.log(`[DEBUG] Fixed mode: value=${value}`);
                 }
+            else if (event.params.mode === 'value-lookup') {
+                const base = await almanac.factValue(event.params.base) as number;
+                value = event.params.table[base] ?? event.params.default;
+                console.log(`[DEBUG] Range lookup mode: value=${value}`);
+                }
+            else if (event.params.mode === 'range-lookup') {
+                const base = await almanac.factValue(event.params.base) as number;
+                value = await CalcUtils.handleRangeLookup(base, event.params.table, event.params.default);
+                console.log(`[DEBUG] Range lookup mode: value=${value}`);
+                }
             else if(event.params.mode === 'expression') {
                 console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
-
                 const context: Record<string, any> = {};
 
                 for (const key of event.params.context ?? []) {
@@ -59,10 +69,9 @@ export class CalculatorService {
                   }
 
                 console.log(`context: value=${context}`);
-
                 value = evaluate(event.params.value, context);
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
-
+                
                 }
         
             await almanac.addRuntimeFact(event.params.item, value);

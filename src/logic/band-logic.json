@@ -1,0 +1,48 @@
+[
+    {
+      "conditions": { "all": [
+          { "fact": "age", "operator": "greaterThan", "value": 1 }
+        ] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": {
+              "item": "riskFactor",
+              "mode": "range-lookup",
+              "base": "age",
+              "table": {
+                "1-17": 0.5,
+                "18-25": 1.5,
+                "26-35": 1.2,
+                "36-50": 1.0,
+                "51-65": 1.3,
+                "66-999": 2.5
+              },
+              "default": 2.0,
+              "message": "Apply age-based risk factor"
+            }
+          }
+    },
+
+    {
+      "conditions": { "all": [
+          { "fact": "age", "operator": "greaterThan", "value": 1 }
+        ] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": {
+              "item": "citizenShip",
+              "mode": "value-lookup",
+              "base": "countryCode",
+              "table": {
+                  "KE": "Kenyan",
+                  "UG": "Ugandan",
+                  "TZ": "Tanzanian",
+                  "CN": "Chinese"
+                },
+              "default": "South African",
+              "message": "Map code to country"
+            }
+          }
+    }
+  ]
+  

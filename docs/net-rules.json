@@ -1,0 +1,26 @@
+
+[
+  {
+    "conditions": {
+      "all": [
+        {
+          "fact": "grossSalary",
+          "operator": "greaterThanInclusive",
+          "value": 3000
+        }
+      ]
+    },
+    "event": {
+      "type": "apply-adjustment",
+      "params": {
+        "item": "taxAmount",
+        "mode": "rate",
+        "base": "grossSalary",
+        "rate": 0.2,
+        "action": "subtract",
+        "message": "deducting 20 %"
+        }
+    }
+  }
+  
+]

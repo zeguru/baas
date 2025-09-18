@@ -1,0 +1,17 @@
+[
+    {
+    "conditions": {
+      "all": [
+        { "fact": "customerType", "operator": "equal", "value": "premium" },
+        { "fact": "orderValue", "operator": "greaterThanInclusive", "value": 100 }
+      ]
+    },
+    "event": {
+      "type": "discount",
+      "params": {
+        "percentage": 10,
+        "message": "Premium customers with orders over $100 get 10% off"
+      }
+    }
+  }
+]

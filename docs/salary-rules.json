@@ -1,0 +1,26 @@
+[
+    {
+      "conditions": {
+        "all": [
+          { "fact": "gross", "operator": "greaterThan", "value": 1000 }
+        ]
+      },
+      "event": {
+        "type": "apply-adjustment",
+        "params": { "item": "taxAmount","mode": "rate", "base": "gross","rate": 0.2, "action": "subtract", "message": "Subtracted 0.2 of gross"}
+      }
+    },
+    {
+      "conditions": {
+        "all": [
+          { "fact": "gross", "operator": "greaterThan", "value": 0 }
+        ]
+      },
+      "event": {
+        "type": "apply-adjustment",
+        "params": {"item": "insuranceRelief", "mode": "fixed", "amount": 200, "action": "add","message": "Added 200 as relief"
+        }
+      }
+    }
+  ]
+  
