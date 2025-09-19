@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { evaluate } from 'mathjs';
-import { RuleSetService } from '../ruleset/ruleset.service';
 import { CalcUtils } from '../common/util/calc-utils';
+import { RuleSetService } from '../ruleset/ruleset.service';
 
 
 @Injectable()
@@ -55,6 +55,13 @@ export class CalculatorService {
                 value = await CalcUtils.handleRangeLookup(base, event.params.table, event.params.default);
                 console.log(`[DEBUG] Range lookup mode: value=${value}`);
                 }
+            else if (event.params.mode === 'value-range-lookup') {
+                const base = await almanac.factValue(event.params.base) as number;
+                const key = await almanac.factValue(event.params.key) as string;
+                value = await CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
+                console.log(`[DEBUG] Value Range lookup mode: value=${value}`);
+                }
+                
             else if(event.params.mode === 'expression') {
                 console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
                 const context: Record<string, any> = {};
@@ -71,7 +78,7 @@ export class CalculatorService {
                 console.log(`context: value=${context}`);
                 value = evaluate(event.params.value, context);
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
-                
+
                 }
         
             await almanac.addRuntimeFact(event.params.item, value);

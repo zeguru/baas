@@ -1,0 +1,133 @@
+[
+    
+      {
+      "conditions": { 
+          "all": [{ "fact":"inpatientCover", "operator": "in", "value": ["Mwananchi_100000", "Select_300000", "Standard_500000", "Executive_750000", "Affluent_1000000"] }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": {
+              "item": "inpatientPremium",
+              "mode": "value-range-lookup",
+              "key": "inpatientCover",
+              "base": "age",
+              "table": {
+                  "Mwananchi_100000": {
+                    "20-40": 5500,
+                    "41-54": 8900,
+                    "55-65": 11120,
+                    "66-75": 16543,
+                    "76-999": 19890
+
+                  },
+                  "Select_300000": {
+                    "20-40": 6115,
+                    "41-54": 10584,
+                    "55-65": 15084,
+                    "66-75": 20128,
+                    "76-999": 25918
+                  },
+                  "Standard_500000": {
+                    "20-40": 6727,
+                    "41-54": 11643,
+                    "55-65": 17043,
+                    "66-75": 23066,
+                    "76-999": 30492
+                  },
+                  "Executive_750000": {
+                    "20-40": 7788,
+                    "41-54": 13480,
+                    "55-65": 19779,
+                    "66-75": 26804,
+                    "76-999": 38115
+                  },
+                  "Affluent_1000000": {
+                    "20-40": 9417,
+                    "41-54": 16300,
+                    "55-65": 23499,
+                    "66-75": 31552,
+                    "76-999": 42350
+                  }
+                },
+              "default": 1,
+              "message": "Lookup inpatient rate from the table"
+            }
+          },
+      "priority": 400
+
+      },
+      {
+      "conditions": { 
+          "all": [{ "fact":"outpatientCover", "operator": "in", "value": ["30000","40000","50000","75000","100000"] }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": {
+              "item": "outpatientPremium",
+              "mode": "value-range-lookup",
+              "key": "outpatientCover",
+              "base": "age",
+              "table": {
+                  "30000": {
+                    "20-40": 6700,
+                    "41-60": 9100,
+                    "61-75": 11520,
+                    "76-999": 14750
+                  },
+                  "40000": {
+                    "20-40": 9000,
+                    "41-60": 11090,
+                    "61-75": 13450,
+                    "76-999": 17818
+                  },
+                  "50000": {
+                    "20-40": 11100,
+                    "41-60": 12900,
+                    "61-75": 16300,
+                    "76-999": 20750
+                  },
+                  "75000": {
+                    "20-40": 13950,
+                    "41-60": 16500,
+                    "61-75": 19050,
+                    "76-999": 23300
+                  },
+                  "100000": {
+                    "20-40": 18200,
+                    "41-60": 20700,
+                    "61-75": 23200,
+                    "76-999": 26200
+                  }
+                },
+              "default": 1,
+              "message": "Lookup outatient rate from the table"
+            }
+          },
+      "priority": 400
+
+      },
+      {
+      "conditions": { 
+          "all": [{ "fact":"maternityCover", "operator": "in", "value": ["50000","75000","100000"] }] },
+      "event": { 
+          "type": "apply-adjustment", 
+          "params": {
+              "item": "maternityPremium",
+              "mode": "value-lookup",
+              "base": "maternityCover",
+              "table": {
+                  "50000": 7500,
+                  "75000": 10000,
+                  "100000": 15000
+                },
+              "default": 1,
+              "message": "Lookup maternity fixed rate from the table"
+            }
+          },
+      "priority": 400
+
+      }
+
+      
+  ]
+
+  
+  
