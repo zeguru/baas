@@ -25,8 +25,8 @@ export class RuleSetController {
     }
 
   @Get(':setName')
-  getRules(@Param('setName') setName: string) {
-    return this.ruleSetsService.getRules(setName);
+  getFriendlyRules(@Param('setName') setName: string) {
+    return this.ruleSetsService.getFriendlyRules(setName);
     }
 
   @Post(':setName/add')

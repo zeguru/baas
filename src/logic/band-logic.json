@@ -1,11 +1,11 @@
 [
     {
-      "conditions": { "all": [
+      "when": { "all": [
           { "fact": "age", "operator": "greaterThan", "value": 1 }
         ] },
-      "event": { 
-          "type": "apply-adjustment", 
-          "params": {
+      "then": { 
+          "do": "apply-adjustment", 
+          "with": {
               "item": "riskFactor",
               "mode": "range-lookup",
               "base": "age",
@@ -24,12 +24,12 @@
     },
 
     {
-      "conditions": { "all": [
+      "when": { "all": [
           { "fact": "age", "operator": "greaterThan", "value": 1 }
         ] },
-      "event": { 
-          "type": "apply-adjustment", 
-          "params": {
+      "then": { 
+          "do": "apply-adjustment", 
+          "with": {
               "item": "citizenShip",
               "mode": "value-lookup",
               "base": "countryCode",

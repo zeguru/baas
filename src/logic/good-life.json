@@ -1,19 +1,19 @@
 [
   {
-    "conditions": {
+    "when": {
       "all": [
         { "fact": "coffeeCups", "operator": "greaterThan", "value": 3 }
       ]
     },
-    "event": {
-      "type": "advice",
-      "params": {
+    "then": {
+      "do": "advice",
+      "with": {
         "message": "Too much coffee detected! Switch to water before you start coding in circles."
       }
     }
   },
   {
-    "conditions": {
+    "when": {
       "all": [
         {
           "fact": "commitsToday",
@@ -22,15 +22,15 @@
         }
       ]
     },
-    "event": {
-      "type": "advice",
-      "params": {
+    "then": {
+      "do": "advice",
+      "with": {
         "message": "No commits yet? Time to make some magic happen ✨."
       }
     }
   },
   {
-    "conditions": {
+    "when": {
       "all": [
         {
           "fact": "productionIncidents",
@@ -39,15 +39,15 @@
         }
       ]
     },
-    "event": {
-      "type": "advice",
-      "params": {
+    "then": {
+      "do": "advice",
+      "with": {
         "message": "Tackling production incidents ? May the force be with you."
       }
     }
   },
   {
-    "conditions": {
+    "when": {
       "all": [
         {
           "fact": "releaseDay",
@@ -56,15 +56,15 @@
         }
       ]
     },
-    "event": {
-      "type": "advice",
-      "params": {
+    "then": {
+      "do": "advice",
+      "with": {
         "message": "Deploying on Friday? May the rollback odds be ever in your favor."
       }
     }
   },
   {
-    "conditions": {
+    "when": {
       "all": [
         {
           "fact": "coffeeCups",
@@ -88,9 +88,9 @@
         }
       ]
     },
-    "event": {
-      "type": "advice",
-      "params": {
+    "then": {
+      "do": "advice",
+      "with": {
         "message": "Balanced caffeine, steady commits, no incidents and no Friday releases. You are living the dream."
       }
     }

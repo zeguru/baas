@@ -111,9 +111,9 @@ export class CalculatorService {
           stopped: stopped,
           baseFacts: baseFacts,
           derivedFacts: derivedFacts,
-          events: result.events.map((e) => ({
-            type: e.type,
-            params: e.params.message,
+          then: result.events.map((e) => ({
+            do: e.type,
+            message: e.params.message,
             })),
           };
       }

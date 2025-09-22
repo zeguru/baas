@@ -1,11 +1,11 @@
 [
     
       {
-      "conditions": { 
+      "when": { 
           "all": [{ "fact":"inpatientCover", "operator": "in", "value": ["Mwananchi_100000", "Select_300000", "Standard_500000", "Executive_750000", "Affluent_1000000"] }] },
-      "event": { 
-          "type": "apply-adjustment", 
-          "params": {
+      "then": { 
+          "do": "apply-adjustment", 
+          "with": {
               "item": "inpatientPremium",
               "mode": "value-range-lookup",
               "key": "inpatientCover",
@@ -56,11 +56,11 @@
 
       },
       {
-      "conditions": { 
+      "when": { 
           "all": [{ "fact":"outpatientCover", "operator": "in", "value": ["30000","40000","50000","75000","100000"] }] },
-      "event": { 
-          "type": "apply-adjustment", 
-          "params": {
+      "then": { 
+          "do": "apply-adjustment", 
+          "with": {
               "item": "outpatientPremium",
               "mode": "value-range-lookup",
               "key": "outpatientCover",
@@ -105,11 +105,11 @@
 
       },
       {
-      "conditions": { 
+      "when": { 
           "all": [{ "fact":"maternityCover", "operator": "in", "value": ["50000","75000","100000"] }] },
-      "event": { 
-          "type": "apply-adjustment", 
-          "params": {
+      "then": { 
+          "do": "apply-adjustment", 
+          "with": {
               "item": "maternityPremium",
               "mode": "value-lookup",
               "base": "maternityCover",
