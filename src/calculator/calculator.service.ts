@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { evaluate } from 'mathjs';
+import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
 
@@ -20,6 +21,12 @@ export class CalculatorService {
         const rules = this.ruleSetService.getRules(setName);
         const engine = new Engine(rules, { allowUndefinedFacts: false });
         const baseFacts: Record<string, any> = { ...facts };
+
+        const utils = {
+            age: DateUtils.age,
+            daysBetween: DateUtils.daysBetween,
+            addDays: DateUtils.addDays,
+          };
 
         let stopped = false;
 
@@ -74,9 +81,8 @@ export class CalculatorService {
                     context[key] = 0; 
                     }
                   }
-
                 console.log(`context: value=${context}`);
-                value = evaluate(event.params.value, context);
+                value = evaluate(event.params.value, {...context, ...utils});
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
 
                 }

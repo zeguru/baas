@@ -1,5 +1,18 @@
 [
-    
+          {
+        "when": {
+          "any": [
+            {"fact":"age", "operator": "lessThan", "value": 0.0},
+            {"fact":"age","operator": "greaterThan", "value": 99.0}
+            ]
+        },
+        "then": {
+          "do": "validation",
+            "with": { "break": true, "message": "Invalid age. Age must be between 1 and 99"}
+            
+          },
+      "priority": 500
+      },
       {
       "when": { 
           "all": [{ "fact":"inpatientCover", "operator": "in", "value": ["Mwananchi_100000", "Select_300000", "Standard_500000", "Executive_750000", "Affluent_1000000"] }] },

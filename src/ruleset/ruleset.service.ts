@@ -36,9 +36,12 @@ export class RuleSetService implements OnModuleInit{
       ];
     }
 
+    
   async onModuleInit() {
     await this.loadFromFile('bima-bamba'); 
     await this.loadFromFile('good-life'); 
+    await this.loadFromFile('band-logic'); 
+    await this.loadFromFile('utility-bill'); 
 
     const result = await this.evaluate('good-life', {
       coffeeCups: 2,
