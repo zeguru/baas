@@ -61,7 +61,7 @@ export class RuleSetService implements OnModuleInit{
 
         const setName = fileName;
         const fullFileName = `${fileName}.json`;
-        const absPath = path.resolve('src/logic', fullFileName);
+        const absPath = path.resolve('./logic', fullFileName);
         const content = await fs.readFile(absPath, 'utf-8');
     
         const friendlyRules = JSON.parse(content);
