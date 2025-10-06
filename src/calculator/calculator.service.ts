@@ -31,7 +31,6 @@ export class CalculatorService {
         let stopped = false;
 
         engine.on('success', async (event, almanac, ruleResult) => {
-
             if(event.params?.break){
                 stopped = true;
                 engine.stop();
@@ -68,7 +67,7 @@ export class CalculatorService {
                 value = await CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
                 console.log(`[DEBUG] Value Range lookup mode: value=${value}`);
                 }
-                
+            //TODO: use `base` for context. This will enforce uniformity of syntax and semantics    
             else if(event.params.mode === 'expression') {
                 console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
                 const context: Record<string, any> = {};

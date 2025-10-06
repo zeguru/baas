@@ -1,7 +1,10 @@
 // src/rules/rule-mapper.ts
 import { FriendlyRule, EngineRule, FriendlyEvent, EngineEvent } from './dsl-utils';
 
+
 export class RuleMapper {
+
+  
   static toEngineRule(friendly: FriendlyRule): EngineRule {
     return {
       conditions: friendly.when,
@@ -13,16 +16,6 @@ export class RuleMapper {
     };
   }
 
-//   static toFriendlyRule(engineRule: EngineRule): FriendlyRule {
-//     return {
-//       when: engineRule.conditions,
-//       then: {
-//         do: engineRule.event.type,
-//         with: engineRule.event.params,
-//       },
-//       priority: engineRule.priority,
-//     };
-//   }
 
   // Events
   static toFriendlyEvent(engineEvent: EngineEvent): FriendlyEvent {

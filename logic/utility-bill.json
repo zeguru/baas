@@ -6,7 +6,7 @@
       "then": { 
           "do": "apply-adjustment", 
           "with": { "item": "unitsTier1", "mode": "expression", "value": "min(units,100)", "context": ["units"],
-              "message":"Apply 10% for units between 1-100" } 
+              "message":"Charge 10% for units between 1-100" } 
             },
       "priority": 500
     },
@@ -17,7 +17,7 @@
       "then": { 
           "do": "apply-adjustment", 
           "with": { "item": "unitsTier2", "mode": "expression", "value": "min(units-100,100)", "context": ["units"],
-              "message":"Apply 15% for units between 101-200 (next hundred)"  } 
+              "message":"Charge 15% for units between 101-200 (next hundred)"  } 
             },
       "priority": 500
     },
@@ -28,7 +28,7 @@
       "then": { 
           "do": "apply-adjustment", 
           "with": { "item": "unitsTier3", "mode": "expression", "value": "min(units-200,100)", "context": ["units"],
-              "message":"Apply 20% for units between 201-300 (next hundred)"  } 
+              "message":"Charge 20% for units between 201-300 (next hundred)"  } 
             },
       "priority": 500
     },
@@ -37,7 +37,7 @@
       "then": { 
           "do": "apply-adjustment", 
           "with": { "item": "unitsTier4", "mode": "expression", "value": "units - 300", "context": ["units"],
-              "message":"Apply 25% for units above 300"  } 
+              "message":"Charge 25% for units above 300"  } 
             },
       "priority": 500
     },

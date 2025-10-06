@@ -1,5 +1,4 @@
 // src/common/utils/calc-utils.ts
-import { evaluate } from 'mathjs';
 
 export class CalcUtils {
   
@@ -13,9 +12,10 @@ export class CalcUtils {
     return defaultValue;
     }
 
+    
   static handleValueRangeLookup(outerKey: string, base: number, table: Record<string, number>,  defaultValue: number): number {
     const innerTable = table[outerKey];
-    console.log(`[DEBUG] Value Range lookup: outerKey=${outerKey}`);
+    console.log(`[DEBUG] Value Range lookup: outerKey=${outerKey}, innerTable=${innerTable}`);
 
     if (!innerTable) return defaultValue;
     for (const [range, val] of Object.entries(innerTable)) {

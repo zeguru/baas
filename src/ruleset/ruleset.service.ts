@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { Engine, Rule } from 'json-rules-engine';
 import * as path from 'path';
 import { RuleMapper } from '../common/util/rule-mapper';
+import { RuleDto } from '../common/dto/rule';
 
 @Injectable()
 export class RuleSetService implements OnModuleInit{
@@ -17,23 +18,12 @@ export class RuleSetService implements OnModuleInit{
           all: [{ fact: 'gross', operator: 'greaterThan', value: 0 }],
           },
         event: {
-          type: 'net-salary',
-          params: { message: 'Salary calculation rule triggered' },
+          type: 'advice',
+          params: { message: 'PAYE is mandatory' },
           },
         }),
       ];
 
-    this.ruleSets['eligibility'] = [
-      new Rule({
-        conditions: {
-          all: [{ fact: 'age', operator: 'greaterThan', value: 18 }],
-          },
-        event: {
-          type: 'adult',
-          params: { message: 'User is an adult' },
-          },
-        }),
-      ];
     }
 
     
@@ -86,7 +76,7 @@ export class RuleSetService implements OnModuleInit{
     return { success: true, ruleSet: name };
     }
 
-  listRuleSets() {
+  listRuleSets():String[] {
     return Object.keys(this.ruleSets);
     }
 
@@ -98,12 +88,11 @@ export class RuleSetService implements OnModuleInit{
     }
 
 
-
-  getFriendlyRules(setName: string) {
+  getFriendlyRules(setName: string): RuleDto[] {
     const rules = this.ruleSets[setName];
     if (!rules) 
         throw new NotFoundException(`Rule set "${setName}" not found`);
-    //return rules
+
     return rules.map((rule) => ({
       when: rule.conditions,
       then: {
@@ -111,19 +100,37 @@ export class RuleSetService implements OnModuleInit{
         with: rule.event.params,
       },
       priority: rule.priority,
-    }))
+    })) as RuleDto[];
   }
+
+
 
   addRule(setName: string, ruleObj: any) {
     if (!this.ruleSets[setName]) {
       this.ruleSets[setName] = [];
       }
+      
     const rule = new Rule(ruleObj);
     this.ruleSets[setName].push(rule);
     return { success: true, count: this.ruleSets[setName].length };
     }
 
+  addFriendlyRule(setName: string, ruleDto: RuleDto) {
+    if (!this.ruleSets[setName]) {
+      this.ruleSets[setName] = [];
+      }
+      
+    const ruleObj = this.toEngineRuleObject(ruleDto);
+
+    const rule = new Rule(ruleObj as any);
+    this.ruleSets[setName].push(rule);
+    return { success: true, count: this.ruleSets[setName].length };
+    }
+
+
   async evaluate(setName: string, facts: Record<string, any>) {
+
+    console.log('Evaluating ', setName, facts);
     const rules = this.ruleSets[setName];
     if (!rules) throw new NotFoundException(`Rule set "${setName}" not found`);
 
@@ -147,6 +154,18 @@ export class RuleSetService implements OnModuleInit{
         do: e.type,
         with: e.params,
       })),
+    };
+  }
+
+
+  private toEngineRuleObject(ruleDto: RuleDto) {
+    return {
+      conditions: ruleDto.when, // same shape
+      event: {
+        type: ruleDto.then.do,
+        params: ruleDto.then.with,
+      },
+      priority: ruleDto.priority,
     };
   }
 }
