@@ -135,7 +135,6 @@ export class RuleSetService implements OnModuleInit{
 
   async evaluate(setName: string, facts: Record<string, any>) {
 
-    console.log('Evaluating ', setName, facts);
     const rules = this.ruleSets[setName];
     if (!rules) throw new NotFoundException(`Rule set "${setName}" not found`);
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { evaluate } from 'mathjs';
 import { DateUtils } from '../common/util/date-utils';
@@ -9,6 +9,8 @@ import { RuleSetService } from '../ruleset/ruleset.service';
 @Injectable()
 export class CalculatorService {
 
+    private readonly logger = new Logger(CalculatorService.name);
+
 
     constructor(private readonly ruleSetService: RuleSetService) {}
 
@@ -17,8 +19,9 @@ export class CalculatorService {
      * - Supports fixed amounts, percentage rates and expressions
      * - Uses runtime facts...
      */
-      async compute(setName: string, facts: Record<string, any>) {
+    async compute(setName: string, facts: Record<string, any>) {
 
+      try {
         const rules = this.ruleSetService.getRules(setName);
         const engine = new Engine(rules, { allowUndefinedFacts: false });
         const baseFacts: Record<string, any> = { ...facts };
@@ -126,6 +129,24 @@ export class CalculatorService {
             result: derivedFacts[e.params.item]
             })),
           };
+        } 
+      catch (err: any) {
+
+        const msg = err?.message || 'Unexpected error during computation';
+        this.logger.error(`Compute failed for set "${setName}": ${msg}`);
+
+        if (msg.includes('Undefined fact')) {
+          throw new BadRequestException({
+            code: 'MISSING_FACT',
+            message: msg,
+          });
+        }
+
+        throw new InternalServerErrorException({
+          code: 'ENGINE_ERROR',
+          message: msg,
+        });
+      }
       }
       
 }
