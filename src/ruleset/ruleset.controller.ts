@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { RuleSetService } from './ruleset.service';
-import { ApiExcludeEndpoint, ApiTags, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiTags, ApiOperation, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 import { RuleDto, EvaluateDto } from '../common/dto/rule';
 
 @Controller('ruleset')
@@ -19,7 +19,10 @@ export class RuleSetController {
       }
 
   @Get()
-  @ApiResponse({ status: 200, description: 'List available rulesets.' })
+  @ApiOperation({
+    summary: 'List available rulesets',
+    description: 'Show list of business logic. Grouped into `rulesets` ',
+    })
   listRuleSets():String[]{
     return this.ruleSetsService.listRuleSets();
     }
@@ -30,18 +33,28 @@ export class RuleSetController {
     return this.ruleSetsService.createRuleSet(name);
     }
 
-  @Get(':setName')
-  @ApiOkResponse({description: 'List rules for the given rule set', type: RuleDto, isArray: true,})
-  getFriendlyRules(@Param('setName') setName: string):RuleDto[] {
+  @Get(':nameOfRuleSet')
+  @ApiOperation({
+    summary: 'Show all business rules defined in selected ruleset',
+    description: 'Show all specific rule that forms the logic within that `ruleset` ',
+    })
+  @ApiOkResponse({description: 'Individual rules for the given `ruleset`', type: RuleDto, isArray: true,})
+  getFriendlyRules(@Param('nameOfRuleSet') setName: string):RuleDto[] {
     return this.ruleSetsService.getFriendlyRules(setName);
     }
 
-  @Post(':setName/add')
-  addRule(@Param('setName') setName: string, @Body() rule: RuleDto) {
+  @Post(':nameOfRuleSet/add')
+  @ApiOperation({
+    summary: 'Add business logic aka ruleset',
+    description: 'Add a set of sequential rules that implement a specific business logic.Eg agent-commissions, loan-prequalification, claim-triage, motor-insurance-premiums',
+    })
+  @ApiOkResponse({description: 'Name of ruleset and the number of rules added'})
+  addRule(@Param('nameOfRuleSet') setName: string, @Body() rule: RuleDto) {
     return this.ruleSetsService.addFriendlyRule(setName, rule);
     }
 
-  @Post(':setName/evaluate')
+  @ApiExcludeEndpoint() 
+  @Post(':nameOfRuleSet/evaluate')
   @ApiBody({
     schema: {
       type: 'object',
@@ -50,7 +63,7 @@ export class RuleSetController {
       },
     })
   evaluate(
-    @Param('setName') setName: string,
+    @Param('nameOfRuleSet') setName: string,
     @Body() facts: Record<string, any>,
     ) {
     return this.ruleSetsService.evaluate(setName, facts);

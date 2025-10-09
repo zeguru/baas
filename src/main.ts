@@ -10,7 +10,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('BaaS API')
-    .setDescription('REST apis for Business Logic Service')
+    .setDescription('REST apis for Business Logic Service. Collect all your facts, evaluate once.')
     .setVersion('1.0')
     .build();
 

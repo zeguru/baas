@@ -9,6 +9,7 @@ import { RuleSetService } from '../ruleset/ruleset.service';
 @Injectable()
 export class CalculatorService {
 
+
     constructor(private readonly ruleSetService: RuleSetService) {}
 
     /**
@@ -26,7 +27,10 @@ export class CalculatorService {
             age: DateUtils.age,
             daysBetween: DateUtils.daysBetween,
             addDays: DateUtils.addDays,
-          };
+            currentYear: DateUtils.currentYear,
+            curentMonth: DateUtils.currentMonth,
+            curentDay: DateUtils.currentDay
+            };
 
         let stopped = false;
 
@@ -119,6 +123,7 @@ export class CalculatorService {
           then: result.events.map((e) => ({
             do: e.type,
             message: e.params.message,
+            result: derivedFacts[e.params.item]
             })),
           };
       }

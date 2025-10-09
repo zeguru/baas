@@ -3,12 +3,13 @@ import { CalculatorService } from './calculator.service';
 import { EvaluateDto } from '../common/dto/rule';
 import { ApiExcludeEndpoint, ApiTags, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('Compute')
 @Controller('calculator')
 export class CalculatorController {
 
     constructor(private readonly calculatorService: CalculatorService) {}
 
-    @Post(':setName/custom/compute')
+    @Post(':nameOfRuleSet/compute')
     @ApiBody({
         schema: {
           type: 'object',
@@ -17,7 +18,7 @@ export class CalculatorController {
           },
         })
     async compute(
-      @Param('setName') setName: string,
+      @Param('nameOfRuleSet') setName: string,
       @Body() facts: Record<string, any>,
         ) {
           return this.calculatorService.compute(setName, facts);

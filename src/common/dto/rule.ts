@@ -29,22 +29,16 @@ export class ConditionDto {
 
 export class WhenDto {
 
-  @ApiPropertyOptional({
-    type: [ConditionDto],
-    example: [
-      { fact: 'amount', operator: 'greaterThan', value: 1000 },
-      { fact: 'category', operator: 'in', value: ['VIP', 'PREMIUM', 'BASIC'] },
-    ],
-    description: 'Any condition that must be true',
-  })
+  @Type(() => ConditionDto)
   all?: ConditionDto[];
+  
 }
 
 export class WithDto {
   @ApiProperty({ description: 'Stop execution ?', example: false, default: false })
   break: boolean;
 
-  @ApiProperty({ description:'The result of the computation, adjustment', example: 'subTotal' })
+  @ApiProperty({ description:'The result of the computation, adjustment', example: 'discount' })
   @IsOptional()
   item?: string;
 
@@ -78,7 +72,7 @@ export class WithDto {
   // @IsOptional()
   // context?: string[];
 
-  @ApiProperty({description:'Describes the rule, step', example: 'Awesome, 16 % rate adjustment applied to amount.'})
+  @ApiProperty({description:'Describes the rule, step', example: 'Awesome, give 10% discount to PREMIUM and VIP.'})
   @IsString()
   message: string;
   
@@ -97,7 +91,16 @@ export class ThenDto {
 }
 
 export class RuleDto {
-  @ApiProperty({ type: WhenDto })
+  @ApiProperty({
+    type: WhenDto,
+    description: 'Conditions that determine when the rule should trigger',
+    example: {
+      all: [
+        { fact: 'amount', operator: 'greaterThan', value: 1000 },
+        { fact: 'category', operator: 'in', value: ['PREMIUM','VIP'] },
+      ],
+    },
+  })
   @ValidateNested()
   @Type(() => WhenDto)
   when: WhenDto;

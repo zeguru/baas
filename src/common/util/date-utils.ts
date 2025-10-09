@@ -1,21 +1,39 @@
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 
 export class DateUtils {
+
   static age(dateString: string): number {
-    const dob = new Date(dateString.split('-').reverse().join('-')); // DD-MM-YYYY → Date
-    const diff = Date.now() - dob.getTime();
-    return new Date(diff).getUTCFullYear() - 1970;
-  }
+    const dob = dayjs(dateString, 'DD-MM-YYYY'); 
+    if (!dob.isValid()) return 0; 
+    const now = dayjs();
+    return now.diff(dob, 'year'); // clean, accurate age difference
+    } 
 
   static daysBetween(date1: string, date2: string): number {
-    const d1 = new Date(date1.split('-').reverse().join('-'));
-    const d2 = new Date(date2.split('-').reverse().join('-'));
-    return Math.floor((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    const d1 = dayjs(date1, 'DD-MM-YYYY');
+    const d2 = dayjs(date2, 'DD-MM-YYYY');
+    if (!d1.isValid() || !d2.isValid()) return 0;
+    return d2.diff(d1, 'day');
   }
 
   static addDays(dateString: string, days: number): string {
-    const d = new Date(dateString.split('-').reverse().join('-'));
-    d.setDate(d.getDate() + days);
-    return d.toISOString().split('T')[0]; // YYYY-MM-DD
+    return dayjs(dateString, 'DD-MM-YYYY').add(days, 'day').format('DD-MM-YYYY');
   }
+
+  static currentDate(): string {
+    return dayjs().format('DD-MM-YYYY');
+    }
+
+  static get currentYear(): number {
+    return dayjs().year();
+    }
+
+  static get currentMonth(): number {
+    return dayjs().month() + 1; // JS months are 0-based
+    }
+
+  static get currentDay(): number {
+    return dayjs().date();
+    }
+
 }

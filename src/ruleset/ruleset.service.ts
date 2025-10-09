@@ -4,7 +4,7 @@ import { Engine, Rule } from 'json-rules-engine';
 import * as path from 'path';
 import { RuleMapper } from '../common/util/rule-mapper';
 import { RuleDto } from '../common/dto/rule';
-
+import { normalizeWhen } from '../common/util/misc-utils'
 @Injectable()
 export class RuleSetService implements OnModuleInit{
 
@@ -28,10 +28,11 @@ export class RuleSetService implements OnModuleInit{
 
     
   async onModuleInit() {
-    await this.loadFromFile('bima-bamba'); 
     await this.loadFromFile('good-life'); 
     await this.loadFromFile('band-logic'); 
     await this.loadFromFile('utility-bill'); 
+    await this.loadFromFile('motor-insurance'); 
+    await this.loadFromFile('health-insurance'); 
 
     const result = await this.evaluate('good-life', {
       coffeeCups: 2,
@@ -71,7 +72,7 @@ export class RuleSetService implements OnModuleInit{
   createRuleSet(name: string) {
     if (this.ruleSets[name]) {
       throw new BadRequestException(`Rule set "${name}" already exists`);
-    }
+      }
     this.ruleSets[name] = [];
     return { success: true, ruleSet: name };
     }
@@ -93,8 +94,13 @@ export class RuleSetService implements OnModuleInit{
     if (!rules) 
         throw new NotFoundException(`Rule set "${setName}" not found`);
 
+    // console.log('TYPE OF CONDITIONS:', typeof rules[0].conditions);
+    // console.log('TYPE:', typeof rules[0].conditions);
+    // console.log('VALUE:', rules[0].conditions);
+    // console.log('STRINGIFY:', JSON.stringify(rules[0].conditions));
+
     return rules.map((rule) => ({
-      when: rule.conditions,
+      when: normalizeWhen(rule.conditions),
       then: {
         do: rule.event.type,
         with: rule.event.params,
@@ -102,7 +108,6 @@ export class RuleSetService implements OnModuleInit{
       priority: rule.priority,
     })) as RuleDto[];
   }
-
 
 
   addRule(setName: string, ruleObj: any) {
