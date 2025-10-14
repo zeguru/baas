@@ -21,9 +21,11 @@ export class CalculatorService {
      */
     async compute(setName: string, facts: Record<string, any>) {
 
+      let engine: Engine | null = null;
+
       try {
         const rules = this.ruleSetService.getRules(setName);
-        const engine = new Engine(rules, { allowUndefinedFacts: false });
+        engine = new Engine(rules, { allowUndefinedFacts: false });
         const baseFacts: Record<string, any> = { ...facts };
 
         const utils = {
@@ -48,6 +50,27 @@ export class CalculatorService {
             console.log('[DEBUG] Event triggered:', event);
             
             let value = 0;
+
+            if (event.params.mode === 'set-defaults') {
+                const table = event.params.table ?? {};
+                for (const [fact, defaultValue] of Object.entries(table)) {
+                  try {
+                    const current = await almanac.factValue(fact);
+                    if (current === undefined || current === null) {
+                      await almanac.addRuntimeFact(fact, defaultValue);
+                      console.log(`[DEBUG] [set-defaults] Added default: ${fact}=${defaultValue}`);
+                      } 
+                    else {
+                      console.log(`[DEBUG] [set-defaults] Skipped existing: ${fact}=${current}`);
+                      }
+                    } 
+                  catch {
+                    await almanac.addRuntimeFact(fact, defaultValue);
+                    console.log(`[DEBUG] [set-defaults] Added missing: ${fact}=${defaultValue}`);
+                    }
+                  }
+                return; 
+              }
 
             if (event.params.mode === 'rate') {
                 const base = await almanac.factValue(event.params.base) as number;
@@ -104,9 +127,9 @@ export class CalculatorService {
         let derivedFacts: Record<string, any> = {};
 
         for (const fact of [
-          ...Object.keys(facts),
-          ...result.events.map((e) => e.params.item)
-        ]) {
+            ...Object.keys(facts),
+            ...result.events.map((e) => e.params.item)
+            ]) {
           try {
             allFacts[fact] = await result.almanac.factValue(fact);
             derivedFacts = Object.fromEntries(
@@ -131,6 +154,13 @@ export class CalculatorService {
           };
         } 
       catch (err: any) {
+
+        try {
+          engine.stop();
+          } 
+        catch (stopErr) {
+          this.logger.warn(`Error stopping engine: ${stopErr.message}`);
+          }
 
         const msg = err?.message || 'Unexpected error during computation';
         this.logger.error(`Compute failed for set "${setName}": ${msg}`);

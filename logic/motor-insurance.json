@@ -1,9 +1,7 @@
 [
       {
       "when": {
-        "any": [
-            { "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}
-            ]
+        "any": [{ "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}]
         },
       "then": {
         "do": "validation",
@@ -11,7 +9,6 @@
         },
       "priority": 600
       },
-
 
       {
         "when": {
@@ -56,9 +53,7 @@
 
     {
       "when": {
-        "all": [
-          {"fact": "vehicleAge", "operator": "greaterThan", "value": 20}
-          ]
+        "all": [{"fact": "vehicleAge", "operator": "greaterThan", "value": 20}]
         },
       "then": {
         "do": "validation",
@@ -108,7 +103,7 @@
       "then": {
         "do": "apply-adjustment",
             "with": { "item": "aaCharge", "mode": "fixed", "base": "total", "value": 5000, 
-          "message": "AA Membership: Charge 5k fixed"}
+              "message": "AA Membership: Charge 5k fixed"}
         },
         "priority": 200
       },
@@ -119,7 +114,7 @@
       "then": {
         "do": "apply-adjustment",
             "with": { "item": "pvt", "mode": "fixed", "base": "total", "value": 0,
-          "message": "Inclusive: Post Election Violence and Terrorism - PVT Benefit. No extra charge "}
+              "message": "Inclusive: Post Election Violence and Terrorism - PVT Benefit. No extra charge "}
         },
         "priority": 200
       },
@@ -241,6 +236,7 @@
             },
         "priority": 50
       },
+
       {
         "when": { 
           "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },

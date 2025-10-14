@@ -27,10 +27,22 @@ export class RuleSetController {
     return this.ruleSetsService.listRuleSets();
     }
 
-  @ApiExcludeEndpoint()
-  @Post('/create')
-  createRuleSet(@Body('name') name: string) {
-    return this.ruleSetsService.createRuleSet(name);
+  @Post(':nameOfRuleSet/create')
+  @ApiOperation({
+    summary: 'Create an empty ruleset',
+    description: 'Create a title for a set of business rules `ruleset`. Without rules, yet',
+    })
+  createRuleSet(@Param('nameOfRuleSet') setName: string) {
+    return this.ruleSetsService.createRuleSet(setName);
+    }
+
+  @Post(':nameOfRuleSet/clear')
+  @ApiOperation({
+    summary: 'Delete contents of a ruleset',
+    description: 'Delete the rules inside a ruleset but not the ruleset itself',
+    })
+  emptifyRuleSet(@Param('nameOfRuleSet') setName: string) {
+    return this.ruleSetsService.emptifyRuleSet(setName);
     }
 
   @Get(':nameOfRuleSet')
@@ -43,9 +55,9 @@ export class RuleSetController {
     return this.ruleSetsService.getFriendlyRules(setName);
     }
 
-  @Post(':nameOfRuleSet/add')
+  @Post(':nameOfRuleSet/update')
   @ApiOperation({
-    summary: 'Add business logic aka ruleset',
+    summary: 'Add business logic (one or more rules) to an existing ruleset',
     description: 'Add a set of sequential rules that implement a specific business logic.Eg agent-commissions, loan-prequalification, claim-triage, motor-insurance-premiums',
     })
   @ApiOkResponse({description: 'Name of ruleset and the number of rules added'})

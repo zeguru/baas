@@ -77,6 +77,14 @@ export class RuleSetService implements OnModuleInit{
     return { success: true, ruleSet: name };
     }
 
+  emptifyRuleSet(name: string) {
+    if (!this.ruleSets[name]) {
+      throw new BadRequestException(`Ruleset "${name}" does not exist`);
+      }
+    this.ruleSets[name] = [];
+    return { success: true, ruleSet: name };
+    }
+
   listRuleSets():String[] {
     return Object.keys(this.ruleSets);
     }

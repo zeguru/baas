@@ -1,7 +1,7 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import { CalculatorService } from './calculator.service';
 import { EvaluateDto } from '../common/dto/rule';
-import { ApiExcludeEndpoint, ApiTags, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiTags, ApiResponse, ApiOkResponse, ApiBody, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Compute')
 @Controller('calculator')
@@ -16,6 +16,11 @@ export class CalculatorController {
           example: { amount: 5500, category: 'VIP' },
           additionalProperties: { type: 'any' },
           },
+        })
+
+    @ApiOperation({
+        summary: 'Run the business logic',
+        description: 'Evaluate (compute) the business logic using the given set of facts',
         })
     async compute(
       @Param('nameOfRuleSet') setName: string,
