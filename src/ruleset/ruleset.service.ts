@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, OnModuleInit, InternalServerErrorException, Logger } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import { Engine, Rule } from 'json-rules-engine';
 import * as path from 'path';
@@ -6,10 +6,12 @@ import { RuleMapper } from '../common/util/rule-mapper';
 import { RuleDto } from '../common/dto/rule';
 import { normalizeWhen } from '../common/util/misc-utils'
 @Injectable()
-export class RuleSetService implements OnModuleInit{
+export class RuleSetService implements OnModuleInit {
+
+  private readonly logger = new Logger(RuleSetService.name);
 
   private ruleSets: Record<string, Rule[]> = {};
-
+  
   constructor() {
 
     this.ruleSets['salary'] = [
@@ -28,6 +30,7 @@ export class RuleSetService implements OnModuleInit{
 
     
   async onModuleInit() {
+
     await this.loadFromFile('good-life'); 
     await this.loadFromFile('band-logic'); 
     await this.loadFromFile('utility-bill'); 
@@ -41,7 +44,7 @@ export class RuleSetService implements OnModuleInit{
       releaseDay: 'Thursday',
       });
       
-    console.log('Default evaluation result:', JSON.stringify(result, null, 2));
+    this.logger.log('Default evaluation result:', JSON.stringify(result, null, 2));
 
   }
 
@@ -70,11 +73,17 @@ export class RuleSetService implements OnModuleInit{
         }
 
   createRuleSet(name: string) {
-    if (this.ruleSets[name]) {
-      throw new BadRequestException(`Rule set "${name}" already exists`);
+    try{
+      if (this.ruleSets[name]) {
+        throw new BadRequestException(`Rule set "${name}" already exists`);
+        }
+      this.ruleSets[name] = [];
+      return { success: true, ruleSet: name };
+      } 
+    catch (error) {
+      this.logger.warn(`Unable to create ruleset: ${error.message}`);
+      throw new InternalServerErrorException(`Failed to create rule set: ${error.message}`);
       }
-    this.ruleSets[name] = [];
-    return { success: true, ruleSet: name };
     }
 
   emptifyRuleSet(name: string) {
@@ -102,11 +111,6 @@ export class RuleSetService implements OnModuleInit{
     if (!rules) 
         throw new NotFoundException(`Rule set "${setName}" not found`);
 
-    // console.log('TYPE OF CONDITIONS:', typeof rules[0].conditions);
-    // console.log('TYPE:', typeof rules[0].conditions);
-    // console.log('VALUE:', rules[0].conditions);
-    // console.log('STRINGIFY:', JSON.stringify(rules[0].conditions));
-
     return rules.map((rule) => ({
       when: normalizeWhen(rule.conditions),
       then: {
@@ -119,54 +123,73 @@ export class RuleSetService implements OnModuleInit{
 
 
   addRule(setName: string, ruleObj: any) {
-    if (!this.ruleSets[setName]) {
-      this.ruleSets[setName] = [];
+    try{
+      if (!this.ruleSets[setName]) {
+        this.ruleSets[setName] = [];
+        }
+        
+      const rule = new Rule(ruleObj);
+      this.ruleSets[setName].push(rule);
+      return { success: true, count: this.ruleSets[setName].length };
+      } 
+    catch (error) {
+      this.logger.warn(`Failed to add a rule: ${error.message}`);
+      throw new BadRequestException(`Failed to update ruleset`);
       }
-      
-    const rule = new Rule(ruleObj);
-    this.ruleSets[setName].push(rule);
-    return { success: true, count: this.ruleSets[setName].length };
     }
 
   addFriendlyRule(setName: string, ruleDto: RuleDto) {
-    if (!this.ruleSets[setName]) {
-      this.ruleSets[setName] = [];
-      }
-      
-    const ruleObj = this.toEngineRuleObject(ruleDto);
+    try {
+      if (!this.ruleSets[setName]) {
+        this.ruleSets[setName] = [];
+        }
+        
+      const ruleObj = this.toEngineRuleObject(ruleDto);
 
-    const rule = new Rule(ruleObj as any);
-    this.ruleSets[setName].push(rule);
-    return { success: true, count: this.ruleSets[setName].length };
+      const rule = new Rule(ruleObj as any);
+      this.ruleSets[setName].push(rule);
+      return { success: true, count: this.ruleSets[setName].length };
+      } 
+    catch (error) {
+      this.logger.warn(`Failed to add friendly rule: ${error.message}`);
+      throw new BadRequestException(`Failed to update ruleset`);
+      }
     }
 
 
   async evaluate(setName: string, facts: Record<string, any>) {
 
-    const rules = this.ruleSets[setName];
-    if (!rules) throw new NotFoundException(`Rule set "${setName}" not found`);
+    try {
 
-    const engine = new Engine(rules, { allowUndefinedFacts: false });
+        const rules = this.ruleSets[setName];
+        if (!rules) throw new NotFoundException(`Rule set "${setName}" not found`);
 
-    let stopped = false;
+        const engine = new Engine(rules, { allowUndefinedFacts: false });
 
-    engine.on('success', (event, almanac, ruleResult) => {
-        if(event.params?.break){
-          stopped = true;
-          engine.stop();
-          }
-      });
-      
-    const result = await engine.run(facts);
+        let stopped = false;
 
-    return {
-      ruleSet: setName,
-      stopped: stopped,
-      then: result.events.map((e) => ({
-        do: e.type,
-        with: e.params,
-      })),
-    };
+        engine.on('success', (event, almanac, ruleResult) => {
+            if(event.params?.break){
+              stopped = true;
+              engine.stop();
+              }
+          });
+          
+        const result = await engine.run(facts);
+
+        return {
+          ruleSet: setName,
+          stopped: stopped,
+          then: result.events.map((e) => ({
+            do: e.type,
+            with: e.params,
+          })),
+        };
+      } 
+    catch (error) {
+      this.logger.warn(`Failed to evaluate: ${error.message}`);
+      throw new BadRequestException(`Failed to evaluate ruleset : ${error.message}`);
+      }
   }
 
 
