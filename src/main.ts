@@ -7,18 +7,22 @@ import * as basicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const context = 'baas'; // or from env
 
   const config = new DocumentBuilder()
     .setTitle('BaaS API')
     .setDescription('REST apis for Business Logic Service. Collect all your facts, evaluate once.')
-    .setVersion('1.0')
+    .setVersion('alpha')
+    .addServer(`/${context}`)
     .build();
 
-const document = SwaggerModule.createDocument(app, config, {
-  include: [RuleSetModule, CalculatorModule], // only include selected modules
-  });
+  const document = SwaggerModule.createDocument(app, config, {
+    include: [RuleSetModule, CalculatorModule], // only include selected modules
+    });
 
-SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup(`${context}/docs`, app, document);
+
+  app.setGlobalPrefix(context); 
 
   await app.listen(3000);
 }

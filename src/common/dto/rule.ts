@@ -110,7 +110,7 @@ export class RuleDto {
   @Type(() => ThenDto)
   then: ThenDto;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ description:'Higher priority rules are evaluated first', example: 1 })
   priority: number;
   }
 

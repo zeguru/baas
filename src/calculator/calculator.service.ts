@@ -24,6 +24,7 @@ export class CalculatorService {
       let engine: Engine | null = null;
 
       try {
+        
         const rules = this.ruleSetService.getRules(setName);
         engine = new Engine(rules, { allowUndefinedFacts: false });
         const baseFacts: Record<string, any> = { ...facts };

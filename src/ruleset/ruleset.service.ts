@@ -21,7 +21,7 @@ export class RuleSetService implements OnModuleInit {
           },
         event: {
           type: 'advice',
-          params: { message: 'PAYE is mandatory' },
+          params: { message: 'PAYE is mandatory for you' },
           },
         }),
       ];
@@ -101,7 +101,7 @@ export class RuleSetService implements OnModuleInit {
   getRules(setName: string) {
     const rules = this.ruleSets[setName];
     if (!rules) 
-        throw new NotFoundException(`Rule set "${setName}" not found`);
+        throw new NotFoundException(`Ruleset "${setName}" not found`);
     return rules
     }
 
