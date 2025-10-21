@@ -24,6 +24,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix(context); 
 
-  await app.listen(3000);
+  await app.listen(3000, '0.0.0.0');
+
 }
 bootstrap();
