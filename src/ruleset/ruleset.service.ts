@@ -5,6 +5,9 @@ import * as path from 'path';
 import { RuleMapper } from '../common/util/rule-mapper';
 import { RuleDto } from '../common/dto/rule';
 import { normalizeWhen } from '../common/util/misc-utils'
+import { registerCustomOperators } from '../common/util/custom-operators'
+import { DateUtils } from '../common/util/date-utils';
+
 @Injectable()
 export class RuleSetService implements OnModuleInit {
 
@@ -165,6 +168,18 @@ export class RuleSetService implements OnModuleInit {
         if (!rules) throw new NotFoundException(`Rule set "${setName}" not found`);
 
         const engine = new Engine(rules, { allowUndefinedFacts: false });
+        registerCustomOperators(engine);
+
+        const utils = {
+            age: DateUtils.age,
+            daysBetween: DateUtils.daysBetween,
+            addDays: DateUtils.addDays,
+            currentYear: DateUtils.currentYear,
+            currentMonth: DateUtils.currentMonth,
+            currentDay: DateUtils.currentDay,
+            currentDate: DateUtils.currentDate,
+            currentDateTime: DateUtils.currentDateTime
+            };
 
         let stopped = false;
 

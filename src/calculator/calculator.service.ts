@@ -4,6 +4,7 @@ import { evaluate } from 'mathjs';
 import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
+import { registerCustomOperators } from '../common/util/custom-operators'
 
 
 @Injectable()
@@ -27,6 +28,8 @@ export class CalculatorService {
         
         const rules = this.ruleSetService.getRules(setName);
         engine = new Engine(rules, { allowUndefinedFacts: false });
+        registerCustomOperators(engine);
+
         const baseFacts: Record<string, any> = { ...facts };
 
         const utils = {
@@ -34,8 +37,10 @@ export class CalculatorService {
             daysBetween: DateUtils.daysBetween,
             addDays: DateUtils.addDays,
             currentYear: DateUtils.currentYear,
-            curentMonth: DateUtils.currentMonth,
-            curentDay: DateUtils.currentDay
+            currentMonth: DateUtils.currentMonth,
+            currentDay: DateUtils.currentDay,
+            currentDate: DateUtils.currentDate,
+            currentDateTime: DateUtils.currentDateTime
             };
 
         let stopped = false;
@@ -136,12 +141,14 @@ export class CalculatorService {
             derivedFacts = Object.fromEntries(
                 Object.entries(allFacts).filter(([k]) => !(k in baseFacts))
               );
+            derivedFacts.timestamp = utils.currentDateTime
             } 
           catch {
             console.log(`Skipping = ${fact}`);
             }
           }
 
+          
         return {
           ruleSet: setName,
           stopped: stopped,

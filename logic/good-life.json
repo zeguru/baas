@@ -1,4 +1,17 @@
-[
+[  {
+    "when": {
+      "all": [
+        { "fact": "always", "operator": "always", "value": true }
+      ]
+    },
+    "then": {
+      "do": "advice",
+      "with": {
+        "message": "Welcome to Business Logic as a service"
+      }
+    }
+  },
+
   {
     "when": {
       "all": [
@@ -51,7 +64,7 @@
       "all": [
         {
           "fact": "releaseDay",
-          "operator": "equal",
+          "operator": "equalIgnoreCase",
           "value": "Friday"
         }
       ]

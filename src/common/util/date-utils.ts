@@ -20,7 +20,11 @@ export class DateUtils {
     return dayjs(dateString, 'DD-MM-YYYY').add(days, 'day').format('DD-MM-YYYY');
   }
 
-  static currentDate(): string {
+  static get currentDateTime(): string {
+    return dayjs().format('YYYY-MM-DDTHH:mm:ssZ'); // ISO-like, with timezone
+    }
+     
+  static get currentDate(): string {
     return dayjs().format('DD-MM-YYYY');
     }
 
