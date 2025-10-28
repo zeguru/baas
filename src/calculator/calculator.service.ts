@@ -5,6 +5,7 @@ import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
 import { registerCustomOperators } from '../common/util/custom-operators'
+import { coalesce } from '../common/util/misc-utils';
 
 
 @Injectable()
@@ -36,6 +37,7 @@ export class CalculatorService {
             age: DateUtils.age,
             daysBetween: DateUtils.daysBetween,
             addDays: DateUtils.addDays,
+            coalesce,
             currentYear: DateUtils.currentYear,
             currentMonth: DateUtils.currentMonth,
             currentDay: DateUtils.currentDay,
@@ -116,6 +118,7 @@ export class CalculatorService {
                     context[key] = 0; 
                     }
                   }
+                  
                 console.log(`context: value=${context}`);
                 value = evaluate(event.params.value, {...context, ...utils});
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
@@ -129,6 +132,7 @@ export class CalculatorService {
 
         const result = await engine.run(facts);
       
+
         const allFacts: Record<string, any> = {};
         let derivedFacts: Record<string, any> = {};
 

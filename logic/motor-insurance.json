@@ -1,6 +1,30 @@
 [
       {
       "when": {
+        "all": [{ "fact": "always", "operator": "always", "value": true }]
+        },
+      "then": {
+        "do": "apply-adjustment",
+          "with": 
+            { "item": "courtesyCarDays", "mode": "fixed", "value": 50, "message": "Hardcode: 10 day courtesy car. Not overridable"}
+          },
+        "priority": 900
+      },
+
+      {
+      "when": {
+        "all": [{ "fact": "always", "operator": "always", "value": true }]
+        },
+      "then": {
+        "do": "apply-adjustment",
+          "with": 
+            { "item": "aaMembership", "mode": "fixed", "value": true, "message": "Hardcode: AA membership true. Not overridable"}
+            },
+        "priority": 900
+      },
+
+      {
+      "when": {
         "any": [{ "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}]
         },
       "then": {

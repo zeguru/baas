@@ -5,3 +5,20 @@ export function normalizeWhen(conditions: unknown): Record<string, any> {
     }
   return conditions as Record<string, any>;
   }
+
+
+// coalesce.util.ts
+/**
+ * Returns the first value that is not null or undefined.
+ * If all values are undefined/null, returns the provided fallback or 0.
+ */
+export function coalesce<T = number>(...values: (T | undefined | null)[]): T {
+  for (const v of values) {
+    if (v !== undefined && v !== null) return v;
+  }
+  // fallback if all values are undefined/null
+  return 0 as unknown as T;
+}
+
+
+

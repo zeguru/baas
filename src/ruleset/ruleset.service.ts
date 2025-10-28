@@ -15,6 +15,7 @@ export class RuleSetService implements OnModuleInit {
 
   private ruleSets: Record<string, Rule[]> = {};
   
+  
   constructor() {
 
     this.ruleSets['salary'] = [

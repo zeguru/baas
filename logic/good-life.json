@@ -1,4 +1,5 @@
-[  {
+[  
+  {
     "when": {
       "all": [
         { "fact": "always", "operator": "always", "value": true }
