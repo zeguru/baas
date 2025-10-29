@@ -35,7 +35,7 @@
               "TZ": "Tanzanian",
               "CN": "Chinese"
             },
-          "default": "South African",
+          "default": "Undefined Country",
           "message": "Map code to country"
         }
       }

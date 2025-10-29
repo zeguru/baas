@@ -6,7 +6,6 @@ export function normalizeWhen(conditions: unknown): Record<string, any> {
   return conditions as Record<string, any>;
   }
 
-
 /**
  * Returns the first value that is not null or undefined.
  * If all values are undefined/null, returns the provided fallback or 0.
