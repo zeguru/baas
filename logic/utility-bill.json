@@ -1,75 +1,91 @@
 [
-    {
-      "when": { "all": [
-          { "fact": "units", "operator": "greaterThanInclusive", "value": 1 }
-        ] },
-      "then": { 
-          "do": "apply-adjustment", 
-          "with": { "item": "unitsTier1", "mode": "expression", "value": "min(units,100)", "context": ["units"],
-              "message":"Charge 10% for units between 1-100" } 
-            },
-      "priority": 500
-    },
-    {
-      "when": { "all": [
-          { "fact": "units", "operator": "greaterThanInclusive", "value": 101 }
-          ] },
-      "then": { 
-          "do": "apply-adjustment", 
-          "with": { "item": "unitsTier2", "mode": "expression", "value": "min(units-100,100)", "context": ["units"],
-              "message":"Charge 15% for units between 101-200 (next hundred)"  } 
-            },
-      "priority": 500
-    },
-        {
-      "when": { "all": [
-          { "fact": "units", "operator": "greaterThanInclusive", "value": 201 }
-          ] },
-      "then": { 
-          "do": "apply-adjustment", 
-          "with": { "item": "unitsTier3", "mode": "expression", "value": "min(units-200,100)", "context": ["units"],
-              "message":"Charge 20% for units between 201-300 (next hundred)"  } 
-            },
-      "priority": 500
-    },
-    {
-      "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 301 }] },
-      "then": { 
-          "do": "apply-adjustment", 
-          "with": { "item": "unitsTier4", "mode": "expression", "value": "units - 300", "context": ["units"],
-              "message":"Charge 25% for units above 300"  } 
-            },
-      "priority": 500
-    },
-    {
-      "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 1 }] },
-      "then": { 
-          "do": "apply-adjustment", 
-          "with": { "item": "meterCharge", "mode": "fixed", "value": 5, 
-              "message":"Charge 5/- fixed meter charge" } 
-            },
-      "priority": 400
-    },
-    {
-      "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 50 }] },
-      "then": { 
-          "do": "apply-adjustment", 
-          "with": { "item": "fuelCharge", "mode": "fixed", "value": 3, 
-              "message":"Charge 3/- fixed fuel charge" } 
-            },
-      "priority": 400
-      },
-
-      {
-      "when": {
-          "all": [{ "fact":"units", "operator": "greaterThan", "value": 1 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "utilityBill", "mode": "expression", "value":"(unitsTier1 * 0.1) + (unitsTier2 * 0.15) + (unitsTier3 * 0.2) + (unitsTier4 * 0.25) + meterCharge + fuelCharge", "context": ["unitsTier1", "unitsTier2", "unitsTier3","unitsTier4", "meterCharge", "fuelCharge"], 
-          "message": "Compute utility bill"}
+  {
+    "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 1 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "unitsTier1", 
+        "mode": "expression", 
+        "value": "min(units,100)", 
+        "context": ["units"],
+        "message":"Charge 10% for units between 1-100" } 
         },
-        "priority": 300
-      }
-        
-  ]
+    "priority": 500
+  },
+
+  {
+    "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 101 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "unitsTier2", 
+        "mode": "expression", 
+        "value": "min(units-100,100)", 
+        "context": ["units"],
+        "message":"Charge 15% for units between 101-200 (next hundred)"  } 
+        },
+    "priority": 500
+  },
+
+  {
+    "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 201 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "unitsTier3",
+        "mode": "expression", 
+        "value": "min(units-200,100)", 
+        "context": ["units"],
+        "message":"Charge 20% for units between 201-300 (next hundred)"  } 
+        },
+      "priority": 500
+  },
+
+  {
+    "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 301 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "unitsTier4", 
+        "mode": "expression", 
+        "value": "units - 300", 
+        "context": ["units"],
+        "message":"Charge 25% for units above 300"  } 
+        },
+      "priority": 500
+  },
+
+  {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { "item": "meterCharge", "mode": "fixed", "value": 5, "message":"Charge 5/- fixed meter charge" } 
+      },
+    "priority": 400
+  },
+
+  {
+    "when": { "all": [{ "fact": "units", "operator": "greaterThanInclusive", "value": 50 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { "item": "fuelCharge", "mode": "fixed", "value": 3, "message":"Charge 3/- fixed fuel charge for units above 50" } 
+      },
+    "priority": 400
+  },
+
+  {
+  "when": {"all": [{ "fact":"always", "operator": "always", "value": true}] },
+  "then": {
+    "do": "apply-adjustment",
+      "with": { 
+        "item": "utilityBill", 
+        "mode": "expression", 
+        "value":"(unitsTier1 * 0.1) + (unitsTier2 * 0.15) + (unitsTier3 * 0.2) + (unitsTier4 * 0.25) + meterCharge + fuelCharge", 
+        "context": ["unitsTier1", "unitsTier2", "unitsTier3","unitsTier4", "meterCharge", "fuelCharge"], 
+        "message": "Compute utility bill"}
+        },
+    "priority": 300
+  }
+     
+]
   

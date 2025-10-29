@@ -7,7 +7,6 @@ export function normalizeWhen(conditions: unknown): Record<string, any> {
   }
 
 
-// coalesce.util.ts
 /**
  * Returns the first value that is not null or undefined.
  * If all values are undefined/null, returns the provided fallback or 0.
