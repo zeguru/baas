@@ -20,3 +20,20 @@ export function coalesce<T = number>(...values: (T | undefined | null)[]): T {
 
 
 
+export function capitalizeTableKeys<T extends Record<string, any>>(obj: T): Record<string, any> {
+  const result: Record<string, any> = {};
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const upperKey = key.toUpperCase();
+
+    if (result[upperKey]) {
+      throw new Error(`Duplicate key after uppercasing: "${key}" -> "${upperKey}"`);
+    }
+
+    result[upperKey] = value;
+  });
+
+  return result;
+}
+
+
