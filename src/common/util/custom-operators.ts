@@ -14,7 +14,7 @@ export function registerCustomOperators(engine: Engine) {
 
 
     /**
-     * "isDefined" removes clutter in conditions but also clarifying the intent
+     * "isDefined" removes clutter in conditions while also clarifying the intent
      */
     engine.addOperator('isDefined', (factValue, jsonValue) => {
 
@@ -40,5 +40,44 @@ export function registerCustomOperators(engine: Engine) {
 
     //glue fact to make the `always` operator work with the `always` fact
     engine.addFact('always', async () => true);
+
+
+    /**
+     * "inIgnoreCase" operator for case insensitivie IN lookups .
+     */
+    engine.addOperator('inIgnoreCase', (factValue: any, jsonValue: any[]) => {
+        if (!Array.isArray(jsonValue)) {
+            throw new Error("Operator 'inIgnoreCase' expects an array as the rule value");
+            }
+
+        // Only do case-insensitive match for strings
+        if (typeof factValue === 'string') {
+            return jsonValue.some(v =>
+                typeof v === 'string' && v.toLowerCase() === factValue.toLowerCase()
+                );
+            }
+
+        // Fallback for numbers, booleans, etc.
+        return jsonValue.includes(factValue);
+        });
+
+
+        
+    /**
+     * "notInIgnoreCase" operator for case insensitivie negation of IN lookups .
+     */
+    engine.addOperator('notInIgnoreCase', (factValue: any, jsonValue: any[]) => {
+        if (!Array.isArray(jsonValue)) {
+            throw new Error("Operator 'notInIgnoreCase' expects an array as the rule value");
+            }
+
+        if (typeof factValue === 'string') {
+            return !jsonValue.some(
+                v => typeof v === 'string' && v.toLowerCase() === factValue.toLowerCase()
+                );
+            }
+
+        return !jsonValue.includes(factValue);
+        });
 
     }

@@ -20,7 +20,7 @@
   },
 
   {
-    "when": {"any": [{ "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}]},
+    "when": {"any": [{ "fact": "model", "operator": "inIgnoreCase", "value": ["VITZ", "DEMIO", "MARCH"]}]},
     "then": {
       "do": "validation",
       "with": {"break": true, "message": "Vehicle model is blacklisted" }        
