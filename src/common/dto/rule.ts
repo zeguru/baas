@@ -61,8 +61,8 @@ export class WithDto {
   //     "BASIC": { "0-40": 6727, "41-999": 11643 }
   //     }
   //   })
-  // @IsOptional()
-  // table?: TableUnion;
+  @IsOptional()
+  table?: TableUnion;
 
   // @ApiPropertyOptional({example: '1',description: 'Default value if no match is found. Usefull when working with `lookup` tables',})
   // @IsOptional()
@@ -88,7 +88,7 @@ export class ThenDto {
   @ValidateNested()
   @Type(() => WithDto)
   with: WithDto;
-}
+  }
 
 export class RuleDto {
   @ApiProperty({

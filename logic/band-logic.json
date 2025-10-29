@@ -18,7 +18,8 @@
           "default": 2.0,
           "message": "Apply age-based risk factor"
         }
-      }
+      },
+    "priority":10
   },
 
   {
@@ -30,21 +31,22 @@
           "mode": "value-lookup",
           "base": "countryCode",
           "table": {
-              "KE": "Kenyan",
-              "UG": "Ugandan",
-              "TZ": "Tanzanian",
+              "Ke": "Kenyan",
+              "uG": "Ugandan",
+              "tz": "Tanzanian",
               "CN": "Chinese"
             },
           "default": "Undefined Country",
           "message": "Map code to country"
         }
-      }
+      },
+    "priority":10
   },
 
   {
     "when": { 
       "all": [
-          { "fact":"category", "operator": "in", "value": ["VIP", "PREMIUM", "BASIC"] },
+          { "fact":"category", "operator": "inIgnoreCase", "value": ["VIP", "PREMIUM", "BASIC"] },
           { "fact": "quantity", "operator": "greaterThan", "value": 0 }
         ] 
       },
@@ -77,7 +79,8 @@
         "default": 1,
         "message": "Award points based on quantity bought and customer category"
         }
-      }
+      },
+    "priority":5
     }
 ]
   

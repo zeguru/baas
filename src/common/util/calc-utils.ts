@@ -11,13 +11,13 @@ export class CalcUtils {
         }
     return defaultValue;
     }
-
     
   static handleValueRangeLookup(outerKey: string, base: number, table: Record<string, number>,  defaultValue: number): number {
-    const innerTable = table[outerKey];
+    const innerTable = table[outerKey.toUpperCase()];
     console.log(`[DEBUG] Value Range lookup: outerKey=${outerKey}, innerTable=${innerTable}`);
 
     if (!innerTable) return defaultValue;
+
     for (const [range, val] of Object.entries(innerTable)) {
         const [min, max] = range.split('-').map(Number);
         if (base >= min && base <= max) {

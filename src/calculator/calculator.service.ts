@@ -7,12 +7,10 @@ import { RuleSetService } from '../ruleset/ruleset.service';
 import { registerCustomOperators } from '../common/util/custom-operators'
 import { coalesce } from '../common/util/misc-utils';
 
-
 @Injectable()
 export class CalculatorService {
 
     private readonly logger = new Logger(CalculatorService.name);
-
 
     constructor(private readonly ruleSetService: RuleSetService) {}
 
@@ -27,11 +25,11 @@ export class CalculatorService {
 
       try {
         
+        const baseFacts: Record<string, any> = { ...facts };
+
         const rules = this.ruleSetService.getRules(setName);
         engine = new Engine(rules, { allowUndefinedFacts: false });
         registerCustomOperators(engine);
-
-        const baseFacts: Record<string, any> = { ...facts };
 
         const utils = {
             age: DateUtils.age,
@@ -48,6 +46,7 @@ export class CalculatorService {
         let stopped = false;
 
         engine.on('success', async (event, almanac, ruleResult) => {
+          
             if(event.params?.break){
                 stopped = true;
                 engine.stop();
@@ -59,27 +58,6 @@ export class CalculatorService {
             
             let value = 0;
 
-            if (event.params.mode === 'set-defaults') {
-                const table = event.params.table ?? {};
-                for (const [fact, defaultValue] of Object.entries(table)) {
-                  try {
-                    const current = await almanac.factValue(fact);
-                    if (current === undefined || current === null) {
-                      await almanac.addRuntimeFact(fact, defaultValue);
-                      console.log(`[DEBUG] [set-defaults] Added default: ${fact}=${defaultValue}`);
-                      } 
-                    else {
-                      console.log(`[DEBUG] [set-defaults] Skipped existing: ${fact}=${current}`);
-                      }
-                    } 
-                  catch {
-                    await almanac.addRuntimeFact(fact, defaultValue);
-                    console.log(`[DEBUG] [set-defaults] Added missing: ${fact}=${defaultValue}`);
-                    }
-                  }
-                return; 
-              }
-
             if (event.params.mode === 'rate') {
                 const base = await almanac.factValue(event.params.base) as number;
                 value = base * event.params.value;
@@ -90,9 +68,9 @@ export class CalculatorService {
                 console.log(`[DEBUG] Fixed mode: value=${value}`);
                 }
             else if (event.params.mode === 'value-lookup') {
-                const base = await almanac.factValue(event.params.base) as number;
-                value = event.params.table[base] ?? event.params.default;
-                console.log(`[DEBUG] Range lookup mode: value=${value}`);
+                const base = await almanac.factValue(event.params.base) as string;
+                value = event.params.table[base.toUpperCase()] ?? event.params.default;
+                console.log(`[DEBUG] Value lookup mode: value=${value}, base=${base}`);
                 }
             else if (event.params.mode === 'range-lookup') {
                 const base = await almanac.factValue(event.params.base) as number;
@@ -103,7 +81,7 @@ export class CalculatorService {
                 const base = await almanac.factValue(event.params.base) as number;
                 const key = await almanac.factValue(event.params.key) as string;
                 value = await CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
-                console.log(`[DEBUG] Value Range lookup mode: value=${value}`);
+                console.log(`[DEBUG] Value Range lookup mode: value=${value}, key=${key}, base = ${base}`);
                 }
             //TODO: use `base` for context. This will enforce uniformity of syntax and semantics    
             else if(event.params.mode === 'expression') {
@@ -122,7 +100,6 @@ export class CalculatorService {
                 console.log(`context: value=${context}`);
                 value = evaluate(event.params.value, {...context, ...utils});
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
-
                 }
         
             await almanac.addRuntimeFact(event.params.item, value);
@@ -132,7 +109,6 @@ export class CalculatorService {
 
         const result = await engine.run(facts);
       
-
         const allFacts: Record<string, any> = {};
         let derivedFacts: Record<string, any> = {};
 
@@ -152,7 +128,6 @@ export class CalculatorService {
             }
           }
 
-          
         return {
           ruleSet: setName,
           stopped: stopped,
@@ -164,6 +139,7 @@ export class CalculatorService {
             result: derivedFacts[e.params.item]
             })),
           };
+
         } 
       catch (err: any) {
 
@@ -181,14 +157,14 @@ export class CalculatorService {
           throw new BadRequestException({
             code: 'MISSING_FACT',
             message: msg,
-          });
-        }
+            });
+          }
 
         throw new InternalServerErrorException({
           code: 'ENGINE_ERROR',
           message: msg,
-        });
-      }
-      }
+          });
+        }
+    }
       
 }
