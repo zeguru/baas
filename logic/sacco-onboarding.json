@@ -1,10 +1,9 @@
 [
   {
-  "when": { 
-    "all": [{ "fact": "dob", "operator": "notEqual", "value":"" }] },
-  "then": {
-    "do": "apply-adjustment",
-    "with": { 
+    "when": { "all": [{ "fact": "dob", "operator": "isDefined", "value":true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
         "item": "age", 
         "mode": "expression", 
         "value": "age(dob)", 
@@ -14,20 +13,22 @@
       },
     "priority": 500
   },
+
   {
     "when": { "all": [{ "fact": "age", "operator": "lessThan", "value": 18 }] },
     "then": {
       "do": "validation",
-      "with": { "message": "Member must be at least 18 years old", "break": true }
-    },
+      "with": {"break": true, "message": "Member must be at least 18 years old" }
+      },
     "priority": 400
   },
+
   {
     "when": { "all": [{ "fact": "initialContribution", "operator": "lessThan", "value": 1000 }] },
     "then": {
       "do": "validation",
-      "with": { "message": "Minimum initial contribution is 1000/-", "break": true }
-    },
+      "with": { "break": true, "message": "Minimum initial contribution is 1000/-" }
+      },
     "priority": 400
   }
 ]

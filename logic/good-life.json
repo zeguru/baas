@@ -1,112 +1,79 @@
 [  
   {
     "when": {
-      "all": [
-        { "fact": "always", "operator": "always", "value": true }
-      ]
-    },
+      "all": [{ "fact": "always", "operator": "always", "value": true }]
+      },
     "then": {
       "do": "advice",
       "with": {
-        "message": "Welcome to Business Logic as a service"
+        "message": "Welcome to Business Logic As a Service"
+        }
       }
-    }
+  },
+
+  {
+    "when": {
+      "all": [{ "fact": "coffeeCups", "operator": "greaterThan", "value": 3 } ]
+      },
+    "then": {
+      "do": "advice",
+      "with": {
+        "message": "Too much coffee detected! Switch to water before you start coding in circles."
+        }
+      }
+  },
+
+  {
+    "when": {
+      "all": [{ "fact": "commitsToday", "operator": "lessThan", "value": 1 }]
+      },
+    "then": {
+      "do": "advice",
+      "with": {
+        "message": "No commits yet? Time to make some magic happen."
+        }
+      }
+  },
+
+  {
+    "when": {
+      "all": [{ "fact": "productionIncidents", "operator": "greaterThanInclusive", "value": 1}]
+      },
+    "then": {
+      "do": "advice",
+      "with": {
+        "message": "Tackling production incidents ? May the force be with you."
+        }
+      }
+  },
+
+  {
+    "when": {
+      "all": [{"fact": "releaseDay", "operator": "equalIgnoreCase", "value": "Friday" }]
+      },
+    "then": {
+      "do": "advice",
+      "with": {
+        "message": "Deploying on Friday? May the rollback odds be ever in your favor."
+        }
+      }
   },
 
   {
     "when": {
       "all": [
-        { "fact": "coffeeCups", "operator": "greaterThan", "value": 3 }
-      ]
-    },
-    "then": {
-      "do": "advice",
-      "with": {
-        "message": "Too much coffee detected! Switch to water before you start coding in circles."
-      }
-    }
-  },
-  {
-    "when": {
-      "all": [
-        {
-          "fact": "commitsToday",
-          "operator": "lessThan",
-          "value": 1
-        }
-      ]
-    },
-    "then": {
-      "do": "advice",
-      "with": {
-        "message": "No commits yet? Time to make some magic happen ✨."
-      }
-    }
-  },
-  {
-    "when": {
-      "all": [
-        {
-          "fact": "productionIncidents",
-          "operator": "greaterThanInclusive",
-          "value": 1
-        }
-      ]
-    },
-    "then": {
-      "do": "advice",
-      "with": {
-        "message": "Tackling production incidents ? May the force be with you."
-      }
-    }
-  },
-  {
-    "when": {
-      "all": [
-        {
-          "fact": "releaseDay",
-          "operator": "equalIgnoreCase",
-          "value": "Friday"
-        }
-      ]
-    },
-    "then": {
-      "do": "advice",
-      "with": {
-        "message": "Deploying on Friday? May the rollback odds be ever in your favor."
-      }
-    }
-  },
-  {
-    "when": {
-      "all": [
-        {
-          "fact": "coffeeCups",
-          "operator": "lessThanInclusive",
-          "value": 3
-        },
-        {
-          "fact": "commitsToday",
-          "operator": "greaterThanInclusive",
-          "value": 1
-        },
-        {
-          "fact": "productionIncidents",
-          "operator": "lessThan",
-          "value": 1
-        },
-        {
-          "fact": "releaseDay",
-          "operator": "notEqual",
-          "value": "Friday"
-        }
-      ]
-    },
+        { "fact": "coffeeCups", "operator": "lessThanInclusive", "value": 3},
+        { "fact": "commitsToday", "operator": "greaterThanInclusive", "value": 1},
+        { "fact": "productionIncidents", "operator": "lessThan", "value": 1 },
+        { "fact": "releaseDay", "operator": "notEqual", "value": "Friday" }
+        ]
+      },
     "then": {
       "do": "advice",
       "with": {
         "message": "Balanced caffeine, steady commits, no incidents and no Friday releases. You are living the dream."
+        }
       }
-    }
   }
+
 ]

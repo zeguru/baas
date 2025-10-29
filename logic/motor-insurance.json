@@ -1,289 +1,271 @@
 [
-      {
-      "when": {
-        "all": [{ "fact": "always", "operator": "always", "value": true }]
+  {
+    "when": {"all": [{ "fact": "always", "operator": "always", "value": true }]},
+    "then": {
+      "do": "apply-adjustment",
+        "with": 
+          { "item": "courtesyCarDays", "mode": "fixed", "value": 10, "message": "Hard defaults: 10 day courtesy car. Not overridable"}
         },
-      "then": {
-        "do": "apply-adjustment",
-          "with": 
-            { "item": "courtesyCarDays", "mode": "fixed", "value": 50, "message": "Hardcode: 10 day courtesy car. Not overridable"}
-          },
-        "priority": 900
-      },
+    "priority": 900
+  },
 
-      {
-      "when": {
-        "all": [{ "fact": "always", "operator": "always", "value": true }]
+  {
+    "when": {"all": [{ "fact": "always", "operator": "always", "value": true }]},
+    "then": {
+      "do": "apply-adjustment",
+        "with": 
+          { "item": "aaMembership", "mode": "fixed", "value": true, "message": "Hard defaults: AA membership true. Not overridable"}
         },
-      "then": {
-        "do": "apply-adjustment",
-          "with": 
-            { "item": "aaMembership", "mode": "fixed", "value": true, "message": "Hardcode: AA membership true. Not overridable"}
-            },
-        "priority": 900
-      },
+    "priority": 900
+  },
 
-      {
-      "when": {
-        "any": [{ "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}]
-        },
-      "then": {
-        "do": "validation",
-        "with": {"break": true, "message": "Vehicle model is blacklisted" }        
-        },
-      "priority": 600
+  {
+    "when": {"any": [{ "fact": "model", "operator": "in", "value": ["VITZ", "DEMIO", "MARCH"]}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Vehicle model is blacklisted" }        
       },
+    "priority": 600
+  },
 
-      {
-        "when": {
-          "any": [
-            {"fact":"sumInsured", "operator": "lessThan", "value": 600000},
-            {"fact":"sumInsured","operator": "greaterThan", "value": 50000000}
-            ]
+  {
+    "when": {
+      "any": [
+        {"fact":"sumInsured", "operator": "lessThan", "value": 600000},
+        {"fact":"sumInsured","operator": "greaterThan", "value": 50000000}
+        ]
+    },
+    "then": {
+      "do": "validation",
+        "with": { "break": true, "message": "Car value is NOT within the allowed range (600K - 50M)."}
         },
-        "then": {
-          "do": "validation",
-            "with": { "break": true, "message": "Car value is NOT within the allowed range (600K - 50M)."}
-            
-          },
-      "priority": 600
-      },
+    "priority": 600
+  },
       
-      {
-      "when": {
-        "all": [{ "fact": "courtesyCarDays", "operator": "greaterThan", "value": 20, "default": 10 }] },
-      "then": {
-        "do": "validation",
-        "with": {"break": true, "message": "Courtesy car is only 10 or 20 days. Above that kindly visit the backoffice" }        
-        },
-      "priority": 600
+  {
+    "when": {"all": [{ "fact": "courtesyCarDays", "operator": "greaterThan", "value": 20 }] },
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Courtesy car is only 10 or 20 days. Above that kindly visit the backoffice" }        
       },
+    "priority": 600
+  },
 
-       {
-      "when": { 
-        "all": [{ "fact": "yearOfManufacture", "operator": "notEqual", "value":"" }] },
-      "then": {
-        "do": "apply-adjustment",
-        "with": { 
-            "item": "vehicleAge", 
-            "mode": "expression", 
-            "value": "currentYear - yearOfManufacture",
-            "context": ["yearOfManufacture"], 
-            "message": "Calculate vehicle age from yearOfManufacture" 
-            }
+  {
+    "when": { "all": [{ "fact": "yearOfManufacture", "operator": "isDefined", "value":true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "vehicleAge", 
+        "mode": "expression", 
+        "value": "currentYear - yearOfManufacture",
+        "context": ["yearOfManufacture"], 
+        "message": "Calculate vehicle age from yearOfManufacture" 
+        }
+      },
+    "priority": 600
+  },
+
+  {
+    "when": {"all": [{"fact": "vehicleAge", "operator": "greaterThan", "value": 20}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Vehicle is above the allowed age, 20 years."}
+      },
+    "priority": 500
+  },
+
+  {
+    "when": {"all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
+    "then": {
+      "do": "apply-adjustment", 
+      "with": {
+        "item": "baseRate",
+        "mode": "range-lookup",
+        "base": "sumInsured",
+        "table": {
+          "600000-999999": 0.0725,
+          "1000000-1499999": 0.0615,
+          "1500000-2499999": 0.0475,
+          "2500000-99000000": 0.03875
           },
-        "priority": 600
+        "default": 1,
+        "message": "Lookup the baseRate from the table"
+        }
       },
+    "priority": 300
+  },
 
-    {
-      "when": {
-        "all": [{"fact": "vehicleAge", "operator": "greaterThan", "value": 20}]
-        },
-      "then": {
-        "do": "validation",
-        "with": {"break": true, "message": "Vehicle year of manufacture is above the allowed age, 20 years."}
-        },
-      "priority": 500
+  {
+    "when": {"all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
+    "then": {
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "basePremium", 
+        "mode": "expression", 
+        "value":"(sumInsured * baseRate)", 
+        "context": ["sumInsured","baseRate"],
+        "message": "Compute base premium using the baseRate above"}
       },
+    "priority": 250
+  },
 
-      {
-      "when": {
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-      "then": {
-          "do": "apply-adjustment", 
-          "with": {
-              "item": "baseRate",
-              "mode": "range-lookup",
-              "base": "sumInsured",
-              "table": {
-                "600000-999999": 0.0725,
-                "1000000-1499999": 0.0615,
-                "1500000-2499999": 0.0475,
-                "2500000-99000000": 0.03875
-              },
-              "default": 1,
-              "message": "Lookup base rate from the table"
-            }
-          },
-      "priority": 300
-
+  {
+    "when": {"all": [{ "fact": "aaMembership", "operator": "equal", "value": true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { "item": "aaCharge", "mode": "fixed", "base": "total", "value": 5000, "message": "AA Membership: Charge 5k fixed"}
       },
+    "priority": 200
+  },
 
-      {
-        "when": {
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-        "then": {
-            "do": "apply-adjustment", 
-            "with": { "item": "basePremium", "mode": "expression", "value":"(sumInsured * baseRate)", "context": ["sumInsured","baseRate"], "base": "sumInsured",
-              "message": "Compute base premium"}
-            },
-      "priority": 250
+  {
+    "when": {"all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { "item": "pvt", "mode": "fixed", "base": "total", "value": 0, "message": "Inclusive: Post Election Violence and Terrorism - PVT Benefit. No extra charge "}
       },
+    "priority": 200
+  },
 
-
-      {
-      "when": {
-          "all": [{ "fact": "aaMembership", "operator": "equal", "value": true }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "aaCharge", "mode": "fixed", "base": "total", "value": 5000, 
-              "message": "AA Membership: Charge 5k fixed"}
-        },
-        "priority": 200
+  {
+    "when": {"all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { "item": "exp", "mode": "fixed", "base": "total", "value": 0.0, "message": "Inclusive: Excess Protector Benefit. No extra charge "}
       },
+    "priority": 150
+  },
 
-     {
-      "when": {
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "pvt", "mode": "fixed", "base": "total", "value": 0,
-              "message": "Inclusive: Post Election Violence and Terrorism - PVT Benefit. No extra charge "}
-        },
-        "priority": 200
+  {
+    "when": {"all": [{ "fact": "windscreenValue", "operator": "lessThanInclusive", "value": 50000 }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "windscreenCharge", "mode": "fixed", "value": 0.0, "message": "Free Benefit: Windscreen benefit if value below 50K. No extra charge "}
       },
+    "priority": 150
+  },
 
-      {
-      "when": {
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "exp", "mode": "fixed", "base": "total", "value": 0.0,
-          "message": "Inclusive: Excess Protector Benefit. No extra charge "}
-        },
-        "priority": 150
+  {
+    "when": { "all": [{ "fact": "windscreenValue", "operator": "greaterThan", "value": 50000 }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "windscreenCharge", 
+        "mode": "expression", 
+        "value":"(windscreenValue - 50000) * 0.1",  
+        "context": ["windscreenValue"], 
+        "message": "Windscreen: Charge 10% of the (extra) amount above 50k"
+        }
       },
+    "priority": 150
+  },
 
-      {
-      "when": {
-          "all": [{ "fact": "windscreenValue", "operator": "lessThanInclusive", "value": 50000 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "windscreenCharge", "mode": "fixed", "base": "total", "value": 0.0, 
-          "message": "Free Benefit: Windscreen benefit if value below 50K. No extra charge "}
-        },
-        "priority": 150
+  {
+    "when": { "all": [{ "fact": "entertainmentValue", "operator": "lessThan", "value": 50000 }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { "item": "entertainmentCharge", "mode": "fixed", "value": 0, "message": "Free Benefit: Entertainment benefit because value is below 50K. No extra charge "}
       },
-
+    "priority": 150
+  },
       
-      {
-      "when": {
-          "all": [{ "fact": "windscreenValue", "operator": "greaterThan", "value": 50000 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "windscreenCharge", "mode": "expression", "value":"(windscreenValue - 50000) * 0.1",  "context": ["windscreenValue","sumInsured"], 
-          "message": "Windscreen: Charge 10% of the (extra) amount above 50k"}
-        },
-        "priority": 150
+  {
+    "when": { "all": [{ "fact": "entertainmentValue", "operator": "greaterThan", "value": 50000 }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "entertainmentCharge", 
+        "mode": "expression", 
+        "value":"(entertainmentValue - 50000) * 0.1", 
+        "context": ["entertainmentValue"], 
+        "message": "Entertainment: Charge 10% of the (extra) amount above 50k"
+        }
       },
+    "priority": 150
+  },
 
-      {
-      "when": {
-          "all": [{ "fact": "entertainmentValue", "operator": "lessThan", "value": 50000 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "entertainmentCharge", "mode": "fixed", "base": "total", "value": 0, 
-          "message": "Free Benefit: Entertainment benefit because value is below 50K. No extra charge "}
-        },
-        "priority": 150
+  {
+    "when": { "all": [{ "fact": "courtesyCarDays", "operator": "lessThanInclusive", "value": 10 }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { "item": "courtesyCarCharge", "mode": "fixed", "value": 3000, "message": "Charge 3k for 10 day Courtesy car"}
       },
+    "priority": 150
+  },
 
-            
-      {
-      "when": {
-          "all": [{ "fact": "entertainmentValue", "operator": "greaterThan", "value": 50000 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "entertainmentCharge", "mode": "expression", "value":"(entertainmentValue - 50000) * 0.1", "context": ["entertainmentValue","sumInsured"], 
-          "message": "Entertainment: Charge 10% of the (extra) amount above 50k"}
-        },
-        "priority": 150
+  {
+    "when": {
+      "all": [
+        {"fact": "courtesyCarDays", "operator": "greaterThan", "value": 10},
+        {"fact": "courtesyCarDays","operator": "lessThanInclusive", "value": 20}
+        ]
       },
-
-
-      {
-      "when": {
-          "all": [{ "fact": "courtesyCarDays", "operator": "lessThanInclusive", "value": 10 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "courtesyCarCharge", "mode": "fixed", "base": "total", "value": 3000, 
-          "message": "Charge 3k for 10 day Courtesy car"}
-        },
-        "priority": 150
+    "then": {
+      "do": "apply-adjustment",
+      "with": { "item": "courtesyCarCharge", "mode": "fixed", "value": 6000, "message": "Charge 6k for 20 day Courtesy car"}
       },
+    "priority": 150
+  },
 
-      {
-      "when": {
-          "all": [
-            {"fact": "courtesyCarDays", "operator": "greaterThan", "value": 10},
-            {"fact": "courtesyCarDays","operator": "lessThanInclusive", "value": 20}
-            ]
-        },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "courtesyCarCharge", "mode": "fixed", "base": "total", "value": 6000, 
-          "message": "Charge 6k for 20 day Courtesy car"}
-        },
-        "priority": 150
+  {
+    "when": { "all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { "item": "stampDuty", "mode": "fixed", "value": 40, "message":"Add stamp duty. 40/- fixed"  } 
       },
+    "priority": 150
+  },
 
-       {
-        "when": { 
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-        "then": { 
-            "do": "apply-adjustment", 
-            "with": { "item": "stampDuty", "mode": "fixed", "value": 40, 
-            "message":"Add stamp duty. 40/- fixed"  } 
-            },
-        "priority": 150
+  {
+    "when": { "all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "grossPremium", 
+        "mode": "expression", 
+        "value":"basePremium + aaCharge + windscreenCharge + entertainmentCharge + courtesyCarCharge", 
+        "context": ["basePremium", "aaCharge", "windscreenCharge","entertainmentCharge", "courtesyCarCharge"], 
+        "message": "Compute gross Premium"
+        }
       },
+    "priority": 100
+  },
 
-      {
-      "when": {
-          "all": [{ "fact":"sumInsured", "operator": "greaterThanInclusive", "value": 1 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "grossPremium", "mode": "expression", "value":"basePremium + aaCharge + windscreenCharge + entertainmentCharge + courtesyCarCharge", "context": ["basePremium", "aaCharge", "windscreenCharge","entertainmentCharge", "courtesyCarCharge"], 
-          "message": "Compute gross Premium"}
-        },
-        "priority": 100
+  {
+    "when": {"all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { "item": "itl", "mode": "rate", "base": "grossPremium", "value": 0.002,  "message":"Add Training Levy. 0.2% of basePremium"  } 
       },
+    "priority": 50
+  },
 
-
-      {
-        "when": { 
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-        "then": { 
-            "do": "apply-adjustment", 
-            "with": { "item": "itl", "mode": "rate", "base": "grossPremium", "value": 0.002, 
-            "message":"Add Training Levy. 0.2% of basePremium"  } 
-            },
-        "priority": 50
+  {
+    "when": { "all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { "item": "phcf", "mode": "rate", "base": "grossPremium", "value": 0.0025, "message":"Add PHCF 0.25% of basePremium"  } 
       },
+    "priority": 50
+  },
 
-      {
-        "when": { 
-          "all": [{ "fact":"sumInsured", "operator": "greaterThan", "value": 1 }] },
-        "then": { 
-            "do": "apply-adjustment", 
-            "with": { "item": "phcf", "mode": "rate", "base": "grossPremium", "value": 0.0025, 
-              "message":"Add PHCF 0.25% of basePremium"  } 
-            },
-        "priority": 50
+  {
+    "when": {"all": [{ "fact":"always", "operator": "always", "value": true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "totalPremium", 
+        "mode": "expression",
+        "value":"grossPremium + stampDuty + itl + phcf", 
+        "context": ["grossPremium", "stampDuty", "itl","phcf"], 
+        "message": "Compute gross Premium"}
       },
-
-      {
-      "when": {
-          "all": [{ "fact":"sumInsured", "operator": "greaterThanInclusive", "value": 1 }] },
-      "then": {
-        "do": "apply-adjustment",
-            "with": { "item": "totalPremium", "mode": "expression", "value":"grossPremium + stampDuty + itl + phcf", "context": ["grossPremium", "stampDuty", "itl","phcf"], 
-          "message": "Compute gross Premium"}
-        },
-        "priority": 10
-      }
+    "priority": 10
+  }
       
-  ]
+]
 
   
   
