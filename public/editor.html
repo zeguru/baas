@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RuleSet Editor</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
+  
+  <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fafafa;
+      margin: 1rem;
+    }
+    h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+
+    #layout {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    #ruleList {
+      width: 26%;
+      max-height: 82vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.05);
+      padding: 0.5rem;
+    }
+
+    #editor_holder {
+      flex: 1;
+      max-width: 72%;
+      min-height: 82vh;
+      background: white;
+      padding: 0.75rem;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.08);
+      overflow-y: auto;
+    }
+
+    .rule-item {
+      cursor: pointer;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      font-size: 0.9rem;
+    }
+
+    .rule-item:hover {
+      background: #f4f8ff;
+    }
+
+    .rule-item.active {
+      background: #007bff;
+      color: white;
+      font-weight: 500;
+    }
+
+    /* Make JSON Editor more compact */
+    .je-object__container {
+      padding-left: 0.4rem !important;
+    }
+
+    .form-control, select, textarea {
+      padding: 0.25rem 0.5rem !important;
+      font-size: 0.85rem !important;
+    }
+
+    .je-indented-panel {
+      margin-bottom: 0.4rem !important;
+      padding: 0.4rem !important;
+      border-radius: 4px !important;
+    }
+
+    label.control-label {
+      font-weight: 500;
+      font-size: 0.85rem;
+      margin-bottom: 2px;
+    }
+
+    .je-header {
+      font-size: 0.9rem;
+      background: #f8f9fa;
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem;
+    }
+
+    /* Shrink collapsible arrows and spacing */
+    .json-editor-btn-collapse {
+      transform: scale(0.8);
+    }
+
+    .json-editor-btn-collapse + span {
+      font-size: 0.85rem;
+    }
+
+    /* Loader (unchanged) */
+    #loaderOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+  <h2>BaaS RuleSet Editor</h2>
+
+  <div class="mb-2 d-flex align-items-center gap-2">
+    <select id="ruleSetSelect" class="form-select w-auto"></select>
+    <button id="loadSetBtn" class="btn btn-primary btn-sm">Load RuleSet</button>
+    <button id="saveSetBtn" class="btn btn-success btn-sm">Save All</button>
+  </div>
+
+<div id="layout">
+  <div id="ruleList" class="list-group"></div>
+
+  <div id="editor_holder">
+    <ul class="nav nav-tabs" id="ruleTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="when-tab" data-bs-toggle="tab" data-bs-target="#whenTab" type="button" role="tab">When</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
+      </li>
+    </ul>
+
+    <div class="tab-content p-2 border border-top-0 rounded-bottom" id="ruleTabsContent" style="background:white; min-height:70vh;">
+      <div class="tab-pane fade show active" id="whenTab" role="tabpanel"></div>
+      <div class="tab-pane fade" id="thenTab" role="tabpanel"></div>
+      <div class="tab-pane fade" id="metaTab" role="tabpanel"></div>
+    </div>
+  </div>
+</div>
+
+
+  <div id="loaderOverlay">
+    <div class="spinner-border text-primary" role="status"></div>
+    <div id="loaderMsg" style="margin-top: 10px; font-size: 0.9rem;"></div>
+  </div>
+
+  <script src="./js/editor.js"></script>
+</body>
+</html>
