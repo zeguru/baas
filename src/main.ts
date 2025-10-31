@@ -4,10 +4,17 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RuleSetModule } from './ruleset/ruleset.module';
 import { CalculatorModule } from './calculator/calculator.module';
 import * as basicAuth from 'express-basic-auth';
+import * as express from 'express';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const context = 'baas'; // or from env
+  //const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  const context = 'baas'; 
+
+  app.use(`/${context}/editor`, express.static(join(__dirname, '..', 'public')));
 
   const config = new DocumentBuilder()
     .setTitle('BaaS API')
@@ -26,5 +33,11 @@ async function bootstrap() {
 
   await app.listen(3000, '0.0.0.0');
 
-}
+  console.log(`✅ API running at http://localhost:3000/${context}`);
+  console.log(`✅ Rule Editor available at http://localhost:3000/${context}/editor/simple-editor.html`);
+
+  }
 bootstrap();
+
+
+

@@ -1,0 +1,234 @@
+       
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Rule Definition",
+  "type": "object",
+  "properties": {
+    "when": 
+    {
+  "type": "object",
+  "title": "When",
+  "description": "Conditions (all, any) that must be satisfied before the rule executes",
+  "properties": {
+    "all": {
+      "type": "array",
+      "title": "All Conditions (AND)",
+      "format": "table",
+      "options": {
+        "compact": true
+        },
+      "items": {
+        "type": "object",
+        "properties": {
+          "fact": { "type": "string", "title": "Fact" },
+          "operator": { "type": "string", "title": "Operator" },
+          "value": {"type": "string","title": "Value"}
+        },
+        "required": ["fact", "operator", "value"]
+      }
+    },
+    "any": {
+      "type": "array",
+      "title": "Any Conditions (OR)",
+      "format": "table",
+      "options": {
+        "compact": true
+        },
+      "items": {
+        "type": "object",
+        "properties": {
+          "fact": { "type": "string", "title": "Fact" },
+          "operator": { "type": "string", "title": "Operator" },
+          "value": {"type": "string","title": "Value"}
+        },
+        "required": ["fact", "operator", "value"]
+      }
+    }
+  },
+  "minProperties": 1
+}
+,
+
+"then": {
+  "type": "object",
+  "title": "Then",
+  "properties": {
+    "do": {
+      "type": "string",
+      "title": "Action",
+      "enum": ["advice", "apply-adjustment", "validation"]
+    },
+  "with": {
+      "type": "object",
+      "title": "Parameters",
+      "properties": {
+        "item": { 
+          "type": "string", 
+          "title": "Item",
+          "description": "Name of the result of this step",
+          "propertyOrder": 10
+        },
+        "mode": {
+          "type": "string",
+          "title": "Mode",
+          "description": "How to get to the result",
+          "enum": [
+            "fixed",
+            "rate",
+            "range-lookup",
+            "value-lookup",
+            "value-range-lookup",
+            "expression"
+          ],
+          "propertyOrder": 20
+        },
+        "base": {
+          "type": "string",
+          "title": "Base Fact",
+          "description": "The fact to use for the calculation / lookup",
+          "propertyOrder": 30
+        },
+        "key": {
+          "type": "string",
+          "title": "Table Key",
+          "description": "The fact for identifying the table/group to use for the lookup",
+          "propertyOrder": 40
+        },
+        "default": { 
+          "type": ["number", "string"], 
+          "title": "Default Value",
+          "description": "Use this for missed lookups",
+          "propertyOrder": 50
+        },
+
+        "value": { 
+          "type": ["number", "string"], 
+          "title": "Value / Expression", 
+          "description": "The actual value or the function / expression to use",
+          "propertyOrder": 60 
+        },
+        "context": {
+          "type": "string",
+          "title": "Referenced Facts",
+          "description": "Facts for use in the expression above. eg [\"age\",\"grossPay\"] ",
+          "propertyOrder": 70
+        },
+        "message": {
+          "type": "string",
+          "title": "Message",
+          "format": "textarea",
+          "description": "Explanation of this step / rule",
+          "options": {
+            "inputAttributes": { "rows": 2, "style": "width: 100%;" }
+          },
+          "propertyOrder": 80
+        },
+      "table": {
+          "type": "object",
+          "title": "Lookup Table",
+          "format": "grid",
+          "propertyOrder": 100
+        }
+      },
+      "required": ["item", "mode", "message"],
+      "additionalProperties": true
+    }
+
+  },
+  "required": ["do", "with"],
+  "allOf": [
+    {
+      "if": { "properties": { "do": { "const": "advice" } } },
+      "then": {
+        "properties": {
+          "with": {
+            "type": "object",
+            "title": "Advice Parameters",
+            "properties": {
+              "message": {
+                "type": "string",
+                "title": "Message",
+                "format": "textarea",
+                "options": {
+                  "inputAttributes": { "rows": 2, "style": "width: 100%;" }
+                }
+              }
+            },
+            "required": ["message"],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "do": { "const": "validation" } } },
+      "then": {
+        "properties": {
+          "with": {
+            "type": "object",
+            "title": "Validation Parameters",
+            "properties": {
+              "message": {
+                "type": "string",
+                "title": "Message",
+                "format": "textarea",
+                "options": {
+                  "inputAttributes": { "rows": 2, "style": "width: 100%;" }
+                }
+              },
+              "break": { "type": "boolean", "title": "Break Execution" }
+            },
+            "required": ["message"],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "do": { "const": "apply-adjustment" } } },
+      "then": {
+        "properties": {
+          "with": {
+            "type": "object",
+            "title": "Adjustment Parameters",
+            "properties": {
+              "item": { "type": "string", "title": "Item" },
+              "mode": {
+                "type": "string",
+                "title": "Mode",
+                "enum": [
+                  "fixed",
+                  "rate",
+                  "range-lookup",
+                  "value-lookup",
+                  "value-range-lookup",
+                  "expression"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "title": "Message",
+                "format": "textarea",
+                "options": {
+                  "inputAttributes": { "rows": 2, "style": "width: 100%;" }
+                }
+              }
+            },
+            "required": ["item", "mode", "message"],
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ]
+}
+,
+
+    "priority": {
+      "type": "integer",
+      "title": "Priority",
+      "minimum": 0
+    }
+  },
+  "required": ["when", "then", "priority"]
+}
