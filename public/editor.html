@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>RuleSet Editor</title>
+  <title>Baas Advanced Editor</title>
 
   <link
     rel="stylesheet"
@@ -117,10 +117,22 @@
       z-index: 9999;
       flex-direction: column;
     }
+
+    #tryTab textarea {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    #tryOutput {
+      background: #f8f9fa;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
   </style>
 </head>
 <body>
-  <h2>BaaS RuleSet Editor</h2>
+  <h2>RuleSet Editor</h2>
 
   <div class="mb-2 d-flex align-items-center gap-2">
     <select id="ruleSetSelect" class="form-select w-auto"></select>
@@ -142,13 +154,47 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
       </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="try-tab" data-bs-toggle="tab" data-bs-target="#tryTab" type="button" role="tab">▶ Try It</button>
+      </li>
+
     </ul>
 
     <div class="tab-content p-2 border border-top-0 rounded-bottom" id="ruleTabsContent" style="background:white; min-height:70vh;">
       <div class="tab-pane fade show active" id="whenTab" role="tabpanel"></div>
       <div class="tab-pane fade" id="thenTab" role="tabpanel"></div>
       <div class="tab-pane fade" id="metaTab" role="tabpanel"></div>
-    </div>
+
+      <div class="tab-pane fade" id="tryTab" role="tabpanel">
+      <div class="row g-2">
+          <div class="col-md-6">
+            
+            <label class="form-label fw-bold small text-muted d-block">
+              Evaluating :
+              <span id="activeRuleSet" class="badge bg-info text-dark">—</span>
+            </label>
+
+
+            <label class="form-label fw-bold small text-muted">Input Facts (JSON)</label>
+            <textarea id="tryInput" class="form-control font-monospace" rows="16" spellcheck="false">
+              {
+                "age": 55,
+                "countryCode": "ke",
+                "category": "VIP",
+                "quantity": 55000
+              }
+            </textarea>
+                <button id="runTryBtn" class="btn btn-primary btn-sm mt-2">Run Test</button>
+                <button id="resetTryBtn" class="btn btn-secondary btn-sm mt-2 ms-1">Reset</button>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold small text-muted">Response</label>
+                <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 420px; overflow-y:auto; font-size:0.85rem;"></pre>
+              </div>
+            </div>
+          </div>
+      </div>
   </div>
 </div>
 
@@ -159,5 +205,7 @@
   </div>
 
   <script src="./js/editor.js"></script>
+  <script src="./js/tryit.js"></script>
+
 </body>
 </html>

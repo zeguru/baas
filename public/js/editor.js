@@ -15,8 +15,24 @@ const saveSetBtn = document.getElementById("saveSetBtn");
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 
-init();
+// After init() completes, attach the listener
+init().then(() => {
+  // Handle RuleSet dropdown changes
+  ruleSetSelect.addEventListener("change", () => {
+    currentRuleSetName = ruleSetSelect.value;
+    rules = [];
+    selectedRuleIndex = -1;
+    ruleList.innerHTML = "";
 
+    // Clear editors
+    whenEditor.setValue({});
+    thenEditor.setValue({});
+    metaEditor.setValue({ priority: 0 });
+
+    // Optional: give feedback
+    console.log(`RuleSet changed to: ${currentRuleSetName || "(none)"}`);
+  });
+});
 async function init() {
   // Load schema
   const schemaRes = await fetch("./schema/editor-schema.json");
@@ -40,7 +56,7 @@ async function init() {
     disable_collapse: true,
     show_errors: "interaction",
     theme: "bootstrap5",
-    object_layout: "grid",
+    object_layout: "normal", //or 'grid'
   };
 
   // Create sub-editors
@@ -80,6 +96,7 @@ async function loadRuleSets() {
     opt.textContent = name;
     ruleSetSelect.appendChild(opt);
   });
+  
 }
 
 // Load full ruleset array
