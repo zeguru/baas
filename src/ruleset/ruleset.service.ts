@@ -4,7 +4,7 @@ import { Engine, Rule } from 'json-rules-engine';
 import * as path from 'path';
 import { RuleMapper } from '../common/util/rule-mapper';
 import { RuleDto } from '../common/dto/rule';
-import { normalizeWhen } from '../common/util/misc-utils'
+import { transformWhenStringToJson } from '../common/util/misc-utils'
 import { registerCustomOperators } from '../common/util/custom-operators'
 import { DateUtils } from '../common/util/date-utils';
 import { capitalizeTableKeys } from '../common/util/misc-utils';
@@ -113,7 +113,7 @@ export class RuleSetService implements OnModuleInit {
         throw new NotFoundException(`Rule set "${setName}" not found`);
 
     return rules.map((rule) => ({
-      when: normalizeWhen(rule.conditions), //why not `when: rule.conditions`
+      when: transformWhenStringToJson(rule.conditions), //why not `when: rule.conditions`
       then: {
         do: rule.event.type,
         with: rule.event.params,

@@ -1,10 +1,24 @@
-export function normalizeWhen(conditions: unknown): Record<string, any> {
-  if (conditions && typeof (conditions as any).toJSON === 'function') {
-    const serialized = (conditions as any).toJSON();
-    return typeof serialized === 'string' ? JSON.parse(serialized) : serialized;
+
+export function transformWhenStringToJson(conditions: unknown): Record<string, any> {
+  if (!conditions) return {} as Record<string, any>;
+
+  let serialized: any;
+
+  if (typeof (conditions as any).toJSON === 'function') {
+    serialized = (conditions as any).toJSON();
+    serialized = typeof serialized === 'string' ? JSON.parse(serialized) : serialized;
+    } 
+  else {
+    serialized = conditions;
     }
-  return conditions as Record<string, any>;
-  }
+
+  if (serialized && typeof serialized === 'object' && 'priority' in serialized) {
+    delete serialized.priority;
+    }
+
+  return serialized;
+}
+
 
 /**
  * Returns the first value that is not null or undefined.
