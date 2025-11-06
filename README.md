@@ -58,6 +58,11 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Credits
+- Json Editor - https://github.com/json-editor/json-editor?tab=readme-ov-file
+- Form example - https://json-editor.github.io/json-editor/
+- 
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

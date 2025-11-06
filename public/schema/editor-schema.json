@@ -130,7 +130,7 @@
           "propertyOrder": 100
         }
       },
-      "required": ["item", "mode", "message"],
+      "required": [ "message"],
       "additionalProperties": true
     }
 

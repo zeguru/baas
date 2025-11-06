@@ -52,7 +52,7 @@ async function init() {
   // Base JSON Editor options
   const opts = {
     disable_edit_json: true,
-    disable_properties: true,
+    disable_properties: false,
     disable_collapse: true,
     show_errors: "interaction",
     theme: "bootstrap5",
@@ -66,6 +66,7 @@ async function init() {
     startval: {},
   });
 
+  
   thenEditor = new JSONEditor(document.getElementById("thenTab"), {
     ...opts,
     schema: thenSchema,
