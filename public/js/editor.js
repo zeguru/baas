@@ -14,6 +14,9 @@ const loadSetBtn = document.getElementById("loadSetBtn");
 const saveSetBtn = document.getElementById("saveSetBtn");
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
+const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
+
+
 
 // After init() completes, attach the listener
 init().then(() => {
@@ -51,7 +54,7 @@ async function init() {
 
   // Base JSON Editor options
   const opts = {
-    disable_edit_json: true,
+    disable_edit_json: false,
     disable_properties: false,
     disable_collapse: true,
     show_errors: "interaction",
@@ -83,7 +86,9 @@ async function init() {
 
   loadSetBtn.addEventListener("click", loadSelectedRuleSet);
   saveSetBtn.addEventListener("click", saveCurrentRuleSet);
-}
+  duplicateRuleBtn.addEventListener("click", duplicateSelectedRule);
+
+  }
 
 
 // Load available rule sets
@@ -110,6 +115,33 @@ async function loadSelectedRuleSet() {
   rules = await res.json();
   renderRuleList();
 }
+
+async function duplicateSelectedRule(){
+  if (selectedRuleIndex == null || selectedRuleIndex < 0) {
+    alert("Select a rule to duplicate first.");
+    return;
+    }
+
+  // Deep clone the selected rule
+  const clonedRule = structuredClone(rules[selectedRuleIndex]);
+
+  // Optionally tweak something to avoid confusion
+  if (clonedRule.then?.with?.message) {
+    clonedRule.then.with.message += " (copy)";
+    }
+  if (clonedRule.priority !== undefined) {
+    clonedRule.priority = clonedRule.priority + 1;
+    }
+
+  // Insert the clone right after the original
+  rules.splice(selectedRuleIndex + 1, 0, clonedRule);
+
+  // Update UI
+  renderRuleList();
+
+  // Automatically select the cloned rule
+  selectRule(selectedRuleIndex + 1);
+  }
 
 // Render list of rules
 function renderRuleList() {

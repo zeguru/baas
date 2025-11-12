@@ -16,7 +16,7 @@ init();
 
 async function init() {
   // Load schema
-  const schemaRes = await fetch("./schema/ruleset-schema.json");
+  const schemaRes = await fetch("./schema/sample-schema.json");
   schema = await schemaRes.json();
 
   // Setup JSON Editor
