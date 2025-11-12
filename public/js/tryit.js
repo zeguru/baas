@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const activeRuleSetLabel = document.getElementById("activeRuleSet");
 
   const sampleInput = `
-  {
-    "age": 55,
-    "countryCode": "ke",
-    "category": "VIP",
-    "quantity": 55000
-  }`;
+      {
+        "age": 25,
+        "countryCode": "ke",
+        "category": "VIP",
+        "quantity": 5
+      }`;
 
   // Initial setup
   if (tryInput) tryInput.value = sampleInput;

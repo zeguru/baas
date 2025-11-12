@@ -16,7 +16,7 @@
             "66-999": 2.5
             },
           "default": 2.0,
-          "message": "Apply age-based risk factor"
+          "message": "Calculate age-based risk factor"
         }
       },
     "priority":10

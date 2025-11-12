@@ -16,7 +16,7 @@
 
   {
     "when": { 
-      "all": [{ "fact":"inpatientCover", "operator": "in", "value": ["Mwananchi_100000", "Select_300000", "Standard_500000", "Executive_750000", "Affluent_1000000"] }] },
+      "all": [{ "fact":"inpatientCover", "operator": "inIgnoreCase", "value": ["Mwananchi_100000", "Select_300000", "Standard_500000", "Executive_750000", "Affluent_1000000"] }] },
     "then": { 
       "do": "apply-adjustment", 
       "with": {
