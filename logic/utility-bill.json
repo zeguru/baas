@@ -8,7 +8,7 @@
         "mode": "expression", 
         "value": "min(units,100)", 
         "context": ["units"],
-        "message":"Charge 10% for units between 1-100" } 
+        "message":"Identify units in Tier 1. (1-100)" } 
         },
     "priority": 500
   },
@@ -22,7 +22,7 @@
         "mode": "expression", 
         "value": "min(units-100,100)", 
         "context": ["units"],
-        "message":"Charge 15% for units between 101-200 (next hundred)"  } 
+        "message":"Identify units in Tier 2. (101-200)" } 
         },
     "priority": 500
   },
@@ -36,7 +36,7 @@
         "mode": "expression", 
         "value": "min(units-200,100)", 
         "context": ["units"],
-        "message":"Charge 20% for units between 201-300 (next hundred)"  } 
+        "message":"Identify units in Tier 3. (201-300)" } 
         },
       "priority": 500
   },
@@ -50,7 +50,7 @@
         "mode": "expression", 
         "value": "units - 300", 
         "context": ["units"],
-        "message":"Charge 25% for units above 300"  } 
+        "message":"Identify units in Tier 4. (301 and above)" } 
         },
       "priority": 500
   },

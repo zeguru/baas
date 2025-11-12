@@ -8,7 +8,7 @@
     {
   "type": "object",
   "title": "When",
-  "description": "Conditions (all, any) that must be satisfied before the rule executes",
+  "description": "Conditions to activate this rule (all, any)",
   "properties": {
     "all": {
       "type": "array",
@@ -223,8 +223,7 @@
   ]
 }
 ,
-
-    "priority": {
+"priority": {
       "type": "integer",
       "title": "Priority",
       "minimum": 0

@@ -260,7 +260,7 @@
         "mode": "expression",
         "value":"grossPremium + stampDuty + itl + phcf", 
         "context": ["grossPremium", "stampDuty", "itl","phcf"], 
-        "message": "Compute gross Premium"}
+        "message": "Compute total payable Premium"}
       },
     "priority": 10
   }

@@ -34,9 +34,10 @@ async function bootstrap() {
   await app.listen(3000, '0.0.0.0');
 
   console.log(`✅ API running at http://localhost:3000/${context}`);
-  console.log(`✅ Rule Editor available at http://localhost:3000/${context}/editor/editor.html`);
+  console.log(`✅ Rule Editor available at http://localhost:3000/${context}/editor/`);
 
   }
+  
 bootstrap();
 
 
