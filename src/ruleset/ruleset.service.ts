@@ -36,15 +36,13 @@ export class RuleSetService implements OnModuleInit {
     
   async onModuleInit() {
 
-    await this.loadFromFile('good-life'); 
-    await this.loadFromFile('band-logic'); 
-    await this.loadFromFile('utility-bill'); 
-    await this.loadFromFile('motor-insurance'); 
-    await this.loadFromFile('health-insurance'); 
-
-    const result = await this.evaluate('welcome', {});
-      
-    this.logger.log('Default evaluation result:', JSON.stringify(result, null, 2));
+    await this.loadFromFile('sample-good-life'); 
+    await this.loadFromFile('sample-band-logic'); 
+    await this.loadFromFile('sample-utility-bill'); 
+    await this.loadFromFile('sample-motor-insurance'); 
+    await this.loadFromFile('sample-health-insurance'); 
+    await this.loadFromFile('sample-sacco-onboarding'); 
+    
     }
 
   /**
@@ -112,15 +110,6 @@ export class RuleSetService implements OnModuleInit {
     if (!rules) 
         throw new NotFoundException(`Rule set "${setName}" not found`);
 
-    // return rules.map((rule) => ({
-    //   when: transformWhenStringToJson(rule.conditions), //why not `when: rule.conditions`
-    //   then: {
-    //     do: rule.event.type,
-    //     with: rule.event.params,
-    //   },
-    //   priority: rule.priority,
-    // })) as RuleDto[];
-    
     const transformedRules: RuleDto[] = rules.map((rule) => ({
       when: transformWhenStringToJson(rule.conditions),
       then: {

@@ -9,7 +9,7 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  //const app = await NestFactory.create(AppModule);
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const context = 'baas'; 
@@ -33,8 +33,8 @@ async function bootstrap() {
 
   await app.listen(3000, '0.0.0.0');
 
-  console.log(`✅ API running at http://localhost:3000/${context}`);
-  console.log(`✅ Rule Editor available at http://localhost:3000/${context}/editor/`);
+  console.log(`API running at http://localhost:3000/${context}`);
+  console.log(`Advanced Editor running at http://localhost:3000/${context}/editor/`);
 
   }
   
