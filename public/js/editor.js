@@ -17,6 +17,7 @@ const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
 const copyBtn = document.getElementById("copyBtn");
 const pasteBtn = document.getElementById("pasteBtn");
+const deleteBtn = document.getElementById("deleteBtn");
 
 
 // After init() completes, attach the listener
@@ -127,7 +128,7 @@ async function duplicateSelectedRule(){
 
   // Optionally tweak something to avoid confusion
   if (clonedRule.then?.with?.message) {
-    clonedRule.then.with.message += " (copy)";
+    clonedRule.then.with.message += " (duplicate)";
     }
   if (clonedRule.priority !== undefined) {
     clonedRule.priority = clonedRule.priority + 1;
@@ -272,18 +273,7 @@ copyBtn.onclick = () => {
 };
 
   pasteBtn.addEventListener("click", pasteCopiedRuleToCurrentSet);
-
-// Paste button
-// pasteBtn.onclick = () => {
-//   if (!copiedRule) {
-//     alert("No rule copied yet!");
-//     return;
-//   }
-//   rules.push(structuredClone(copiedRule));
-//   renderRuleList();
-//   selectRule(rules.length - 1);
-//   alert("Rule pasted!");
-// };
+  deleteBtn.addEventListener("click", deleteSelectedRule);
 
 
 async function pasteCopiedRuleToCurrentSet() {
@@ -303,7 +293,7 @@ async function pasteCopiedRuleToCurrentSet() {
 
   // Label it as pasted for clarity
   if (pastedRule.then?.with?.message) {
-    pastedRule.then.with.message += " (pasted)";
+    pastedRule.then.with.message += " (copy)";
   }
 
   // Insert at the end or right after currently selected one
@@ -313,4 +303,34 @@ async function pasteCopiedRuleToCurrentSet() {
   // Refresh and select new rule
   renderRuleList();
   selectRule(insertIndex);
+}
+
+
+async function deleteSelectedRule() {
+  if (selectedRuleIndex == null || selectedRuleIndex < 0) {
+    alert("Select a rule to delete first.");
+    return;
+  }
+
+  const ruleToDelete = rules[selectedRuleIndex];
+  const confirmed = confirm("Delete this rule ?\n\"" +  ruleToDelete.then?.with?.message + "\"");
+  if (!confirmed) return;
+
+  // Remove from the rules array
+  rules.splice(selectedRuleIndex, 1);
+
+  // Update UI
+  renderRuleList();
+
+  // Reset or select the next available rule
+  if (rules.length > 0) {
+    const newIndex = Math.min(selectedRuleIndex, rules.length - 1);
+    selectRule(newIndex);
+  } else {
+    selectedRuleIndex = null;
+    // Optionally clear editor content
+    if (window.editorWhen) editorWhen.destroy();
+    if (window.editorThen) editorThen.destroy();
+    if (window.editorMeta) editorMeta.destroy();
+  }
 }
