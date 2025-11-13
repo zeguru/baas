@@ -11,7 +11,7 @@ let whenEditor, thenEditor, metaEditor;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
 const loadSetBtn = document.getElementById("loadSetBtn");
-const saveSetBtn = document.getElementById("saveSetBtn");
+const saveAllBtn = document.getElementById("saveAllBtn");
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
@@ -87,7 +87,7 @@ async function init() {
   await loadRuleSets();
 
   loadSetBtn.addEventListener("click", loadSelectedRuleSet);
-  saveSetBtn.addEventListener("click", saveCurrentRuleSet);
+  saveAllBtn.addEventListener("click", saveCurrentRuleSet);
   duplicateRuleBtn.addEventListener("click", duplicateSelectedRule);
   }
 
@@ -191,8 +191,8 @@ async function saveCurrentRuleSet() {
 
   try {
     const clearRes = await fetch(`${API_BASE}/${currentRuleSetName}/clear`, {
-      method: "POST",
-    });
+        method: "POST",
+        });
     if (!clearRes.ok) throw new Error("Clear failed");
 
     for (let i = 0; i < rules.length; i++) {
@@ -208,6 +208,8 @@ async function saveCurrentRuleSet() {
 
     showLoader(false);
     alert("✅ All rules saved!");
+
+    loadSelectedRuleSet();
   } catch (e) {
     console.error(e);
     showLoader(false);
