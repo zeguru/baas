@@ -15,7 +15,8 @@ const saveSetBtn = document.getElementById("saveSetBtn");
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
-
+const copyBtn = document.getElementById("copyBtn");
+const pasteBtn = document.getElementById("pasteBtn");
 
 
 // After init() completes, attach the listener
@@ -87,7 +88,6 @@ async function init() {
   loadSetBtn.addEventListener("click", loadSelectedRuleSet);
   saveSetBtn.addEventListener("click", saveCurrentRuleSet);
   duplicateRuleBtn.addEventListener("click", duplicateSelectedRule);
-
   }
 
 
@@ -251,4 +251,66 @@ function showLoader(show, message = "Loading...") {
 
   loader.querySelector("#loaderMsg").textContent = message;
   loader.style.display = show ? "flex" : "none";
+}
+
+
+
+
+//========COPY PASTE LOGIC
+
+let copiedRule = null;
+
+// Copy button
+copyBtn.onclick = () => {
+  if (selectedRuleIndex >= 0) {
+    copiedRule = structuredClone(rules[selectedRuleIndex]);
+    alert("Rule copied !\n\"" + copiedRule.then?.with?.message + "\"");
+    }
+  else {
+    alert("No rule selected");
+    }
+};
+
+  pasteBtn.addEventListener("click", pasteCopiedRuleToCurrentSet);
+
+// Paste button
+// pasteBtn.onclick = () => {
+//   if (!copiedRule) {
+//     alert("No rule copied yet!");
+//     return;
+//   }
+//   rules.push(structuredClone(copiedRule));
+//   renderRuleList();
+//   selectRule(rules.length - 1);
+//   alert("Rule pasted!");
+// };
+
+
+async function pasteCopiedRuleToCurrentSet() {
+
+  if (!copiedRule) {
+    alert("No rule copied yet.");
+    return;
+  }
+
+  if(selectedRuleIndex < 0){
+    alert("Choose destination first");
+    return;
+    }
+
+  // Deep clone to avoid mutating original
+  const pastedRule = structuredClone(copiedRule);
+
+  // Label it as pasted for clarity
+  if (pastedRule.then?.with?.message) {
+    pastedRule.then.with.message += " (pasted)";
+  }
+
+  // Insert at the end or right after currently selected one
+  const insertIndex = selectedRuleIndex != null ? selectedRuleIndex + 1 : rules.length;
+  rules.splice(insertIndex, 0, pastedRule);
+
+  // Refresh and select new rule
+  renderRuleList();
+  selectRule(insertIndex);
 }
