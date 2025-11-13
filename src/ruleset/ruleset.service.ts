@@ -112,14 +112,29 @@ export class RuleSetService implements OnModuleInit {
     if (!rules) 
         throw new NotFoundException(`Rule set "${setName}" not found`);
 
-    return rules.map((rule) => ({
-      when: transformWhenStringToJson(rule.conditions), //why not `when: rule.conditions`
+    // return rules.map((rule) => ({
+    //   when: transformWhenStringToJson(rule.conditions), //why not `when: rule.conditions`
+    //   then: {
+    //     do: rule.event.type,
+    //     with: rule.event.params,
+    //   },
+    //   priority: rule.priority,
+    // })) as RuleDto[];
+    
+    const transformedRules: RuleDto[] = rules.map((rule) => ({
+      when: transformWhenStringToJson(rule.conditions),
       then: {
         do: rule.event.type,
         with: rule.event.params,
       },
       priority: rule.priority,
     })) as RuleDto[];
+
+  // Sort descending by priority (higher priority first)
+  transformedRules.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+  return transformedRules;
+
   }
 
 
