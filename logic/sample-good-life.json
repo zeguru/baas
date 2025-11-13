@@ -1,16 +1,4 @@
 [  
-  {
-    "when": {
-      "all": [{ "fact": "always", "operator": "always", "value": true }]
-      },
-    "then": {
-      "do": "advice",
-      "with": {
-        "message": "Welcome to Business Logic As a Service"
-        }
-      },
-    "priority":10
-  },
 
   {
     "when": {

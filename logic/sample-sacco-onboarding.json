@@ -30,5 +30,19 @@
       "with": { "break": true, "message": "Minimum initial contribution is 1000/-" }
       },
     "priority": 400
+  },
+
+  {
+    "when": {
+      "all": [{ "fact": "always", "operator": "always", "value": true } ]
+      },
+    "then": {
+      "do": "advice",
+      "with": {
+        "message": "Cleared: Proceed with onboarding"
+        }
+      },
+    "priority":10
   }
+  
 ]
