@@ -336,3 +336,68 @@ async function deleteSelectedRule() {
     if (window.editorMeta) editorMeta.destroy();
   }
 }
+
+
+
+//ADD NEW
+
+const createBtn = document.getElementById("createRuleSetBtn");
+const newRuleSetNameInput = document.getElementById("newRuleSetName");
+
+createBtn.addEventListener("click", createEmptyRuleset);
+newRuleSetNameInput.addEventListener("input", forceKebabCase);
+
+async function forceKebabCase(){
+  // Convert to lowercase and remove invalid chars
+    newRuleSetNameInput.value = newRuleSetNameInput.value
+      .toLowerCase()              // enforce lowercase
+      .replace(/\s+/g, '-')       // replace spaces (one or more) with a single hyphen
+      .replace(/[^a-z0-9-]/g, '') // allow ONLY a-z, 0–9, and hyphen
+      .replace(/--+/g, '-')       // collapse multiple hyphens
+  }
+
+
+async  function createEmptyRuleset() {
+
+  const nameOfRuleset = newRuleSetNameInput.value.trim();
+
+  const defaultRule = {
+    when: { all: [ { fact: "always", operator: "always", value: "true" } ] },
+    then: { do: "validation", with: { break: true, message: "Default rule. Please add usefull rules" } },
+    priority: 0
+  };
+
+
+  if (!nameOfRuleset) {
+    alert("Please enter a ruleset name.");
+    return;
+    }
+
+  try {
+      //showLoader("Creating ruleset...");
+
+      const response = await fetch(`${API_BASE}/${nameOfRuleset}/update`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(defaultRule)   // <— IMPORTANT: send as array of rules
+      });
+
+      if (!response.ok) {
+        const txt = await response.text();
+        throw new Error(txt || "Create failed");
+        }
+
+      alert(`Ruleset "${nameOfRuleset}" created.`);
+
+    // Refresh dropdown
+      await loadRuleSets();
+      newRuleSetNameInput.value = "";
+      } 
+    catch (err) {
+      alert("Error creating ruleset: " + err.message);
+      //hideLoader();
+      } 
+    finally {
+      hideLoader();
+    }
+  }

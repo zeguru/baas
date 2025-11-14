@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
         tryOutput.textContent = JSON.stringify(result, null, 2);
       } catch (err) {
-        tryOutput.textContent = `❌ Error: ${err.message}`;
+        tryOutput.textContent = `Error: ${err.message}`;
       } finally {
         document.getElementById("loaderOverlay").style.display = "none";
       }

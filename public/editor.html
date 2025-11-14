@@ -134,15 +134,26 @@
 <body>
   <h2>Rule Editor</h2>
 
-  <div class="mb-2 d-flex align-items-center gap-2">
-    <select id="ruleSetSelect" class="form-select w-auto"></select>
-    <button id="loadSetBtn" class="btn btn-primary btn-sm">Load Rules</button>
-    <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">⧉ Duplicate Rule</button>
-    <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button>
-    <button id="pasteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Paste next to the selected rule">Paste Rule</button>
-    <button id="deleteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Delete selected rule">Delete Rule</button>
-    <button id="saveAllBtn" class="btn btn-success btn-sm" title="Update the ruleset">Save All</button>
-  </div>
+  <div class="mb-2 d-flex align-items-center gap-2 justify-content-between">
+
+      <!-- LEFT SIDE -->
+      <div class="d-flex align-items-center gap-2">
+          <select id="ruleSetSelect" class="form-select w-auto"></select>
+          <button id="loadSetBtn" class="btn btn-primary btn-sm">Load Rules</button>
+          <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">⧉ Duplicate Rule</button>
+          <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button>
+          <button id="pasteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Paste next to the selected rule">Paste Rule</button>
+          <button id="deleteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Delete selected rule">Delete Rule</button>
+          <button id="saveAllBtn" class="btn btn-success btn-sm" title="Update the ruleset">Save All</button>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="d-flex align-items-center gap-2">
+        <input id="newRuleSetName" class="form-control w-auto" placeholder="new-ruleset-name" />
+        <button id="createRuleSetBtn" class="btn btn-warning btn-sm">Create RuleSet</button>
+      </div>
+
+    </div>
 
 <div id="layout">
   <div id="ruleList" class="list-group"></div>
@@ -210,6 +221,7 @@
 
   <script src="./js/editor.js"></script>
   <script src="./js/tryit.js"></script>
+  <script src="./js/addnew.js"></script>
 
 </body>
 </html>
