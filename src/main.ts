@@ -33,8 +33,10 @@ async function bootstrap() {
 
   await app.listen(3000, '0.0.0.0');
 
-  console.log(`API running at http://localhost:3000/${context}`);
-  console.log(`Advanced Editor running at http://localhost:3000/${context}/editor/`);
+  const url = await app.getUrl(); // <-- auto-detected URL
+
+  console.log(`API running at ${url}/${context}`);
+  console.log(`Advanced Editor running at ${url}/${context}/editor/`);
 
   }
   
