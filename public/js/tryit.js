@@ -1,4 +1,8 @@
+
 document.addEventListener("DOMContentLoaded", () => {
+  
+  const API_BASE = "/baas/calculator";
+
   const tryInput = document.getElementById("tryInput");
   const tryOutput = document.getElementById("tryOutput");
   const runTryBtn = document.getElementById("runTryBtn");
@@ -57,9 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("loaderMsg").innerText = "Running test...";
       document.getElementById("loaderOverlay").style.display = "flex";
 
+
       try {
         const response = await fetch(
-          `http://127.0.0.1:3000/baas/calculator/${ruleSetName}/compute`,
+          `${API_BASE}/${ruleSetName}/compute`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
