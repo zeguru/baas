@@ -174,7 +174,6 @@ export class RuleSetController {
                 item: 'applicableTax',
                 mode: 'expression',
                 value: 'min(upperLimit,computedTax)',
-                context: ["upperLimit","computedTax"],
                 message: 'Applicable tax is the one calculated or the limit, whichever is lower'
               }
             },
