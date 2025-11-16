@@ -59,7 +59,6 @@
         "item": "vehicleAge", 
         "mode": "expression", 
         "value": "currentYear - yearOfManufacture",
-        "context": ["yearOfManufacture"], 
         "message": "Calculate vehicle age from yearOfManufacture" 
         }
       },
@@ -104,7 +103,6 @@
         "item": "basePremium", 
         "mode": "expression", 
         "value":"(sumInsured * baseRate)", 
-        "context": ["sumInsured","baseRate"],
         "message": "Compute base premium using the baseRate above"}
       },
     "priority": 250
@@ -155,7 +153,6 @@
         "item": "windscreenCharge", 
         "mode": "expression", 
         "value":"(windscreenValue - 20000) * 0.1",  
-        "context": ["windscreenValue"], 
         "message": "Windscreen: Charge 10% of the (extra) amount above 20k"
         }
       },
@@ -179,7 +176,6 @@
         "item": "entertainmentCharge", 
         "mode": "expression", 
         "value":"(entertainmentValue - 25000) * 0.1", 
-        "context": ["entertainmentValue"], 
         "message": "Entertainment: Charge 10% of the (extra) amount above 25k"
         }
       },
@@ -226,7 +222,6 @@
         "item": "grossPremium", 
         "mode": "expression", 
         "value":"basePremium + aaCharge + windscreenCharge + entertainmentCharge + courtesyCarCharge", 
-        "context": ["basePremium", "aaCharge", "windscreenCharge","entertainmentCharge", "courtesyCarCharge"], 
         "message": "Compute gross Premium"
         }
       },
@@ -259,7 +254,6 @@
         "item": "totalPremium", 
         "mode": "expression",
         "value":"grossPremium + stampDuty + itl + phcf", 
-        "context": ["grossPremium", "stampDuty", "itl","phcf"], 
         "message": "Compute total payable Premium"}
       },
     "priority": 10
