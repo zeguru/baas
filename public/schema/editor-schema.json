@@ -107,12 +107,6 @@
           "description": "The actual value or the function / expression to use",
           "propertyOrder": 60 
         },
-        "context": {
-          "type": "string",
-          "title": "Referenced Facts",
-          "description": "Facts for use in the expression above. eg [\"age\",\"grossPay\"] ",
-          "propertyOrder": 70
-        },
         "message": {
           "type": "string",
           "title": "Message",

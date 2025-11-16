@@ -1,4 +1,5 @@
 // src/common/utils/calc-utils.ts
+import { parse, MathNode, SymbolNode, all } from 'mathjs';
 
 export class CalcUtils {
   
@@ -26,5 +27,33 @@ export class CalcUtils {
         }
     return defaultValue;
     }
+
+
+
+
+  static extractVariablesFromExpression(expr: string): string[] {
+
+    const node = parse(expr);
+    const vars = new Set<string>();
+    const builtin = all; 
+
+    console.log(`Builting = ${builtin}`)
+
+    node.traverse((n: MathNode) => {
+        if (node.type === "FunctionNode"){
+            console.log(`skipping ${n}`)
+            return;
+            } 
+        if (n.type === 'SymbolNode') {
+            const name = (n as SymbolNode).name;
+            if (!(name in builtin)) {
+                vars.add(name);
+                }
+            }
+        });
+
+    return Array.from(vars);
+    }
+
 
 }

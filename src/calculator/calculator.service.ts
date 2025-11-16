@@ -31,6 +31,8 @@ export class CalculatorService {
         engine = new Engine(rules, { allowUndefinedFacts: false });
         registerCustomOperators(engine);
 
+        const context: Record<string, any> = { ...facts };
+
         const utils = {
             age: DateUtils.age,
             daysBetween: DateUtils.daysBetween,
@@ -85,15 +87,15 @@ export class CalculatorService {
                 }
             //TODO: use `base` for context. This will enforce uniformity of syntax and semantics    
             else if(event.params.mode === 'expression') {
-                console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
-                const context: Record<string, any> = {};
 
-                for (const key of event.params.context ?? []) {
-                  try {
-                    context[key] = await almanac.factValue(key);
-                    } 
-                  catch {
-                    context[key] = 0; 
+                console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
+
+                const symbols = CalcUtils.extractVariablesFromExpression(event.params?.value)
+
+                for (const sym of symbols) {
+                  console.log(`sym = ${sym}`)
+                  if (!(sym in context)) {  //if not set
+                    context[sym] = 0;        
                     }
                   }
                   
@@ -104,6 +106,9 @@ export class CalculatorService {
         
             await almanac.addRuntimeFact(event.params.item, value);
             console.log(`[DEBUG] Added runtime fact: ${event.params.item}=${value}`);
+
+            context[event.params.item] = value;
+            console.log(`[DEBUG] Updated context: ${event.params.item}=${value}`);
 
           });
 
