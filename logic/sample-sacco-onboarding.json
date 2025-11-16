@@ -7,7 +7,6 @@
         "item": "age", 
         "mode": "expression", 
         "value": "age(dob)", 
-        "context": ["dob"], 
         "message": "Compute member age from DOB" 
         }
       },

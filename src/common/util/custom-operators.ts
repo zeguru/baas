@@ -12,7 +12,6 @@ export function registerCustomOperators(engine: Engine) {
         return factValue.toLowerCase() === jsonValue.toLowerCase();
         });
 
-
     engine.addOperator('notEqualsIgnoreCase', (factValue, jsonValue) => {
         if (typeof factValue !== 'string' || typeof jsonValue !== 'string') {
             return true; // different types = not equal
@@ -26,12 +25,14 @@ export function registerCustomOperators(engine: Engine) {
      */
     engine.addOperator('isDefined', (factValue, jsonValue) => {
 
-        if (typeof jsonValue !== 'boolean') {
-            throw new Error('[isDefined] operator requires a boolean literal (true|false)');
-            }
+        let booleanValue = false;
+        if (typeof jsonValue === 'boolean') 
+            booleanValue = jsonValue
+        else if (typeof jsonValue === 'string') 
+            booleanValue = jsonValue === 'true';
 
         const isDefined = factValue !== undefined && factValue !== null;
-        return jsonValue ? isDefined : !isDefined;
+        return booleanValue ? isDefined : !isDefined;
         });
 
     /**
@@ -51,36 +52,46 @@ export function registerCustomOperators(engine: Engine) {
      * "inIgnoreCase" operator for case insensitivie IN lookups .
      */
     engine.addOperator('inIgnoreCase', (factValue: any, jsonValue: any[]) => {
-        if (!Array.isArray(jsonValue)) {
-            throw new Error("Operator 'inIgnoreCase' expects an array as the rule value");
+
+        let jsonArray;
+        if (Array.isArray(jsonValue)) {
+            jsonArray = jsonValue
+            }
+        else{
+            jsonArray = JSON.parse(jsonValue);
             }
 
         // Only do case-insensitive match for strings
         if (typeof factValue === 'string') {
-            return jsonValue.some(v =>
+            return jsonArray.some(v =>
                 typeof v === 'string' && v.toLowerCase() === factValue.toLowerCase()
                 );
             }
 
         // Fallback for numbers, booleans, etc.
-        return jsonValue.includes(factValue);
+        return jsonArray.includes(factValue);
         });
  
     /**
      * "notInIgnoreCase" operator for case insensitivie negation of IN lookups .
      */
     engine.addOperator('notInIgnoreCase', (factValue: any, jsonValue: any[]) => {
-        if (!Array.isArray(jsonValue)) {
-            throw new Error("Operator 'notInIgnoreCase' expects an array as the rule value");
+
+        let jsonArray;
+        if (Array.isArray(jsonValue)) {
+            jsonArray = jsonValue
+            }
+        else{
+            jsonArray = JSON.parse(jsonValue);
             }
 
         if (typeof factValue === 'string') {
-            return !jsonValue.some(
+            return !jsonArray.some(
                 v => typeof v === 'string' && v.toLowerCase() === factValue.toLowerCase()
                 );
             }
 
-        return !jsonValue.includes(factValue);
+        return !jsonArray.includes(factValue);
         });
 
     }
