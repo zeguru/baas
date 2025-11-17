@@ -1,0 +1,210 @@
+[
+  
+  {
+    "when": { "all": [{ "fact": "grossPay", "operator": "lessThan", "value": 5000 }] },
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Income less than 5k is not taxable" }
+      },
+    "priority": 999
+  },
+
+
+    {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "shif", 
+        "mode": "expression", 
+        "value": "max(grossPay * 0.0275, 300)", 
+        "message":"SHIF. 2.75% of gross pay" } 
+        },
+    "priority": 900
+  },
+
+    {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "housingLevy", 
+        "mode": "expression", 
+        "value": "grossPay * 0.015", 
+        "message":"Housing Levy. 1.5% of gross pay" } 
+        },
+    "priority": 900
+  },
+
+
+  {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "nssfTier1", 
+        "mode": "expression", 
+        "value": "min(grossPay,8000)", 
+        "message":"NSSF Tier I. First 8000" } 
+        },
+    "priority": 900
+  },
+
+  {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "nssfTier2", 
+        "mode": "expression", 
+        "value": "min(grossPay-8000,64000)", 
+        "message":"NSSF Tier II. KES 64,000 (from KES 8,001 to KES 72,000)" } 
+        },
+    "priority": 900
+  },
+
+
+  {
+    "when": {"all": [{ "fact": "always", "operator": "always", "value": true }]},
+    "then": {
+      "do": "apply-adjustment",
+        "with": 
+          { "item": "personalRelief", "mode": "fixed", "value": 2400, "message": "Personal Relief of 2400"}
+        },
+    "priority": 900
+  },
+
+    {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "nssfTotal", 
+        "mode": "expression", 
+        "value": "(nssfTier1 * 0.06) + (nssfTier2 * 0.06)", 
+        "message":"NSSF Tier II. KES 36,000 (from KES 8,001 to KES 80,000)" } 
+        },
+    "priority": 850
+  },
+
+  {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "taxableIncome", 
+        "mode": "expression", 
+        "value": "grossPay - (shif + housingLevy)", 
+        "message":"Compute taxable income" } 
+        },
+    "priority": 800
+  },
+
+
+  {
+    "when": { "all": [
+                  { "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 5000 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "band1", 
+        "mode": "expression", 
+        "value": "min(taxableIncome,24000)", 
+        "message":"Identify pay falling within band 1. (5K-24K)" } 
+        },
+    "priority": 700
+  },
+
+  {
+    "when": { "all": [{ "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 24001 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "band2", 
+        "mode": "expression", 
+        "value": "min(taxableIncome-24000,8333)", 
+        "message":"Identify pay falling within band 2. (next 8,333)" } 
+        },
+    "priority": 700
+  },
+
+  {
+    "when": { "all": [{ "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 32334 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "band3", 
+        "mode": "expression", 
+        "value": "min(taxableIncome-32333,467667)", 
+        "message":"Identify pay falling within band 3. (next 467,667)" } 
+        },
+    "priority": 700
+  },
+
+  {
+    "when": { "all": [{ "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 500001 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "band4", 
+        "mode": "expression", 
+        "value": "min(taxableIncome-500000,300000)", 
+        "message":"Identify pay falling within band 4. (next 300,000)" } 
+        },
+    "priority": 700
+  },
+
+  {
+    "when": { "all": [{ "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 800001 }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": { 
+        "item": "band5", 
+        "mode": "expression", 
+        "value": "taxableIncome - 800000", 
+        "message":"Tax 35% for income above 800,000" } 
+        },
+    "priority": 700
+  },
+
+  {
+  "when": {"all": [{ "fact":"always", "operator": "always", "value": true}] },
+  "then": {
+    "do": "apply-adjustment",
+      "with": { 
+        "item": "grossPAYE", 
+        "mode": "expression", 
+        "value":"(band1 * 0.1) + (band2 * 0.25) + (band3 * 0.3) + (band4 * 0.325) + (band5 * 0.35)", 
+        "message": "Compute PAYE before Relief"}
+        },
+    "priority": 650
+  },
+
+  {
+  "when": {"all": [{ "fact":"always", "operator": "always", "value": true}] },
+  "then": {
+    "do": "apply-adjustment",
+      "with": { 
+        "item": "finalPAYE", 
+        "mode": "expression", 
+        "value":"grossPAYE - personalRelief", 
+        "message": "Compute PAYE after Relief"}
+        },
+    "priority": 600
+  },
+
+  {
+  "when": {"all": [{ "fact":"always", "operator": "always", "value": true}] },
+  "then": {
+    "do": "apply-adjustment",
+      "with": { 
+        "item": "netPay", 
+        "mode": "expression", 
+        "value":"grossPay - (finalPAYE + shif + housingLevy + nssfTotal)  ", 
+        "message": "Compute NET pay"}
+        },
+    "priority": 500
+  }
+    
+]
+  

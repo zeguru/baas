@@ -33,7 +33,6 @@ export class RuleSetService implements OnModuleInit {
 
     }
 
-    
   async onModuleInit() {
 
     await this.loadFromFile('sample-good-life'); 
@@ -42,7 +41,13 @@ export class RuleSetService implements OnModuleInit {
     await this.loadFromFile('sample-motor-insurance'); 
     await this.loadFromFile('sample-health-insurance'); 
     await this.loadFromFile('sample-sacco-onboarding'); 
-    
+    await this.loadFromFile('sample-netpay-calc'); 
+
+
+
+
+
+
     }
 
   /**
@@ -119,13 +124,11 @@ export class RuleSetService implements OnModuleInit {
       priority: rule.priority,
     })) as RuleDto[];
 
-  // Sort descending by priority (higher priority first)
   transformedRules.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
   return transformedRules;
 
   }
-
 
   addRule(setName: string, ruleObj: any) {
     try{
@@ -165,7 +168,6 @@ export class RuleSetService implements OnModuleInit {
       throw new BadRequestException(`Failed to update ruleset`);
       }
     }
-
 
   async evaluate(setName: string, facts: Record<string, any>) {
 
