@@ -74,6 +74,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await response.json();
         tryOutput.textContent = JSON.stringify(result, null, 2);
+
+        // Highlight in red if stopped=true
+        if (result.stopped === true) {
+          tryOutput.style.color = "red";
+        } else {
+          tryOutput.style.color = "black"; // reset if not stopped
+        }
+
       } catch (err) {
         tryOutput.textContent = `Error: ${err.message}`;
       } finally {

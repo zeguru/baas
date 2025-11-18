@@ -4,17 +4,17 @@
     "then": {
       "do": "apply-adjustment",
       "with": { 
-        "item": "age", 
+        "item": "memberAge", 
         "mode": "expression", 
         "value": "age(dob)", 
-        "message": "Compute member age from DOB" 
+        "message": "Compute member age from dob" 
         }
       },
     "priority": 500
   },
 
   {
-    "when": { "all": [{ "fact": "age", "operator": "lessThan", "value": 18 }] },
+    "when": { "all": [{ "fact": "memberAge", "operator": "lessThan", "value": 18 }] },
     "then": {
       "do": "validation",
       "with": {"break": true, "message": "Member must be at least 18 years old" }

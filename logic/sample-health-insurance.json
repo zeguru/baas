@@ -69,6 +69,15 @@
   },
 
   {
+    "when": {"any": [{ "fact":"inpatientCover", "operator": "notInIgnoreCase", "value": ["Hustler", "Special", "Regular", "Vip", "VVIP"] }]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Invalid inpatient cover selected. Allowed Hustler, Special, Regular, Vip and VVip" }        
+      },
+    "priority": 300
+  },
+
+  {
     "when": { 
       "all": [{ "fact":"outpatientCover", "operator": "inIgnoreCase", "value": ["30000","40000","50000","75000","100000"] }] },
     "then": { 
@@ -118,6 +127,15 @@
   },
 
   {
+    "when": {"any": [{ "fact":"outpatientCover", "operator": "notInIgnoreCase", "value": ["30000","40000","50000","75000","100000"] }]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Invalid outpatient cover selected. Allowed 30000, 40000, 50000, 75000 and 100000" }        
+      },
+    "priority": 300
+  },
+
+  {
     "when": { 
       "all": [{ "fact":"maternityCover", "operator": "inIgnoreCase", "value": ["50000","75000","100000"] }] },
     "then": { 
@@ -136,7 +154,27 @@
         }
       },
     "priority": 400
+  },
+
+    {
+    "when": {"any": [{ "fact":"maternityCover", "operator": "notInIgnoreCase", "value": ["50000","75000","100000"] }]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Invalid maternity cover selected. Allowed 50000, 75000 and 100000" }        
+      },
+    "priority": 300
+  },
+
+
+  {
+    "when": {"all": [{ "fact":"maternityPremium", "operator": "greaterThan", "value": 0}, { "fact":"age", "operator": "lessThan", "value": 18}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Maternity cover is only allowed for members above 18 years" }        
+      },
+    "priority": 200
   }
+
 ]
 
   

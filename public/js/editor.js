@@ -108,6 +108,7 @@ async function loadRuleSets() {
 
 // Load full ruleset array
 async function loadSelectedRuleSet() {
+  
   const name = ruleSetSelect.value;
   if (!name) return alert("Select a RuleSet first");
   currentRuleSetName = name;

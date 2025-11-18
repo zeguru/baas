@@ -1,0 +1,165 @@
+[
+    {
+    "when": { "all": [{ "fact": "accountStatus", "operator": "notEqualIgnoreCase", "value": "active" }] },
+    "then": {
+      "do": "validation",
+      "with": { "break": true, "message": "Only active accounts allowed to apply" }
+      },
+    "priority": 900
+  },
+
+  {
+    "when": { "all": [{ "fact": "currentBalance", "operator": "lessThan", "value": 5000 }] },
+    "then": {
+      "do": "validation",
+      "with": { "break": true, "message": "Minimum balance should be above 5000/-" }
+      },
+    "priority": 900
+  },
+
+   {
+    "when": {"any": [{ "fact": "occupation", "operator": "notInIgnoreCase", "value": ["teacher", "employed", "police"]}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Only teachers and police allowed to get loans" }        
+      },
+    "priority": 900
+  },
+
+  {
+    "when": {"any": [{ "fact": "totalLoanBalance", "operator": "greaterThanInclusive", "value": 1000}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Kindly clear the balance for your previous loan first" }        
+      },
+    "priority": 900
+  },
+
+  {
+    "when": { "all": [{ "fact": "loanAmount", "operator": "greaterThan", "value": 10000000 }] },
+    "then": {
+      "do": "validation",
+      "with": { "break": true, "message": "Loans above 10M not accepted" }
+      },
+    "priority": 900
+  },
+
+  {
+    "when": { "all": [{ "fact": "dob", "operator": "isDefined", "value":true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "memberAge", 
+        "mode": "expression", 
+        "value": "age(dob)", 
+        "message": "Compute member age from dob" 
+        }
+      },
+    "priority": 800
+  },
+
+  {
+    "when": { "all": [{ "fact": "joinDate", "operator": "isDefined", "value":true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "membershipYears", 
+        "mode": "expression", 
+        "value": "age(joinDate)", 
+        "message": "Compute number of years as member using joinDate" 
+        }
+      },
+    "priority": 700
+  },
+
+  {
+    "when": { "all": [{ "fact": "totalSavings", "operator": "isDefined", "value":true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "overLimitAmount", 
+        "mode": "expression", 
+        "value": "loanAmount - (totalSavings * 3)", 
+        "message": "Compute amount over limit" 
+        }
+      },
+    "priority": 700
+  },
+
+  {
+    "when": { "all": [{ "fact": "overLimitAmount", "operator": "greaterThan", "value":0 }] },
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "You can borrow up to a maximum of your savings * 3" }        
+      },
+    "priority": 600
+  },
+
+    {
+    "when": {"any": [{ "fact":"loanType", "operator": "notInIgnoreCase", "value": ["Education","Development","Emergency"] }]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Invalid loan selected. Allowed Education, Development and Emergency" }        
+      },
+    "priority": 600
+  },
+
+  {
+    "when": { 
+      "all": [{ "fact":"loanType", "operator": "inIgnoreCase", "value": ["Education","Development","Emergency"] },
+              { "fact": "repaymentMonths", "operator": "isDefined", "value":true }] },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": {
+        "item": "loanRate",
+        "mode": "value-range-lookup",
+        "key": "loanType",
+        "base": "repaymentMonths",
+        "table": {
+          "EDUCATION": {
+            "1-12": 0.1,
+            "13-24": 0.2,
+            "25-999": 0.3
+            },
+          "DEVELOPMENT": {
+            "1-12": 0.1,
+            "13-24": 0.2,
+            "25-36": 0.3,
+            "37-999": 0.3
+            },
+          "EMERGENCY": {
+            "1-12": 0.1,
+            "13-999": 0.3
+            }
+          },
+        "default": 0,
+        "message": "Lookup repayment rate. Rate depends on the type of loan and the number of months."
+        }
+      },
+    "priority": 500
+  },
+
+  {
+    "when": {"all": [{ "fact": "loanType", "operator": "equalIgnoreCase", "value": "education"}, { "fact": "memberAge", "operator": "greaterThan", "value": 30}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Student loans allowed for members below 30 only" }        
+      },
+    "priority": 500
+  },
+
+  {
+    "when": { "all": [{ "fact": "always", "operator": "always", "value":true }] },
+    "then": {
+      "do": "apply-adjustment",
+      "with": { 
+        "item": "totalLoan", 
+        "mode": "expression", 
+        "value": "loanAmount * (1 + loanRate) ", 
+        "message": "Compute total loan" 
+        }
+      },
+    "priority": 400
+  }
+
+]

@@ -140,17 +140,17 @@
       <div class="d-flex align-items-center gap-2">
           <select id="ruleSetSelect" class="form-select w-auto"></select>
           <button id="loadSetBtn" class="btn btn-primary btn-sm">Load Rules</button>
-          <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">⧉ Duplicate Rule</button>
+          <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">Duplicate</button>
           <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button>
           <button id="pasteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Paste next to the selected rule">Paste Rule</button>
-          <button id="deleteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Delete selected rule">Delete Rule</button>
+          <button id="deleteBtn" class="btn btn-outline-danger btn-sm ms-1" title="Delete selected rule">Delete Rule</button>
           <button id="saveAllBtn" class="btn btn-success btn-sm" title="Update the ruleset">Save All</button>
       </div>
 
       <!-- RIGHT SIDE -->
       <div class="d-flex align-items-center gap-2">
         <input id="newRuleSetName" class="form-control w-auto" placeholder="new-ruleset-name" />
-        <button id="createRuleSetBtn" class="btn btn-warning btn-sm">Create RuleSet</button>
+        <button id="createRuleSetBtn" class="btn btn-warning btn-sm">New RuleSet</button>
       </div>
 
     </div>
@@ -204,8 +204,12 @@
               </div>
 
               <div class="col-md-6">
+                  <label class="form-label fw-bold small text-muted d-block">
+                    ...
+                  </label>
+
                 <label class="form-label fw-bold small text-muted">Response</label>
-                <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 420px; overflow-y:auto; font-size:0.85rem;"></pre>
+                <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 520px; overflow-y:auto; font-size:0.85rem;"></pre>
               </div>
             </div>
           </div>

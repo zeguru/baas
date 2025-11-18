@@ -10,7 +10,7 @@
   },
 
 
-    {
+  {
     "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
     "then": { 
       "do": "apply-adjustment", 
@@ -23,7 +23,7 @@
     "priority": 900
   },
 
-    {
+  {
     "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
     "then": { 
       "do": "apply-adjustment", 
@@ -45,7 +45,7 @@
         "item": "nssfTier1", 
         "mode": "expression", 
         "value": "min(grossPay,8000)", 
-        "message":"NSSF Tier I. First 8000" } 
+        "message":"NSSF Tier I. First 8000 or less if pay is less than 8,000" } 
         },
     "priority": 900
   },
@@ -58,21 +58,11 @@
         "item": "nssfTier2", 
         "mode": "expression", 
         "value": "min(grossPay-8000,64000)", 
-        "message":"NSSF Tier II. KES 64,000 (from KES 8,001 to KES 72,000)" } 
+        "message":"NSSF Tier II. Next 64,000 or less if gross pay is less than 72,000" } 
         },
     "priority": 900
   },
 
-
-  {
-    "when": {"all": [{ "fact": "always", "operator": "always", "value": true }]},
-    "then": {
-      "do": "apply-adjustment",
-        "with": 
-          { "item": "personalRelief", "mode": "fixed", "value": 2400, "message": "Personal Relief of 2400"}
-        },
-    "priority": 900
-  },
 
     {
     "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
@@ -82,9 +72,19 @@
         "item": "nssfTotal", 
         "mode": "expression", 
         "value": "(nssfTier1 * 0.06) + (nssfTier2 * 0.06)", 
-        "message":"NSSF Tier II. KES 36,000 (from KES 8,001 to KES 80,000)" } 
+        "message":"Compute Total NSSF deduction" } 
         },
     "priority": 850
+  },
+
+  {
+    "when": {"all": [{ "fact": "always", "operator": "always", "value": true }]},
+    "then": {
+      "do": "apply-adjustment",
+        "with": 
+          { "item": "personalRelief", "mode": "fixed", "value": 2400, "message": "Define Personal Relief"}
+        },
+    "priority": 820
   },
 
   {
@@ -100,10 +100,8 @@
     "priority": 800
   },
 
-
   {
-    "when": { "all": [
-                  { "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 5000 }] },
+    "when": { "all": [{ "fact": "taxableIncome", "operator": "greaterThanInclusive", "value": 5000 }] },
     "then": { 
       "do": "apply-adjustment", 
       "with": { 
@@ -162,7 +160,7 @@
         "item": "band5", 
         "mode": "expression", 
         "value": "taxableIncome - 800000", 
-        "message":"Tax 35% for income above 800,000" } 
+        "message":"Identify pay above 800,000" } 
         },
     "priority": 700
   },
