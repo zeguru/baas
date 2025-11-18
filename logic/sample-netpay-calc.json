@@ -45,7 +45,7 @@
         "item": "nssfTier1", 
         "mode": "expression", 
         "value": "min(grossPay,8000)", 
-        "message":"NSSF Tier I. First 8000 or less whichever is lower" } 
+        "message":"NSSF Tier I. First 8000 or less if pay is less than 8,000" } 
         },
     "priority": 900
   },
@@ -58,7 +58,7 @@
         "item": "nssfTier2", 
         "mode": "expression", 
         "value": "min(grossPay-8000,64000)", 
-        "message":"NSSF Tier II. Next 64,000 or less" } 
+        "message":"NSSF Tier II. Next 64,000 or less if gross pay is less than 72,000" } 
         },
     "priority": 900
   },
@@ -82,7 +82,7 @@
     "then": {
       "do": "apply-adjustment",
         "with": 
-          { "item": "personalRelief", "mode": "fixed", "value": 2400, "message": "Personal Relief of 2400"}
+          { "item": "personalRelief", "mode": "fixed", "value": 2400, "message": "Define Personal Relief"}
         },
     "priority": 820
   },

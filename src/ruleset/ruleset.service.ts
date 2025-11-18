@@ -38,14 +38,10 @@ export class RuleSetService implements OnModuleInit {
     await this.loadFromFile('sample-good-life'); 
     await this.loadFromFile('sample-band-logic'); 
     await this.loadFromFile('sample-utility-bill'); 
-    await this.loadFromFile('sample-motor-insurance'); 
     await this.loadFromFile('sample-netpay-calc'); 
+    await this.loadFromFile('sample-motor-insurance'); 
     await this.loadFromFile('sample-health-insurance'); 
-    await this.loadFromFile('sample-sacco-onboarding'); 
     await this.loadFromFile('sample-loan-eligibility'); 
-
-    
-
 
 
 

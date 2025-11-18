@@ -3,7 +3,7 @@
     "when": { "all": [{ "fact": "accountStatus", "operator": "notEqualIgnoreCase", "value": "active" }] },
     "then": {
       "do": "validation",
-      "with": { "break": true, "message": "Only active accounts" }
+      "with": { "break": true, "message": "Only active accounts allowed to apply" }
       },
     "priority": 900
   },
@@ -12,7 +12,7 @@
     "when": { "all": [{ "fact": "currentBalance", "operator": "lessThan", "value": 5000 }] },
     "then": {
       "do": "validation",
-      "with": { "break": true, "message": "Minimum balance is 5000/-" }
+      "with": { "break": true, "message": "Minimum balance should be above 5000/-" }
       },
     "priority": 900
   },
@@ -21,7 +21,7 @@
     "when": {"any": [{ "fact": "occupation", "operator": "notInIgnoreCase", "value": ["teacher", "employed", "police"]}]},
     "then": {
       "do": "validation",
-      "with": {"break": true, "message": "Only teachers, police and employed" }        
+      "with": {"break": true, "message": "Only teachers and police allowed to get loans" }        
       },
     "priority": 900
   },
@@ -66,7 +66,7 @@
         "item": "membershipYears", 
         "mode": "expression", 
         "value": "age(joinDate)", 
-        "message": "Compute number of years as member fron joinDate" 
+        "message": "Compute number of years as member using joinDate" 
         }
       },
     "priority": 700
@@ -90,7 +90,7 @@
     "when": { "all": [{ "fact": "overLimitAmount", "operator": "greaterThan", "value":0 }] },
     "then": {
       "do": "validation",
-      "with": {"break": true, "message": "You can borrow to a maximum of your savings * 3" }        
+      "with": {"break": true, "message": "You can borrow up to a maximum of your savings * 3" }        
       },
     "priority": 600
   },
@@ -156,7 +156,7 @@
         "item": "totalLoan", 
         "mode": "expression", 
         "value": "loanAmount * (1 + loanRate) ", 
-        "message": "Compute simple total" 
+        "message": "Compute total loan" 
         }
       },
     "priority": 400

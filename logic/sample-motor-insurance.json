@@ -20,7 +20,7 @@
   },
 
   {
-    "when": {"any": [{ "fact": "model", "operator": "inIgnoreCase", "value": ["LION","VITZ", "DEMIO", "MARCH", "FIT", "PIAGGIO"]}]},
+    "when": {"all": [{ "fact": "model", "operator": "inIgnoreCase", "value": ["LION","VITZ", "DEMIO", "MARCH", "FIT", "PIAGGIO"]}]},
     "then": {
       "do": "validation",
       "with": {"break": true, "message": "Vehicle model is blacklisted" }        
@@ -69,7 +69,7 @@
     "when": {"all": [{"fact": "vehicleAge", "operator": "greaterThan", "value": 20}]},
     "then": {
       "do": "validation",
-      "with": {"break": true, "message": "Vehicle is above the allowed age, 20 years."}
+      "with": {"break": true, "message": "Vehicle age is above 20 years. Sorry"}
       },
     "priority": 500
   },
@@ -103,7 +103,7 @@
         "item": "basePremium", 
         "mode": "expression", 
         "value":"(sumInsured * baseRate)", 
-        "message": "Compute base premium using the baseRate above"}
+        "message": "Compute base premium using the baseRate"}
       },
     "priority": 250
   },
@@ -232,7 +232,7 @@
     "when": {"all": [{ "fact":"always", "operator": "always", "value": true }] },
     "then": { 
       "do": "apply-adjustment", 
-      "with": { "item": "itl", "mode": "rate", "base": "grossPremium", "value": 0.002,  "message":"Add Training Levy. 0.2% of basePremium"  } 
+      "with": { "item": "itl", "mode": "rate", "base": "basePremium", "value": 0.002,  "message":"Add Training Levy. 0.2% of basePremium"  } 
       },
     "priority": 50
   },
@@ -241,7 +241,7 @@
     "when": { "all": [{ "fact":"always", "operator": "always", "value": true }] },
     "then": { 
       "do": "apply-adjustment", 
-      "with": { "item": "phcf", "mode": "rate", "base": "grossPremium", "value": 0.0025, "message":"Add PHCF 0.25% of basePremium"  } 
+      "with": { "item": "phcf", "mode": "rate", "base": "basePremium", "value": 0.0025, "message":"Add PHCF 0.25% of basePremium"  } 
       },
     "priority": 50
   },

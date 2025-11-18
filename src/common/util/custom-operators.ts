@@ -14,8 +14,8 @@ export function registerCustomOperators(engine: Engine) {
 
     engine.addOperator('notEqualIgnoreCase', (factValue, jsonValue) => {
         if (typeof factValue !== 'string' || typeof jsonValue !== 'string') {
-            return true; // different types = not equal
-        }
+            return true; 
+            }
         return factValue.toLowerCase() !== jsonValue.toLowerCase();
         });
 
@@ -35,6 +35,9 @@ export function registerCustomOperators(engine: Engine) {
         return booleanValue ? isDefined : !isDefined;
         });
 
+
+
+        
     /**
      * "always" operator for unconditional evaluation.
      * Example usage: { "fact": "always", "operator": "always", "value": true }

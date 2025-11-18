@@ -1,4 +1,13 @@
 [
+
+    {
+    "when": {"any": [{ "fact":"category", "operator": "notInIgnoreCase", "value": ["VIP", "PREMIUM", "BASIC"]}]},
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Invalid category. Allowed VIP, PREMIUM and BASIC" }        
+      },
+    "priority": 50
+  },
   {
     "when": { "all": [{ "fact": "age", "operator": "isDefined", "value": true }] },
     "then": { 
@@ -82,5 +91,6 @@
       },
     "priority":5
     }
+
 ]
   
