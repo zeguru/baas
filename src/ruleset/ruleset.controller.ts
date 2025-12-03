@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { RuleSetService } from './ruleset.service';
 import { ApiExcludeEndpoint, ApiTags, ApiOperation, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 import { RuleDto, EvaluateDto } from '../common/dto/rule';
@@ -15,8 +15,10 @@ export class RuleSetController {
   @ApiExcludeEndpoint() 
   @Post(':fileName/load')
   async load(@Param('fileName') fileName: string) {
-      return this.ruleSetsService.loadFromFile(fileName);
+      return this.ruleSetsService.loadSample(fileName);
       }
+
+
 
   @Get()
   @ApiOperation({
@@ -41,10 +43,10 @@ export class RuleSetController {
   @Post(':nameOfRuleSet/create')
   @ApiOperation({
     summary: 'Create a new empty ruleset',
-    description: 'Create a title for a set of business rules aka `ruleset`. Without rules, yet',
+    description: 'Create a title for a set of business rules aka `ruleset`. Without rules, yet. Good for reserving namespaces',
     })
   createRuleSet(@Param('nameOfRuleSet') setName: string) {
-    return this.ruleSetsService.createRuleSet(setName);
+    return this.ruleSetsService.createEmptyRuleSet(setName);
     }
 
   @Post(':nameOfRuleSet/clear')
@@ -59,10 +61,10 @@ export class RuleSetController {
 
   @Post(':nameOfRuleSet/update')
   @ApiOperation({
-    summary: 'Add business logic (one or more rules) to an existing ruleset',
-    description: 'Add a set of sequential rules that implement a specific business logic',
+    summary: 'Update business logic',
+    description: 'Add a new rules that implement a specific business logic.',
     })
-  @ApiOkResponse({description: 'Name of ruleset and the number of rules added'})
+  @ApiOkResponse({description: 'Name of ruleset and the number of total rules'})
   @ApiBody({
       description: 'Create a rule definition',
       type: RuleDto,
@@ -182,8 +184,27 @@ export class RuleSetController {
         },
       }
     })
-  addRule(@Param('nameOfRuleSet') setName: string, @Body() rule: RuleDto) {
+  addFriendlyRule(@Param('nameOfRuleSet') setName: string, @Body() rule: RuleDto) {
     return this.ruleSetsService.addFriendlyRule(setName, rule);
+    }
+
+  //@ApiExcludeEndpoint() 
+  @Get(':nameOfRuleSet/db/get')
+  @ApiOperation({
+    summary: 'Get saved logic',
+    description: 'Show all saved rules in the `ruleset` ',
+    })
+  async get(@Param('nameOfRuleSet')setName: string) {
+    return this.ruleSetsService.getBusinessLogic(setName);
+    }
+
+  @Post(':nameOfRuleSet/db/save')
+  @ApiOperation({
+    summary: 'Persist selected ruleset',
+    description: 'Save `ruleset` logic to the database',
+    })
+  persistBusinessLogic(@Param('nameOfRuleSet') setName: string) {
+    return this.ruleSetsService.persistBusinessLogic(setName);
     }
 
   @ApiExcludeEndpoint() 

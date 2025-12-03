@@ -23,8 +23,10 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY logic ./logic
+COPY samples ./samples
 COPY public ./public
+
+RUN mkdir -p /data
 
 ENV NODE_ENV=production
 CMD ["node", "dist/main.js"]

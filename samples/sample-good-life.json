@@ -2,7 +2,7 @@
 
   {
     "when": {
-      "all": [{ "fact": "coffeeCups", "operator": "greaterThan", "value": 3 } ]
+      "all": [{ "fact": "numberOfCofeeCups", "operator": "greaterThan", "value": 3 } ]
       },
     "then": {
       "do": "advice",
@@ -15,7 +15,7 @@
 
   {
     "when": {
-      "all": [{ "fact": "commitsToday", "operator": "lessThan", "value": 1 }]
+      "all": [{ "fact": "numberOfCommitsToday", "operator": "lessThan", "value": 1 }]
       },
     "then": {
       "do": "advice",
@@ -28,7 +28,7 @@
 
   {
     "when": {
-      "all": [{ "fact": "productionIncidents", "operator": "greaterThanInclusive", "value": 1}]
+      "all": [{ "fact": "numberOfProductionIncidents", "operator": "greaterThanInclusive", "value": 1}]
       },
     "then": {
       "do": "advice",
@@ -55,10 +55,10 @@
   {
     "when": {
       "all": [
-        { "fact": "coffeeCups", "operator": "lessThanInclusive", "value": 3},
-        { "fact": "commitsToday", "operator": "greaterThanInclusive", "value": 1},
-        { "fact": "productionIncidents", "operator": "lessThan", "value": 1 },
-        { "fact": "releaseDay", "operator": "notEqual", "value": "Friday" }
+        { "fact": "numberOfCofeeCups", "operator": "lessThanInclusive", "value": 3},
+        { "fact": "numberOfCommitsToday", "operator": "greaterThanInclusive", "value": 1},
+        { "fact": "numberOfProductionIncidents", "operator": "lessThan", "value": 1 },
+        { "fact": "releaseDay", "operator": "notEqualIgnoreCase", "value": "Friday" }
         ]
       },
     "then": {

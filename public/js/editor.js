@@ -11,7 +11,9 @@ let whenEditor, thenEditor, metaEditor;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
 const loadSetBtn = document.getElementById("loadSetBtn");
-const saveAllBtn = document.getElementById("saveAllBtn");
+const updateAllBtn = document.getElementById("updateAllBtn");
+const persistBtn = document.getElementById("persistBtn");
+
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
@@ -87,9 +89,10 @@ async function init() {
   await loadRuleSets();
 
   loadSetBtn.addEventListener("click", loadSelectedRuleSet);
-  saveAllBtn.addEventListener("click", saveCurrentRuleSet);
+  updateAllBtn.addEventListener("click", updateCurrentRuleSet);
   duplicateRuleBtn.addEventListener("click", duplicateSelectedRule);
-  }
+  persistBtn.addEventListener("click", persistCurrentRuleset);
+}
 
 
 // Load available rule sets
@@ -175,7 +178,7 @@ function selectRule(index) {
 }
 
 // Save all rules back
-async function saveCurrentRuleSet() {
+async function updateCurrentRuleSet() {
   if (!currentRuleSetName) return alert("Select a RuleSet first");
 
   // capture current edited rule
@@ -358,7 +361,7 @@ async function forceKebabCase(){
   }
 
 
-async  function createEmptyRuleset() {
+async  function createEmptyRuleset() {    //With a default rule !!!
 
   const nameOfRuleset = newRuleSetNameInput.value.trim();
 
@@ -402,3 +405,38 @@ async  function createEmptyRuleset() {
       hideLoader();
     }
   }
+
+
+  async  function persistCurrentRuleset() {    //With a default rule !!!
+
+    //const nameOfRuleset = newRuleSetNameInput.value.trim();
+    if (!currentRuleSetName) return alert("Select a RuleSet first");
+
+    try {
+
+        const response = await fetch(`${API_BASE}/${currentRuleSetName}/db/save`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          //body: ""  
+          });
+
+        if (!response.ok) {
+          const responseText = await response.text();
+          const json = JSON.parse(responseText);
+          console.log(json);
+          throw new Error(json.message || "Persist failed");
+          }
+
+        alert(`Ruleset "${currentRuleSetName}" saved.`);
+
+      // Refresh dropdown
+        await loadRuleSets();
+        } 
+      catch (err) {
+        alert(err);
+        //hideLoader();
+        } 
+      finally {
+        //hideLoader();
+      }
+    }

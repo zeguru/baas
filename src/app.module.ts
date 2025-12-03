@@ -1,19 +1,26 @@
-import { SampleController } from './sample.controller';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { SampleController } from './sample.controller';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-// import { RulesModule } from './rules/rules.module';
 import { RuleSetModule } from './ruleset/ruleset.module';
-// import { RuleSetService } from './ruleset/ruleset.service';
 import { RuleSetController } from './ruleset/ruleset.controller';
-
 import { CalculatorModule } from './calculator/calculator.module';
-// import { CalculatorService } from './calculator/calculator.service';
-// import { CalculatorController } from './calculator/calculator.controller';
+
+import { BusinessLogic } from './ruleset/logic';
 
 @Module({
-  imports: [ RuleSetModule, CalculatorModule],
+  imports: [ 
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: './data/baas.db',
+      autoLoadEntities: true,
+      synchronize: true, // auto generate tables in dev
+      }),
+    RuleSetModule, 
+    CalculatorModule],
   controllers: [SampleController, AppController, RuleSetController],
   providers: [AppService],
 })
