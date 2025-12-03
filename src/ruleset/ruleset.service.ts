@@ -9,6 +9,11 @@ import { registerCustomOperators } from '../common/util/custom-operators'
 import { DateUtils } from '../common/util/date-utils';
 import { capitalizeTableKeys } from '../common/util/misc-utils';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { BusinessLogic } from './logic';
+
+
 @Injectable()
 export class RuleSetService implements OnModuleInit {
 
@@ -16,7 +21,12 @@ export class RuleSetService implements OnModuleInit {
 
   private ruleSets: Record<string, Rule[]> = {};
   
-  constructor() {
+  private sampleFiles = ['sample-good-life', 'sample-band-logic', 'sample-utility-bill', 'sample-netpay-calc', 'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility'];
+
+  constructor(
+    @InjectRepository(BusinessLogic)
+    private readonly logicRepository: Repository<BusinessLogic>,
+    ) {
 
     //simplest Engine rule
     this.ruleSets['welcome'] = [
@@ -35,26 +45,38 @@ export class RuleSetService implements OnModuleInit {
 
   async onModuleInit() {
 
-    await this.loadFromFile('sample-good-life'); 
-    await this.loadFromFile('sample-band-logic'); 
-    await this.loadFromFile('sample-utility-bill'); 
-    await this.loadFromFile('sample-netpay-calc'); 
-    await this.loadFromFile('sample-motor-insurance'); 
-    await this.loadFromFile('sample-health-insurance'); 
-    await this.loadFromFile('sample-loan-eligibility'); 
-
-
-
+    await this.loadAllRules();
     }
+
+  async loadAllRules() {
+    // 1️⃣ Load all enabled rules from DB
+    const enabledDbRulesets = await this.logicRepository.find({ where: { is_enabled: true } });
+
+    for (const ruleset of enabledDbRulesets) {
+      this.logger.log(`Loading ruleset from DB: ${ruleset.name_of_ruleset} with ${ruleset.rules.length} rules`);
+      const engineRules = RuleMapper.mapArrayToEngine(ruleset.rules);
+      for (const rule of engineRules) {
+        await this.addEngineRule(ruleset.name_of_ruleset, rule);
+        }
+      }
+
+    // 2️⃣ Load all sample rules from files
+    for (const file of this.sampleFiles) {
+      this.logger.log(`Loading sample ruleset from file: ${file}.json`);
+      if(!this.ruleSets[file]){   //do not load updated samples 
+        await this.loadSample(file);
+        }
+    }
+  }
 
   /**
    * Load rules from a JSON file and register in RuleSetsService
    */
-  async loadFromFile(fileName: string) {
+  async loadSample(fileName: string) {
 
       const setName = fileName;
       const fullFileName = `${fileName}.json`;
-      const absPath = path.resolve('./logic', fullFileName);
+      const absPath = path.resolve('./samples', fullFileName);
       const content = await fs.readFile(absPath, 'utf-8');
   
       const friendlyRules = JSON.parse(content);
@@ -65,15 +87,14 @@ export class RuleSetService implements OnModuleInit {
           if (!rule.conditions || !rule.event || !rule.event.type || !rule.event.params || !rule.priority) {
             this.logger.error(`Invalid rule format in ${fullFileName}`)
             throw new Error(`Invalid rule format in ${fullFileName}`);
-            //return { success:false, setName, count: engineRules.length };
             }
-          await this.addRule(setName, rule);
+          await this.addEngineRule(setName, rule);
           }
 
       return { success:true,  ruleSet: setName, count:engineRules };
       }
 
-  createRuleSet(name: string) {
+  createEmptyRuleSet(name: string) {  //Useful for reserving a ruleset namespace
     try{
       if (this.ruleSets[name]) {
         throw new BadRequestException(`Rule set "${name}" already exists`);
@@ -127,7 +148,7 @@ export class RuleSetService implements OnModuleInit {
 
   }
 
-  addRule(setName: string, ruleObj: any) {
+  addEngineRule(setName: string, ruleObj: any) {
     try{
       if (!this.ruleSets[setName]) {
         this.ruleSets[setName] = [];
@@ -165,6 +186,43 @@ export class RuleSetService implements OnModuleInit {
       throw new BadRequestException(`Failed to update ruleset`);
       }
     }
+
+  async persistBusinessLogic(setName: string) {
+
+    if(this.sampleFiles.includes(setName)){
+      throw new BadRequestException(`Cannot persist sample ruleset "${setName}". Create a new ruleset instead.`);
+      }
+
+    const rules = this.getFriendlyRules(setName);
+
+    let logic = await this.logicRepository.findOneBy({ name_of_ruleset: setName });
+
+    if (!logic) {
+      this.logger.debug('Creating new logic entry');
+      logic = this.logicRepository.create({
+        name_of_ruleset: setName,
+        rules: rules,
+        //is_enabled: enabled
+        });
+      }
+    else{
+      this.logger.debug('Updating existing logic entry');
+      logic.rules = rules;
+      //logic.is_enabled = enabled;
+      }
+
+     return this.logicRepository.save(logic);
+
+    }
+  
+  async getBusinessLogic(name: string) {
+    const logic = await this.logicRepository.findOneBy({ name_of_ruleset: name });
+    if (!logic) {
+      throw new NotFoundException(`No saved logic for "${name}" found`);
+      }
+    return logic;
+    }
+
 
   async evaluate(setName: string, facts: Record<string, any>) {
 
