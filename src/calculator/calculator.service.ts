@@ -7,12 +7,17 @@ import { RuleSetService } from '../ruleset/ruleset.service';
 import { registerCustomOperators } from '../common/util/custom-operators'
 import { coalesce } from '../common/util/misc-utils';
 
+import { SessionManager } from 'src/session/manager';
+
 @Injectable()
 export class CalculatorService {
 
     private readonly logger = new Logger(CalculatorService.name);
 
-    constructor(private readonly ruleSetService: RuleSetService) {}
+    constructor(
+      private readonly ruleSetService: RuleSetService,
+      private readonly sessionManager: SessionManager,
+    ) {}
 
     /**
      *  Compute (while evaluating) facts against a ruleset
@@ -29,8 +34,19 @@ export class CalculatorService {
 
         const rules = this.ruleSetService.getRules(setName);
         engine = new Engine(rules, { allowUndefinedFacts: false });
-        registerCustomOperators(engine);
 
+        const isSession = baseFacts.sessionID != null && baseFacts.sessionID !== '';
+        let session = null;
+      
+        if (isSession) {
+            session = this.sessionManager.get(baseFacts.sessionID);
+            if (!session) session = this.sessionManager.create(baseFacts.sessionID);
+            this.logger.log(`Using session : ${JSON.stringify(session)}`);
+            engine.addFact('session.state.step', session.state.step);
+            }
+
+
+        registerCustomOperators(engine);
         const context: Record<string, any> = { ...facts };
 
         const utils = {
@@ -57,7 +73,7 @@ export class CalculatorService {
             if (event.type !== 'apply-adjustment') return;
 
             console.log('[DEBUG] Event triggered:', event);
-            
+
             let value = 0;
 
             if (event.params.mode === 'rate') {
@@ -110,6 +126,13 @@ export class CalculatorService {
             context[event.params.item] = value;
             console.log(`[DEBUG] Updated context: ${event.params.item}=${value}`);
 
+            if (isSession && session) {
+                session.state["step"] = event.params.item.toUpperCase();
+                session.state[event.params.item] = value;
+                this.sessionManager.update(facts.sessionID, session.state);
+                console.log(`[DEBUG] Updated session to ${JSON.stringify(session)}  `);
+                }
+
           });
 
         const result = await engine.run(facts);
@@ -137,6 +160,7 @@ export class CalculatorService {
           ruleSet: setName,
           stopped: stopped,
           baseFacts: baseFacts,
+          ...(session ? { session } : {}),
           derivedFacts: derivedFacts,
           then: result.events.map((e) => ({
             do: e.type,

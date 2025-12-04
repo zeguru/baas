@@ -1,8 +1,8 @@
-/*
-https://docs.nestjs.com/providers#services
-*/
+// /*
+// https://docs.nestjs.com/providers#services
+// */
 
-import { Injectable } from '@nestjs/common';
+// import { Injectable } from '@nestjs/common';
 
-@Injectable()
-export class RandomService {}
+// @Injectable()
+// export class RandomService {}

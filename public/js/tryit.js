@@ -10,13 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const ruleSetSelect = document.getElementById("ruleSetSelect");
   const activeRuleSetLabel = document.getElementById("activeRuleSet");
 
-  const sampleInput = `
-      {
-        "age": 25,
-        "countryCode": "ke",
-        "category": "VIP",
-        "quantity": 5
-      }`;
+  const sampleInput = 
+`{
+  "age": 25,
+  "countryCode": "ke",
+  "category": "VIP",
+  "quantity": 5
+}`;
 
   // Initial setup
   if (tryInput) tryInput.value = sampleInput;
