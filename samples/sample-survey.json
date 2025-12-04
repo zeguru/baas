@@ -1,0 +1,88 @@
+[  
+
+  {
+    "when": {
+      "all": [{ "fact": "sessionID", "operator": "isDefined", "value": true },
+    { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "DEFAULT" } ]
+      },
+    "then": {
+      "do": "apply-adjustment",
+      "with": {
+        "item":"start",
+        "mode": "expression", 
+        "value": "currentDateTime", 
+        "break": true,
+        "message": "Choose Title. 1 Mr, 2 Mrs, 3 Miss, 4 Dr"
+        }
+      },
+    "priority":100
+  },
+
+  {
+    "when": {
+      "all": [{ "fact": "input", "operator": "isDefined", "value": true },
+              { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "START" } ]
+      },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": {
+          "item": "title",
+          "mode": "value-lookup",
+          "base": "input",
+          "table": {
+              "1": "Mr",
+              "2": "Mrs",
+              "3": "Miss ",
+              "4": "Dr"           
+              },
+          "default": "X",
+          "break": true,
+          "message": "Whats your hobby ? 1 Sports 2 Travel 3 Gaming 4 None"
+          }
+        },
+    "priority":90
+  },
+
+  {
+    "when": {
+      "all": [{ "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "TITLE" } ]
+      },
+    "then": { 
+      "do": "apply-adjustment", 
+      "with": {
+          "item": "hobby",
+          "mode": "value-lookup",
+          "base": "input",
+          "table": {
+              "1": "Sports",
+              "2": "Travel",
+              "3": "Gaming",
+              "4": "None"
+              },
+          "default": "X",
+          "break": true,
+          "message": "Thank you for participating. Input any key to exit"
+          }
+        },
+    "priority":70
+  },
+
+  {
+    "when": {
+      "all": [
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "HOBBY" }
+        ]
+      },
+    "then": {
+      "do": "apply-adjustment", 
+      "with": {
+        "item": "end",
+        "mode": "expression",
+        "value": "currentDateTime",
+        "message": "Cheers"
+        }
+      },
+    "priority":60
+  }
+
+]

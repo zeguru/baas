@@ -21,7 +21,7 @@ export class RuleSetService implements OnModuleInit {
 
   private ruleSets: Record<string, Rule[]> = {};
   
-  private sampleFiles = ['sample-good-life', 'sample-band-logic', 'sample-utility-bill', 'sample-netpay-calc', 'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility'];
+  private sampleFiles = ['sample-good-life', 'sample-band-logic', 'sample-utility-bill', 'sample-netpay-calc', 'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
 
   constructor(
     @InjectRepository(BusinessLogic)
