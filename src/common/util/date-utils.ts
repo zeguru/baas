@@ -18,7 +18,7 @@ export class DateUtils {
 
   static addDays(dateString: string, days: number): string {
     return dayjs(dateString, 'DD-MM-YYYY').add(days, 'day').format('DD-MM-YYYY');
-  }
+    }
 
   static get currentDateTime(): string {
     return dayjs().format('YYYY-MM-DDTHH:mm:ssZ'); // ISO-like, with timezone

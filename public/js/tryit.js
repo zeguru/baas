@@ -12,10 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const sampleInput = 
 `{
-  "age": 25,
-  "countryCode": "ke",
-  "category": "VIP",
-  "quantity": 5
+  "units":500
 }`;
 
   // Initial setup

@@ -1,9 +1,12 @@
 [  
 
+
   {
     "when": {
-      "all": [{ "fact": "sessionID", "operator": "isDefined", "value": true },
-    { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "DEFAULT" } ]
+      "all": [
+        { "fact": "sessionID", "operator": "isDefined", "value": true },
+        { "fact": "input", "operator": "isDefined", "value": true },
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "DEFAULT" } ]
       },
     "then": {
       "do": "apply-adjustment",
@@ -20,6 +23,23 @@
 
   {
     "when": {
+      "all": [ 
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "START" },
+        { "fact":"input", "operator": "notInIgnoreCase", "value": ["1","2","3","4"] }
+        ]
+      },
+    "then": {
+      "do": "validation",
+      "with": {
+        "break": true, 
+        "message": "Invalid title. Expecting input to be 1,2,3 or 4" 
+        }        
+      },
+    "priority": 90
+  },
+
+  {
+    "when": {
       "all": [{ "fact": "input", "operator": "isDefined", "value": true },
               { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "START" } ]
       },
@@ -32,7 +52,7 @@
           "table": {
               "1": "Mr",
               "2": "Mrs",
-              "3": "Miss ",
+              "3": "Miss",
               "4": "Dr"           
               },
           "default": "X",
@@ -40,7 +60,25 @@
           "message": "Whats your hobby ? 1 Sports 2 Travel 3 Gaming 4 None"
           }
         },
-    "priority":90
+    "priority":80
+  },
+
+
+  {
+    "when": {
+      "all": [ 
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "TITLE" },
+        { "fact":"input", "operator": "notInIgnoreCase", "value": ["1","2","3","4"] }
+        ]
+      },
+    "then": {
+      "do": "validation",
+      "with": {
+        "break": true, 
+        "message": "Invalid hobby. Expecting input to be 1,2,3 or 4" 
+        }        
+      },
+    "priority": 75
   },
 
   {
@@ -60,17 +98,77 @@
               "4": "None"
               },
           "default": "X",
-          "break": true,
-          "message": "Thank you for participating. Input any key to exit"
+          "message": "Saving hobby in the background "
           }
         },
     "priority":70
+  },
+    
+  {
+    "when": {
+      "all": [
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "TITLE" },
+        { "fact": "session.state.title", "operator": "equalIgnoreCase", "value": "MR" }
+        ]
+      },
+    "then": {
+      "do": "apply-adjustment", 
+      "with": {
+        "item": "branch",
+        "mode": "fixed",
+        "value": "male",
+        "message": "What is your favorite car ?",
+        "break": true
+        }
+      },
+    "priority":60
+  },
+
+
+    {
+    "when": {
+      "all": [
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "TITLE" },
+        { "fact": "session.state.title", "operator": "inIgnoreCase", "value": ["MRS","MISS","DR"] }
+        ]
+      },
+    "then": {
+      "do": "apply-adjustment", 
+      "with": {
+        "item": "branch",
+        "mode": "fixed",
+        "value": "female respondent",
+        "message": "What is your favorite pet ?",
+        "break": true
+        }
+      },
+    "priority":60
+  },
+
+
+
+  {
+    "when": {
+      "all": [
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "BRANCH" }
+        ]
+      },
+    "then": {
+      "do": "apply-adjustment", 
+      "with": {
+        "item": "favorite",
+        "mode": "expression",
+        "value": "input",
+        "message": "Thank you for completing the survey. Press any key to exit."
+        }
+      },
+    "priority":50
   },
 
   {
     "when": {
       "all": [
-        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "HOBBY" }
+        { "fact": "session.state.step", "operator": "equalIgnoreCase", "value": "FAVORITE" }
         ]
       },
     "then": {
@@ -79,10 +177,10 @@
         "item": "end",
         "mode": "expression",
         "value": "currentDateTime",
-        "message": "Cheers"
+        "message": "Survey Completed"
         }
       },
-    "priority":60
+    "priority":40
   }
 
 ]

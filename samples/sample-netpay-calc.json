@@ -9,6 +9,14 @@
     "priority": 999
   },
 
+  {
+    "when": { "all": [{ "fact": "grossPay", "operator": "lessThan", "value": 50000 }] },
+    "then": {
+      "do": "validation",
+      "with": {"break": true, "message": "Lets test with amounts above 50K" }
+      },
+    "priority": 999
+  },
 
   {
     "when": { "all": [{ "fact": "always", "operator": "always", "value": true }] },
@@ -108,7 +116,7 @@
         "item": "band1", 
         "mode": "expression", 
         "value": "min(taxableIncome,24000)", 
-        "message":"Identify pay falling within band 1. (5K-24K)" } 
+        "message":"Identify amount falling within band 1. (5K-24K)" } 
         },
     "priority": 700
   },
@@ -121,7 +129,7 @@
         "item": "band2", 
         "mode": "expression", 
         "value": "min(taxableIncome-24000,8333)", 
-        "message":"Identify pay falling within band 2. (next 8,333)" } 
+        "message":"Identify amount falling within band 2. (next 8,333)" } 
         },
     "priority": 700
   },
@@ -134,7 +142,7 @@
         "item": "band3", 
         "mode": "expression", 
         "value": "min(taxableIncome-32333,467667)", 
-        "message":"Identify pay falling within band 3. (next 467,667)" } 
+        "message":"Identify amount falling within band 3. (next 467,667)" } 
         },
     "priority": 700
   },
@@ -147,7 +155,7 @@
         "item": "band4", 
         "mode": "expression", 
         "value": "min(taxableIncome-500000,300000)", 
-        "message":"Identify pay falling within band 4. (next 300,000)" } 
+        "message":"Identify amount falling within band 4. (next 300,000)" } 
         },
     "priority": 700
   },
@@ -160,7 +168,7 @@
         "item": "band5", 
         "mode": "expression", 
         "value": "taxableIncome - 800000", 
-        "message":"Identify pay above 800,000" } 
+        "message":"Identify amount above 800,000" } 
         },
     "priority": 700
   },

@@ -42,7 +42,11 @@ export class CalculatorService {
             session = this.sessionManager.get(baseFacts.sessionID);
             if (!session) session = this.sessionManager.create(baseFacts.sessionID);
             this.logger.log(`Using session : ${JSON.stringify(session)}`);
-            engine.addFact('session.state.step', session.state.step);
+
+            //add session related facts to engine 
+            Object.entries(session.state).forEach(([key, value]) => {
+                  engine.addFact(`session.state.${key}`, value);
+              });
             }
 
 
@@ -136,7 +140,7 @@ export class CalculatorService {
           });
 
         const result = await engine.run(facts);
-      
+
         const allFacts: Record<string, any> = {};
         let derivedFacts: Record<string, any> = {};
 

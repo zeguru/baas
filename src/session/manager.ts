@@ -5,21 +5,25 @@ import { SessionData } from './dto';
 export class SessionManager {
   private readonly sessions = new Map<string, SessionData>();
 
+    // Default TTL = 30 min
+  private readonly DEFAULT_TTL = 30 * 60 * 1000;
+
   constructor() {
     setInterval(() => this.cleanup(), 1000 * 60 * 5).unref();
-      console.log("SESSION MANAGER INSTANCE:", this);
+    console.log("SESSION MANAGER INSTANCE:", this);
+    }
 
-  }
-
-  create(sessionId: string, ttlMs = 1000 * 60 * 30): SessionData {
+  create(sessionId: string): SessionData {
 
     console.log(`Creating session with ID: ${sessionId}`);
+
+    const ttl = this.DEFAULT_TTL;
 
     const now = Date.now();
     const session: SessionData = {
       state: {step: 'DEFAULT'},
       createdAt: now,
-      expiresAt: now + ttlMs
+      expiresAt: now + ttl
     };
 
     this.sessions.set(sessionId, session);
@@ -34,7 +38,8 @@ export class SessionManager {
     if (!session) return undefined;
 
     if (session.expiresAt < Date.now()) {
-      this.sessions.delete(sessionId);
+      //this.sessions.delete(sessionId);
+      this.delete(sessionId);
       return undefined;
     }
 
@@ -48,23 +53,24 @@ export class SessionManager {
     }
 
     Object.assign(session.state, patch);
-    session.expiresAt = Date.now() + (session.expiresAt - session.createdAt);
+    session.expiresAt = Date.now() + this.DEFAULT_TTL
 
     return session;
   }
 
   delete(sessionId: string) {
+    console.log(`Deleting session with ID: ${sessionId}`);
     this.sessions.delete(sessionId);
   }
 
   cleanup() {
 
-    console.log(`Cleaning up expired sessions`);
+    console.log(`Session cleanup up job`);
 
     const now = Date.now();
     for (const [id, session] of this.sessions.entries()) {
       if (session.expiresAt < now) {
-        this.sessions.delete(id);
+        this.delete(id);
       }
     }
   }
