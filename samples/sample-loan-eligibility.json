@@ -12,7 +12,7 @@
     "when": { "all": [{ "fact": "currentBalance", "operator": "lessThan", "value": 5000 }] },
     "then": {
       "do": "validation",
-      "with": { "break": true, "message": "Minimum balance should be above 5000/-" }
+      "with": { "break": true, "message": "Minimum currentBalance is 5000/-" }
       },
     "priority": 900
   },

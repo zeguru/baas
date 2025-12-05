@@ -19,7 +19,6 @@ export class CalculatorService {
       private readonly sessionManager: SessionManager,
     ) {}
 
-
     /**
      *  Compute (while evaluating) facts against a ruleset
      * - Supports fixed amounts, percentage rates and expressions
