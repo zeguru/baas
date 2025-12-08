@@ -149,7 +149,7 @@ async function duplicateSelectedRule(){
   }
 
 // Render list of rules
-function renderRuleList() {
+function renderRuleListOld() {
   ruleList.innerHTML = "";
   rules.forEach((r, i) => {
     const label =
@@ -165,6 +165,70 @@ function renderRuleList() {
     ruleList.appendChild(div);
   });
 }
+
+function renderRuleList() {
+  ruleList.innerHTML = "";
+
+  rules.forEach((r, i) => {
+    const label =
+      r.then?.with?.message ||
+      `Rule ${i + 1}` +
+        (r.priority ? ` (Priority ${r.priority})` : "");
+
+    // Main rule item container
+    const div = document.createElement("div");
+    div.className = "rule-item list-group-item d-flex justify-content-between align-items-center";
+    div.onclick = () => selectRule(i);
+
+    // Left: label
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = label;
+    div.appendChild(labelSpan);
+
+    // Right: buttons (only show for selected)
+    if (i === selectedRuleIndex) {
+      const btnContainer = document.createElement("div");
+      btnContainer.className = "rule-buttons btn-group btn-group-sm";
+
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "btn btn-sm  copy-btn";
+      copyBtn.title = "Copy Rule";
+      copyBtn.innerHTML = "📋";
+      copyBtn.onclick = (e) => { e.stopPropagation(); copyRule(i); };
+
+      const duplicateBtn = document.createElement("button");
+      duplicateBtn.className = "btn btn-sm duplicate-btn";
+      duplicateBtn.title = "Duplicate Rule";
+      duplicateBtn.innerHTML = "⧉";
+      duplicateBtn.onclick = (e) => { e.stopPropagation(); duplicateRule(i); };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn btn-sm delete-btn";
+      deleteBtn.title = "Delete Rule";
+      deleteBtn.innerHTML = "🗑";
+      deleteBtn.onclick = (e) => { e.stopPropagation(); deleteRule(i); };
+
+      const pasteBtn = document.createElement("button");
+      pasteBtn.className = "btn btn-sm paste-btn";
+      pasteBtn.title = "Paste Rule";
+      pasteBtn.innerHTML = "📥";
+      pasteBtn.onclick = (e) => { e.stopPropagation(); pasteRule(i); };
+
+      btnContainer.appendChild(copyBtn);
+      btnContainer.appendChild(duplicateBtn);
+      btnContainer.appendChild(deleteBtn);
+      btnContainer.appendChild(pasteBtn);
+
+      div.appendChild(btnContainer);
+    }
+
+    // Highlight selected
+    if (i === selectedRuleIndex) div.classList.add("active");
+
+    ruleList.appendChild(div);
+  });
+}
+
 
 // Select rule for editing
 function selectRule(index) {

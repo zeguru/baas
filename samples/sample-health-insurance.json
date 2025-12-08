@@ -156,7 +156,7 @@
     "priority": 400
   },
 
-    {
+  {
     "when": {"any": [{ "fact":"maternityCover", "operator": "notInIgnoreCase", "value": ["50000","75000","100000"] }]},
     "then": {
       "do": "validation",
