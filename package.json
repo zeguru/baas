@@ -1,6 +1,6 @@
 {
   "name": "baas",
-  "version": "0.27",
+  "version": "0.29",
   "description": "Business Logic As A Service. Rules Engine",
   "author": "",
   "private": true,
