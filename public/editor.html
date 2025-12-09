@@ -26,6 +26,30 @@
       align-items: flex-start;
     }
 
+
+    /* Target the container flex alignment */
+    .rule-item.d-flex {
+      align-items: flex-end !important; /* push buttons to bottom */
+    }
+
+    /* Optional: ensure label wraps naturally */
+    .rule-item span {
+      display: inline-block;
+      word-break: break-word;
+      margin-bottom: 0.25rem; 
+    }
+
+
+    .rule-buttons button {
+      margin-left: 0.25rem;
+      }
+
+    .list-group-item.active {
+      background-color: #e9ecef !important; 
+      color: #212529 !important;           
+      }
+
+
     #ruleList {
       width: 26%;
       max-height: 82vh;
@@ -129,6 +153,11 @@
       white-space: pre-wrap;
     }
 
+    #ruleSetSelect {
+      width: 200px !important;
+      }
+
+
   </style>
 </head>
 <body>
@@ -139,13 +168,13 @@
       <!-- LEFT SIDE -->
       <div class="d-flex align-items-center gap-2">
           <select id="ruleSetSelect" class="form-select w-auto"></select>
-          <button id="loadSetBtn" class="btn btn-primary btn-sm">Load Rules</button>
-          <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">Duplicate</button>
-          <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button>
-          <button id="pasteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Paste next to the selected rule">Paste Rule</button>
-          <button id="deleteBtn" class="btn btn-outline-danger btn-sm ms-1" title="Delete selected rule">Delete Rule</button>
-          <button id="updateAllBtn" class="btn btn-success btn-sm" title="Update the ruleset">Update All</button>
-          <button id="persistBtn" class="btn btn-outline-primary btn-sm" title="Persist the business logic">Persist</button>
+          <button id="loadSetBtn" class="btn btn-outline-primary btn-sm" title="Load definition from db">Load Rules</button>
+          <!-- <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">Duplicate</button>
+          <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button> -->
+          <!-- <button id="pasteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Paste next to the selected rule">Paste Rule</button> -->
+          <!-- <button id="deleteBtn" class="btn btn-outline-danger btn-sm ms-1" title="Delete selected rule">Delete Rule</button> -->
+          <button id="updateAllBtn" class="btn btn-outline-success btn-sm" title="Update the ruleset">Update</button>
+          <button id="persistBtn" class="btn btn-primary btn-sm" title="Save to db">Persist</button>
 
         </div>
 

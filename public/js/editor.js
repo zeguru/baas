@@ -17,9 +17,9 @@ const persistBtn = document.getElementById("persistBtn");
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
-const copyBtn = document.getElementById("copyBtn");
-const pasteBtn = document.getElementById("pasteBtn");
-const deleteBtn = document.getElementById("deleteBtn");
+// const copyBtn = document.getElementById("copyBtn");
+// const pasteBtn = document.getElementById("pasteBtn");
+// const deleteBtn = document.getElementById("deleteBtn");
 
 
 // After init() completes, attach the listener
@@ -123,7 +123,7 @@ async function loadSelectedRuleSet() {
 
 async function duplicateSelectedRule(){
   if (selectedRuleIndex == null || selectedRuleIndex < 0) {
-    alert("Select a rule to duplicate first.");
+    alert("Select a rule to clone first.");
     return;
     }
 
@@ -132,7 +132,7 @@ async function duplicateSelectedRule(){
 
   // Optionally tweak something to avoid confusion
   if (clonedRule.then?.with?.message) {
-    clonedRule.then.with.message += " (duplicate)";
+    clonedRule.then.with.message += " (clone)";
     }
   if (clonedRule.priority !== undefined) {
     clonedRule.priority = clonedRule.priority + 1;
@@ -149,7 +149,7 @@ async function duplicateSelectedRule(){
   }
 
 // Render list of rules
-function renderRuleList() {
+function renderRuleListOld() {
   ruleList.innerHTML = "";
   rules.forEach((r, i) => {
     const label =
@@ -165,6 +165,71 @@ function renderRuleList() {
     ruleList.appendChild(div);
   });
 }
+
+function renderRuleList() {
+  ruleList.innerHTML = "";
+
+  rules.forEach((r, i) => {
+    const label =
+      r.then?.with?.message ||
+      `Rule ${i + 1}` +
+        (r.priority ? ` (Priority ${r.priority})` : "");
+
+    // Main rule item container
+    const div = document.createElement("div");
+    div.className = "rule-item list-group-item d-flex justify-content-between align-items-center";
+    div.onclick = () => selectRule(i);
+
+    // Left: label
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = label;
+    div.appendChild(labelSpan);
+
+    // Right: buttons (only show for selected)
+    if (i === selectedRuleIndex) {
+      const btnContainer = document.createElement("div");
+      btnContainer.className = "rule-buttons btn-group btn-group-sm";
+
+      const duplicateBtn = document.createElement("button");
+      duplicateBtn.className = "btn btn-sm duplicate-btn";
+      duplicateBtn.title = "Clone Rule";
+      duplicateBtn.innerHTML = "⧉";
+      duplicateBtn.onclick = (e) => { e.stopPropagation(); duplicateSelectedRule(); };
+
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "btn btn-sm  copy-btn";
+      copyBtn.title = "Copy to another Ruleset";
+      copyBtn.innerHTML = "📋";
+      copyBtn.onclick = (e) => { e.stopPropagation(); copyRule(i); };
+
+      const pasteBtn = document.createElement("button");
+      pasteBtn.className = "btn btn-sm paste-btn";
+      pasteBtn.title = "Paste from another Ruleset";
+      pasteBtn.innerHTML = "📥";
+      pasteBtn.onclick = (e) => { e.stopPropagation(); pasteCopiedRuleToCurrentSet(); };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn btn-sm delete-btn";
+      deleteBtn.title = "Delete Rule";
+      deleteBtn.innerHTML = "❌";
+      deleteBtn.onclick = (e) => { e.stopPropagation(); deleteSelectedRule(); };
+
+
+      btnContainer.appendChild(duplicateBtn);
+      btnContainer.appendChild(copyBtn);
+      btnContainer.appendChild(pasteBtn);
+      btnContainer.appendChild(deleteBtn);
+
+      div.appendChild(btnContainer);
+    }
+
+    // Highlight selected
+    if (i === selectedRuleIndex) div.classList.add("active");
+
+    ruleList.appendChild(div);
+  });
+}
+
 
 // Select rule for editing
 function selectRule(index) {
@@ -267,19 +332,31 @@ function showLoader(show, message = "Loading...") {
 
 let copiedRule = null;
 
-// Copy button
-copyBtn.onclick = () => {
-  if (selectedRuleIndex >= 0) {
-    copiedRule = structuredClone(rules[selectedRuleIndex]);
-    alert("Rule copied !\n\"" + copiedRule.then?.with?.message + "\"");
-    }
-  else {
+// reusable copy function that works for toolbar or inline buttons
+function copyRule(index) {
+  if (selectedRuleIndex == null || selectedRuleIndex < 0 || selectedRuleIndex >= rules.length) {
     alert("No rule selected");
-    }
-};
+    return;
+  }
+  copiedRule = structuredClone(rules[index]);
+  alert("Rule copied!\n\"" + (copiedRule.then?.with?.message || `Rule ${index+1}`) + "\"");
+}
 
+
+// Copy button
+// copyBtn.onclick = () => {
+//   if (selectedRuleIndex >= 0) {
+//     copiedRule = structuredClone(rules[selectedRuleIndex]);
+//     alert("Rule copied !\n\"" + copiedRule.then?.with?.message + "\"");
+//     }
+//   else {
+//     alert("No rule selected");
+//     }
+// };
+
+  // copyBtn.onclick = () => copyRule(selectedRuleIndex);
   pasteBtn.addEventListener("click", pasteCopiedRuleToCurrentSet);
-  deleteBtn.addEventListener("click", deleteSelectedRule);
+  // deleteBtn.addEventListener("click", deleteSelectedRule);
 
 
 async function pasteCopiedRuleToCurrentSet() {
