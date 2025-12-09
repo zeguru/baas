@@ -14,6 +14,7 @@ const loadSetBtn = document.getElementById("loadSetBtn");
 const updateAllBtn = document.getElementById("updateAllBtn");
 const persistBtn = document.getElementById("persistBtn");
 
+
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
@@ -90,7 +91,6 @@ async function init() {
 
   loadSetBtn.addEventListener("click", loadSelectedRuleSet);
   updateAllBtn.addEventListener("click", updateCurrentRuleSet);
-  duplicateRuleBtn.addEventListener("click", duplicateSelectedRule);
   persistBtn.addEventListener("click", persistCurrentRuleset);
 }
 
@@ -271,12 +271,12 @@ async function updateCurrentRuleSet() {
         body: JSON.stringify(rules[i]),
       });
       if (!res.ok) console.warn(`Rule ${i + 1} failed`);
-      showLoader(true, `Saved rule ${i + 1}/${rules.length}`);
+      showLoader(true, `Updating rule ${i + 1}/${rules.length}`);
       await new Promise((r) => setTimeout(r, 300));
     }
 
     showLoader(false);
-    alert("✅ All rules saved!");
+    alert("✅ All rules synchronized!");
 
     loadSelectedRuleSet();
   } catch (e) {
@@ -486,6 +486,7 @@ async  function createEmptyRuleset() {    //With a default rule !!!
 
   async  function persistCurrentRuleset() {    //With a default rule !!!
 
+    console.log("persisting.....")
     //const nameOfRuleset = newRuleSetNameInput.value.trim();
     if (!currentRuleSetName) return alert("Select a RuleSet first");
 

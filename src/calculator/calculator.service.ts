@@ -166,7 +166,7 @@ export class CalculatorService {
           baseFacts: baseFacts,
           ...(session ? { session } : {}),
           derivedFacts: derivedFacts,
-          then: result.events.map((e) => ({
+          breakdown: result.events.map((e) => ({
             do: e.type,
             message: e.params.message,
             result: derivedFacts[e.params.item]
