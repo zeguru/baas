@@ -355,7 +355,7 @@ function copyRule(index) {
 // };
 
   // copyBtn.onclick = () => copyRule(selectedRuleIndex);
-  pasteBtn.addEventListener("click", pasteCopiedRuleToCurrentSet);
+  // pasteBtn.addEventListener("click", pasteCopiedRuleToCurrentSet);
   // deleteBtn.addEventListener("click", deleteSelectedRule);
 
 
