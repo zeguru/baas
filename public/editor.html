@@ -158,6 +158,28 @@
       }
 
 
+    /* Make Try It float right and visually distinct */
+  .try-it-tab {
+      background-color: #0d6efd;  /* Bootstrap primary blue */
+      color: white;
+      font-weight: 500;
+      border-radius: 4px 4px 0 0;
+      border: 1px solid #0d6efd;
+      margin-left: 0.5rem;
+      transition: background 0.2s;
+  }
+
+  .try-it-tab:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+  }
+
+  .try-it-tab.active {
+      background-color: #0b5ed7;
+      border-color: #0b5ed7;
+  }
+
+
   </style>
 </head>
 <body>
@@ -190,20 +212,28 @@
   <div id="ruleList" class="list-group"></div>
 
   <div id="editor_holder">
-    <ul class="nav nav-tabs" id="ruleTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="when-tab" data-bs-toggle="tab" data-bs-target="#whenTab" type="button" role="tab">When</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="try-tab" data-bs-toggle="tab" data-bs-target="#tryTab" type="button" role="tab">▶ Try It</button>
-      </li>
+    
+      <ul class="nav nav-tabs d-flex justify-content-between" id="ruleTabs" role="tablist">
 
+        <div class="d-flex">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="when-tab" data-bs-toggle="tab" data-bs-target="#whenTab" type="button" role="tab">When</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
+          </li>
+        </div>
+
+        <div class="d-flex">
+          <li class="nav-item ms-auto" role="presentation">
+            <button class="nav-link try-it-tab" id="try-tab" data-bs-toggle="tab" data-bs-target="#tryTab" type="button" role="tab">
+              ▶ Try Ruleset
+            </button>
+          </li>
+        </div>
     </ul>
 
     <div class="tab-content p-2 border border-top-0 rounded-bottom" id="ruleTabsContent" style="background:white; min-height:70vh;">
