@@ -110,15 +110,39 @@ async function loadRuleSets() {
 }
 
 // Load full ruleset array
-async function loadSelectedRuleSet() {
+// async function loadSelectedRuleSet() {
   
+//   const name = ruleSetSelect.value;
+//   if (!name) return alert("Select a RuleSet first");
+//   currentRuleSetName = name;
+
+//   const res = await fetch(`${API_BASE}/${name}`);
+//   rules = await res.json();
+//   renderRuleList();
+// }
+
+async function loadSelectedRuleSet() {
   const name = ruleSetSelect.value;
   if (!name) return alert("Select a RuleSet first");
   currentRuleSetName = name;
 
   const res = await fetch(`${API_BASE}/${name}`);
   rules = await res.json();
+
   renderRuleList();
+
+  // 🔹 NEW: auto-populate Try-It input
+  const facts = extractFactsFromRules(rules);
+  const tryItObject = buildEmptyFactsObject(facts);
+
+  const tryInput = document.getElementById("tryInput");
+  if (tryInput) {
+    tryInput.value = JSON.stringify(tryItObject, null, 2);
+  }
+
+  // Optional UI hint
+  const badge = document.getElementById("activeRuleSet");
+  if (badge) badge.textContent = name;
 }
 
 async function duplicateSelectedRule(){
@@ -343,21 +367,6 @@ function copyRule(index) {
 }
 
 
-// Copy button
-// copyBtn.onclick = () => {
-//   if (selectedRuleIndex >= 0) {
-//     copiedRule = structuredClone(rules[selectedRuleIndex]);
-//     alert("Rule copied !\n\"" + copiedRule.then?.with?.message + "\"");
-//     }
-//   else {
-//     alert("No rule selected");
-//     }
-// };
-
-  // copyBtn.onclick = () => copyRule(selectedRuleIndex);
-  // pasteBtn.addEventListener("click", pasteCopiedRuleToCurrentSet);
-  // deleteBtn.addEventListener("click", deleteSelectedRule);
-
 
 async function pasteCopiedRuleToCurrentSet() {
 
@@ -518,3 +527,58 @@ async  function createEmptyRuleset() {    //With a default rule !!!
         //hideLoader();
       }
     }
+
+
+function extractDerivedFacts(rules) {
+  const derived = new Set();
+
+  rules.forEach(rule => {
+    const item = rule?.then?.with?.item;
+    if (item) {
+      derived.add(item);
+    }
+  });
+
+  return derived;
+  }
+
+
+function extractFactsFromRules(rules) {
+  const facts = new Set();
+  const derivedFacts = extractDerivedFacts(rules);
+
+  function scan(node) {
+    if (!node || typeof node !== "object") return;
+
+    if (node.fact) {
+      const fact = node.fact;
+
+      // Ignore internal / engine-managed facts and derived facts
+      if ( fact === "always" || fact.startsWith("session.") || derivedFacts.has(fact)) {
+        return;
+        }
+
+      // Ignore derived facts (produced by rules)
+      // if () {
+      //   return;
+      // }
+
+      facts.add(fact);
+      return;
+    }
+
+    if (Array.isArray(node.all)) node.all.forEach(scan);
+    if (Array.isArray(node.any)) node.any.forEach(scan);
+    }
+
+  rules.forEach(rule => scan(rule.when));
+  
+  return Array.from(facts);
+}
+
+function buildEmptyFactsObject(facts) {
+  return facts.reduce((obj, fact) => {
+    obj[fact] = "";
+    return obj;
+  }, {});
+}
