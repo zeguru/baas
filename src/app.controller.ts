@@ -7,15 +7,21 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+  // @Get()
+  // getHello(): string {
+  //   return this.appService.getHello();
+  //   }
 
 
   @Get('editor')
   getEditor(@Res() res: Response) {
-    // Adjust path depending on where you compile your assets
     return res.sendFile(join(__dirname, '..', 'public', 'editor.html'));
+    }
+
+  
+  @Get()
+  @Get('welcome')
+  getWelcome(@Res() res: Response) {
+    return res.sendFile(join(__dirname, '..', 'public', 'welcome.html'));
     }
 }
