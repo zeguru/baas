@@ -15,6 +15,8 @@ async function bootstrap() {
   const context = 'baas'; 
 
   app.use(`/${context}/editor`, express.static(join(__dirname, '..', 'public')));
+  app.use(`/${context}/welcome`, express.static(join(__dirname, '..', 'public')));
+
 
   const config = new DocumentBuilder()
     .setTitle('BaaS API')

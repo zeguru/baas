@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BaaS | Business Logic As A Service</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  />
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fafafa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
+      max-width: 520px;
+      width: 100%;
+    }
+
+    .hero h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      font-size: 0.95rem;
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero .btn {
+      min-width: 160px;
+    }
+
+    footer {
+      background: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+    }
+
+.footer-link {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .footer-link:hover {
+    text-decoration: underline;
+  }
+  </style>
+</head>
+
+<body>
+
+  <main class="hero">
+    <div class="hero-card">
+      <h1>BaaS </h1>
+      
+      
+        <p class="mb-2">
+            Design, test and run experiences such as:
+        </p>
+
+        <ul class="list-unstyled text-muted small mb-3">
+        <li>• Pricing and calculation flows</li>
+        <li>• Product and service rules</li>
+        <li>• Session and state management</li>
+        <li>• General purpose business logic</li>
+        <li>• Conversational SMS flows</li>
+        <li>• USSD menus</li>
+        </ul>
+
+
+      <div class="d-flex justify-content-center gap-3">
+        <a href="/baas/editor" class="btn btn-primary btn-sm">
+          Editor
+        </a>
+        <a href="/baas/docs" class="btn btn-outline-secondary btn-sm" target="_blank">
+          API docs
+        </a>
+
+      </div>
+    </div>
+  </main>
+
+    <footer class="app-footer">
+    <div class="d-flex justify-content-between align-items-center px-3 py-2">
+      <span class="text-muted small">
+          © 2025 
+          <a href="https://x.com/MaburaZeGuru" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="footer-link">
+            @MaburaZeGuru
+          </a>
+      </span>
+      <span class="text-muted small">
+        Release <span id="appVersion">—</span>
+      </span>
+    </div>
+  </footer>
+
+  <script>
+  fetch('/baas/meta/version')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('appVersion').textContent = `v${d.version}`;
+    })
+    .catch(() => {
+      document.getElementById('appVersion').textContent = 'unknown';
+    });
+</script>
+
+</body>
+</html>
