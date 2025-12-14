@@ -179,6 +179,16 @@
       border-color: #0b5ed7;
   }
 
+  .footer-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
 
   </style>
 </head>
@@ -280,8 +290,37 @@
     <div id="loaderMsg" style="margin-top: 10px; font-size: 0.9rem;"></div>
   </div>
 
+  <footer class="app-footer">
+    <div class="d-flex justify-content-between align-items-center px-3 py-2">
+      <span class="text-muted small">
+          © 2025 
+          <a href="https://x.com/MaburaZeGuru" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="footer-link">
+            @MaburaZeGuru
+          </a>
+      </span>
+      <span class="text-muted small">
+        Release <span id="appVersion">—</span>
+      </span>
+    </div>
+  </footer>
+
+
   <script src="./js/editor.js"></script>
   <script src="./js/tryit.js"></script>
+
+  <script>
+  fetch('/baas/meta/version')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('appVersion').textContent = `v${d.version}`;
+    })
+    .catch(() => {
+      document.getElementById('appVersion').textContent = 'unknown';
+    });
+</script>
 
 </body>
 </html>
