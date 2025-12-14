@@ -9,6 +9,7 @@ import { RuleSetModule } from './ruleset/ruleset.module';
 import { RuleSetController } from './ruleset/ruleset.controller';
 import { CalculatorModule } from './calculator/calculator.module';
 import { SessionModule } from './session/session.module';
+import { MetaModule } from './meta/meta.module';
 
 @Module({
   imports: [ 
@@ -19,7 +20,7 @@ import { SessionModule } from './session/session.module';
       synchronize: true, // auto generate tables in dev
       }),
     RuleSetModule, 
-    CalculatorModule, SessionModule],
+    CalculatorModule, SessionModule, MetaModule],
   controllers: [AppController, RuleSetController],
   providers: [AppService],
 })
