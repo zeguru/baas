@@ -8,35 +8,30 @@ let selectedRuleIndex = -1;
 
 let whenEditor, thenEditor, metaEditor;
 
-//track duplicate, paste and delete
 let unsavedChanges = false;
-let updateButtonClicked = false;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
 const loadSetBtn = document.getElementById("loadSetBtn");
 const updateAllBtn = document.getElementById("updateAllBtn");
 const persistBtn = document.getElementById("persistBtn");
 
-
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
-// const copyBtn = document.getElementById("copyBtn");
-// const pasteBtn = document.getElementById("pasteBtn");
-// const deleteBtn = document.getElementById("deleteBtn");
-
 
 // After init() completes, attach the listener
 init().then(() => {
-  // Handle RuleSet dropdown changes
+
   ruleSetSelect.addEventListener("change", () => {
 
     if (unsavedChanges) {
-        if (!confirm("You have out of sync rules. Discard changes and switch ruleset?")) {
+        if (!confirm("You have out of sync rules. Discard updates and switch ruleset?")) {
           ruleSetSelect.value = currentRuleSetName;
           return;
         }
       }
+
+    updateActionButtons(true);
 
     currentRuleSetName = ruleSetSelect.value;
     rules = [];
@@ -49,9 +44,10 @@ init().then(() => {
     metaEditor.setValue({ priority: 0 });
 
     // Optional: give feedback
-    console.log(`RuleSet changed to: ${currentRuleSetName || "(none)"}`);
+    //console.log(`RuleSet changed to: ${currentRuleSetName || "(none)"}`);
   });
 });
+
 async function init() {
   // Load schema
   const schemaRes = await fetch("./schema/editor-schema.json");
@@ -78,12 +74,14 @@ async function init() {
     object_layout: "normal", //or 'grid'
   };
 
+  const editorContainer = document.getElementById('editor_holder'); 
+
   // Create sub-editors
   whenEditor = new JSONEditor(document.getElementById("whenTab"), {
     ...opts,
     schema: whenSchema,
-    startval: {},
-  });
+    startval: {all:[{ fact: "always", operator: "always",value: true}]}
+    });
 
   
   thenEditor = new JSONEditor(document.getElementById("thenTab"), {
@@ -98,23 +96,32 @@ async function init() {
     startval: {},
   });
 
+
+  editorContainer.addEventListener('input', () => {
+        console.log('Input detected!');
+        unsavedChanges = true;
+        },
+      true // 👈 capture phase
+    );
+
+
   await loadRuleSets();
 
   //loadSetBtn.addEventListener("click", loadSelectedRuleSet);
-
-  loadSetBtn.addEventListener("click", () => {
-    updateButtonClicked = false;
-    loadSelectedRuleSet();
-    });
-
-  // updateAllBtn.addEventListener("click", updateCurrentRuleSet);
-  updateAllBtn.addEventListener("click", () => {
-    updateButtonClicked = true;
-    updateCurrentRuleSet();
-    });
+  loadSetBtn.addEventListener("click", (e) => {
+      loadSelectedRuleSet();
+      updateActionButtons(false);
+      unsavedChanges = false;
+      });
+  updateAllBtn.addEventListener("click", updateCurrentRuleSet);
   persistBtn.addEventListener("click", persistCurrentRuleset);
-}
+  }
 
+
+function updateActionButtons(flag) {
+  persistBtn.disabled = flag;
+  updateAllBtn.disabled = flag;
+  }
 
 // Load available rule sets
 async function loadRuleSets() {
@@ -127,20 +134,8 @@ async function loadRuleSets() {
     opt.textContent = name;
     ruleSetSelect.appendChild(opt);
   });
-  
 }
 
-// Load full ruleset array
-// async function loadSelectedRuleSet() {
-  
-//   const name = ruleSetSelect.value;
-//   if (!name) return alert("Select a RuleSet first");
-//   currentRuleSetName = name;
-
-//   const res = await fetch(`${API_BASE}/${name}`);
-//   rules = await res.json();
-//   renderRuleList();
-// }
 
 async function loadSelectedRuleSet() {
   const name = ruleSetSelect.value;
@@ -152,7 +147,6 @@ async function loadSelectedRuleSet() {
 
   renderRuleList();
 
-  // 🔹 NEW: auto-populate Try-It input
   const facts = extractFactsFromRules(rules);
   const tryItObject = buildEmptyFactsObject(facts);
 
@@ -162,12 +156,10 @@ async function loadSelectedRuleSet() {
   }
 
   // Optional UI hint
-  const badge = document.getElementById("activeRuleSet");
-  if (badge) badge.textContent = name;
+  // const badge = document.getElementById("activeRuleSet");
+  // if (badge) badge.textContent = name;
 
-  unsavedChanges = false;
-  //??
-}
+  }
 
 async function duplicateSelectedRule(){
   if (selectedRuleIndex == null || selectedRuleIndex < 0) {
@@ -248,7 +240,6 @@ function renderRuleList() {
       deleteBtn.innerHTML = "❌";
       deleteBtn.onclick = (e) => { e.stopPropagation(); deleteSelectedRule(); };
 
-
       btnContainer.appendChild(duplicateBtn);
       btnContainer.appendChild(copyBtn);
       btnContainer.appendChild(pasteBtn);
@@ -274,7 +265,7 @@ function selectRule(index) {
   whenEditor.setValue(rule.when || {});
   thenEditor.setValue(rule.then || {});
   metaEditor.setValue({ priority: rule.priority ?? 0 });
-}
+  }
 
 // Save all rules back
 async function updateCurrentRuleSet() {
@@ -309,20 +300,21 @@ async function updateCurrentRuleSet() {
       showLoader(true, `Updating rule ${i + 1}/${rules.length}`);
       await new Promise((r) => setTimeout(r, 300));
 
-      updateButtonClicked = true;
       }
 
     showLoader(false);
-    alert("✅ All rules synchronized!");
+    alert("All rules synchronized!");
 
     loadSelectedRuleSet();
+
+    unsavedChanges = false;
+
   } catch (e) {
     console.error(e);
     showLoader(false);
-    alert("❌ Save failed");
+    alert("Save failed");
   }
 
-  unsavedChanges = false;
 }
 
 
@@ -367,7 +359,6 @@ function showLoader(show, message = "Loading...") {
 
 
 
-//========COPY PASTE LOGIC
 
 let copiedRule = null;
 
@@ -451,8 +442,6 @@ async function deleteSelectedRule() {
 
 
 
-//ADD NEW
-
 const createBtn = document.getElementById("createRuleSetBtn");
 const newRuleSetNameInput = document.getElementById("newRuleSetName");
 
@@ -514,15 +503,21 @@ async  function createEmptyRuleset() {    //With a default rule !!!
     }
   }
 
+  const sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
 
-  async  function persistCurrentRuleset() {    //With a default rule !!!
+  async  function persistCurrentRuleset() {  
 
     console.log("persisting.....")
 
     if (!currentRuleSetName) return alert("Select a RuleSet first");
 
-    if (!updateButtonClicked) {
-      if (!confirm("You may have out of sync rules. Proceed Anyway ?")) {
+    if (sampleFiles.includes(currentRuleSetName)) {
+      alert("Overwriting sample RuleSets is not allowed");
+      return;
+      }
+
+    if (unsavedChanges) {
+      if (!confirm("You have out of sync rules. Proceed Anyway ?")) {
         return;
         }
       }
@@ -585,11 +580,6 @@ function extractFactsFromRules(rules) {
       if ( fact === "always" || fact.startsWith("session.") || derivedFacts.has(fact)) {
         return;
         }
-
-      // Ignore derived facts (produced by rules)
-      // if () {
-      //   return;
-      // }
 
       facts.add(fact);
       return;
