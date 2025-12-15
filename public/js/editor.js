@@ -8,6 +8,9 @@ let selectedRuleIndex = -1;
 
 let whenEditor, thenEditor, metaEditor;
 
+//track duplicate, paste and delete
+let unsavedChanges = false;
+let updateButtonClicked = false;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
 const loadSetBtn = document.getElementById("loadSetBtn");
@@ -27,6 +30,14 @@ const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
 init().then(() => {
   // Handle RuleSet dropdown changes
   ruleSetSelect.addEventListener("change", () => {
+
+    if (unsavedChanges) {
+        if (!confirm("You have out of sync rules. Discard changes and switch ruleset?")) {
+          ruleSetSelect.value = currentRuleSetName;
+          return;
+        }
+      }
+
     currentRuleSetName = ruleSetSelect.value;
     rules = [];
     selectedRuleIndex = -1;
@@ -89,8 +100,18 @@ async function init() {
 
   await loadRuleSets();
 
-  loadSetBtn.addEventListener("click", loadSelectedRuleSet);
-  updateAllBtn.addEventListener("click", updateCurrentRuleSet);
+  //loadSetBtn.addEventListener("click", loadSelectedRuleSet);
+
+  loadSetBtn.addEventListener("click", () => {
+    updateButtonClicked = false;
+    loadSelectedRuleSet();
+    });
+
+  // updateAllBtn.addEventListener("click", updateCurrentRuleSet);
+  updateAllBtn.addEventListener("click", () => {
+    updateButtonClicked = true;
+    updateCurrentRuleSet();
+    });
   persistBtn.addEventListener("click", persistCurrentRuleset);
 }
 
@@ -143,6 +164,9 @@ async function loadSelectedRuleSet() {
   // Optional UI hint
   const badge = document.getElementById("activeRuleSet");
   if (badge) badge.textContent = name;
+
+  unsavedChanges = false;
+  //??
 }
 
 async function duplicateSelectedRule(){
@@ -170,25 +194,11 @@ async function duplicateSelectedRule(){
 
   // Automatically select the cloned rule
   selectRule(selectedRuleIndex + 1);
+
+  unsavedChanges = true;
   }
 
-// Render list of rules
-function renderRuleListOld() {
-  ruleList.innerHTML = "";
-  rules.forEach((r, i) => {
-    const label =
-      r.then?.with?.message ||
-      `Rule ${i + 1}` +
-        (r.priority ? ` (Priority ${r.priority})` : "");
 
-    const div = document.createElement("div");
-    div.textContent = label;
-    div.className = "rule-item list-group-item";
-    if (i === selectedRuleIndex) div.classList.add("active");
-    div.onclick = () => selectRule(i);
-    ruleList.appendChild(div);
-  });
-}
 
 function renderRuleList() {
   ruleList.innerHTML = "";
@@ -268,6 +278,7 @@ function selectRule(index) {
 
 // Save all rules back
 async function updateCurrentRuleSet() {
+
   if (!currentRuleSetName) return alert("Select a RuleSet first");
 
   // capture current edited rule
@@ -276,9 +287,9 @@ async function updateCurrentRuleSet() {
       when: whenEditor.getValue(),
       then: thenEditor.getValue(),
       priority: metaEditor.getValue().priority ?? 0,
-    };
+      };
     rules[selectedRuleIndex] = updatedRule;
-  }
+    }
 
   showLoader(true, `Clearing ${currentRuleSetName}...`);
 
@@ -297,7 +308,9 @@ async function updateCurrentRuleSet() {
       if (!res.ok) console.warn(`Rule ${i + 1} failed`);
       showLoader(true, `Updating rule ${i + 1}/${rules.length}`);
       await new Promise((r) => setTimeout(r, 300));
-    }
+
+      updateButtonClicked = true;
+      }
 
     showLoader(false);
     alert("✅ All rules synchronized!");
@@ -308,6 +321,8 @@ async function updateCurrentRuleSet() {
     showLoader(false);
     alert("❌ Save failed");
   }
+
+  unsavedChanges = false;
 }
 
 
@@ -373,7 +388,7 @@ async function pasteCopiedRuleToCurrentSet() {
   if (!copiedRule) {
     alert("No rule copied yet.");
     return;
-  }
+    }
 
   if(selectedRuleIndex < 0){
     alert("Choose destination first");
@@ -386,7 +401,7 @@ async function pasteCopiedRuleToCurrentSet() {
   // Label it as pasted for clarity
   if (pastedRule.then?.with?.message) {
     pastedRule.then.with.message += " (copy)";
-  }
+    }
 
   // Insert at the end or right after currently selected one
   const insertIndex = selectedRuleIndex != null ? selectedRuleIndex + 1 : rules.length;
@@ -395,6 +410,9 @@ async function pasteCopiedRuleToCurrentSet() {
   // Refresh and select new rule
   renderRuleList();
   selectRule(insertIndex);
+
+  unsavedChanges = true;
+
 }
 
 
@@ -402,7 +420,7 @@ async function deleteSelectedRule() {
   if (selectedRuleIndex == null || selectedRuleIndex < 0) {
     alert("Select a rule to delete first.");
     return;
-  }
+    }
 
   const ruleToDelete = rules[selectedRuleIndex];
   const confirmed = confirm("Delete this rule ?\n\"" +  ruleToDelete.then?.with?.message + "\"");
@@ -418,13 +436,17 @@ async function deleteSelectedRule() {
   if (rules.length > 0) {
     const newIndex = Math.min(selectedRuleIndex, rules.length - 1);
     selectRule(newIndex);
-  } else {
+    } 
+  else {
     selectedRuleIndex = null;
     // Optionally clear editor content
     if (window.editorWhen) editorWhen.destroy();
     if (window.editorThen) editorThen.destroy();
     if (window.editorMeta) editorMeta.destroy();
-  }
+    }
+
+  unsavedChanges = true;
+
 }
 
 
@@ -496,8 +518,14 @@ async  function createEmptyRuleset() {    //With a default rule !!!
   async  function persistCurrentRuleset() {    //With a default rule !!!
 
     console.log("persisting.....")
-    //const nameOfRuleset = newRuleSetNameInput.value.trim();
+
     if (!currentRuleSetName) return alert("Select a RuleSet first");
+
+    if (!updateButtonClicked) {
+      if (!confirm("You may have out of sync rules. Proceed Anyway ?")) {
+        return;
+        }
+      }
 
     try {
 

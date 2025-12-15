@@ -190,7 +190,7 @@ export class RuleSetService implements OnModuleInit {
   async persistBusinessLogic(setName: string) {
 
     if(this.sampleFiles.includes(setName)){
-      throw new BadRequestException(`Cannot persist sample ruleset "${setName}". Create a new ruleset instead.`);
+      throw new BadRequestException(`Overwiting sample RuleSet "${setName}". This is not permitted. Create a new ruleset instead and copy individual rules.`);
       }
 
     const rules = this.getFriendlyRules(setName);
