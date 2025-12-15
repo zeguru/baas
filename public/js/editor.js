@@ -74,7 +74,7 @@ async function init() {
     object_layout: "normal", //or 'grid'
   };
 
-  const editorContainer = document.getElementById('editor_holder'); 
+  //const editorContainer = document.getElementById('editor_holder'); 
 
   // Create sub-editors
   whenEditor = new JSONEditor(document.getElementById("whenTab"), {
@@ -97,13 +97,29 @@ async function init() {
   });
 
 
-  editorContainer.addEventListener('input', () => {
-        console.log('Input detected!');
-        unsavedChanges = true;
-        },
-      true // 👈 capture phase
-    );
 
+  // editorContainer.addEventListener('input', () => {
+  //       console.log('Input detected!');
+  //       unsavedChanges = true;
+  //       },
+  //     true // 👈 capture phase
+  //   );
+
+  const tabIds = ['whenTab', 'thenTab', 'metaTab'];
+  // Function to mark dirty
+  const markDirty = () => {
+    unsavedChanges = true;
+    console.log('User changed JSON!');
+    };
+
+  // Attach input listener to all relevant tabs
+  tabIds.forEach(id => {
+    const tabEl = document.getElementById(id);
+    if (!tabEl) return; // skip missing elements
+
+    // Use capture phase to catch all input events inside this tab
+    tabEl.addEventListener('input', markDirty, true);
+  });
 
   await loadRuleSets();
 
