@@ -137,6 +137,7 @@ async function init() {
 function updateActionButtons(flag) {
   persistBtn.disabled = flag;
   updateAllBtn.disabled = flag;
+  rulesetActionsBtn.disabled = flag;
   }
 
 // Load available rule sets
@@ -616,3 +617,39 @@ function buildEmptyFactsObject(facts) {
     return obj;
   }, {});
 }
+
+const readMeDoc = document.getElementById('viewReadmeAction')
+
+const readmeModalEl = document.getElementById('rulesetReadmeModal');
+const readmeModal = new bootstrap.Modal(readmeModalEl);
+const readmeContent = document.getElementById('rulesetReadmeContent');
+const readmeTitle = document.getElementById('rulesetReadmeModalTitle');
+
+readMeDoc.addEventListener('click', async () => {
+
+    console.log("ReadMe clicked");
+
+    const id = ruleSetSelect.value;
+    if (!id) return;
+
+      // Dynamically update modal title
+    const selectedName = ruleSetSelect.options[ruleSetSelect.selectedIndex].text;
+    readmeTitle.textContent = `${selectedName} README`;
+
+    readmeContent.innerHTML = '<em>Loading documentation…</em>';
+    readmeModal.show();
+
+    try {
+      //const res = await fetch(`${API_BASE}/${currentRuleSetName}/readme`);
+      const res = await fetch(`${API_BASE}/${encodeURIComponent(currentRuleSetName)}/readme`);
+
+      const { read_me } = await res.json();
+
+      readmeContent.innerHTML = marked.parse(
+        read_me || '_No documentation available._'
+      );
+    } catch {
+      readmeContent.innerHTML =
+        '<span class="text-danger">Failed to load README</span>';
+    }
+});

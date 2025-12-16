@@ -19,6 +19,9 @@ export class BusinessLogic {
     @Column({ default: true })
     is_enabled: boolean; 
 
+    @Column({ type: 'text', nullable: true })
+    read_me: string;
+
     @CreateDateColumn({ type: 'datetime' })
     created_at: Date;
 

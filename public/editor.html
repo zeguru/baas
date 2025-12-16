@@ -189,6 +189,14 @@
     text-decoration: underline;
   }
 
+#rulesetActionsBtn {
+  text-decoration: none;
+  color: #6c757d;
+}
+
+#rulesetActionsBtn:hover {
+  color: #212529;
+}
 
   </style>
 </head>
@@ -200,6 +208,41 @@
       <!-- LEFT SIDE -->
       <div class="d-flex align-items-center gap-2">
           <select id="ruleSetSelect" class="form-select w-auto"></select>
+          
+          <!-- Three-dot actions -->
+        <div class="dropdown">
+          <button
+            class="btn btn-link p-0"
+            id="rulesetActionsBtn"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            disabled
+            title="User Guides and more"
+            >
+            <span style="font-size: 1.8rem; line-height: 1;">⋮</span>
+          </button>
+
+          <ul class="dropdown-menu">
+            <li>
+              <button class="dropdown-item" id="viewReadmeAction">
+                View README
+              </button>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <button class="dropdown-item" id="cloneRulesetAction" disabled>
+                Clone ruleset
+              </button>
+            </li>
+            <li>
+              <button class="dropdown-item text-warning" id="disableRulesetAction" disabled>
+                Disable ruleset
+              </button>
+            </li>
+
+          </ul>
+        </div>
+
           <button id="loadSetBtn" class="btn btn-outline-primary btn-sm" title="Load definition from db">Load Rules</button>
           <!-- <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">Duplicate</button>
           <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button> -->
@@ -208,7 +251,9 @@
           <button id="updateAllBtn" class="btn btn-outline-success btn-sm" title="Sync local changes" disabled="true">Update</button>
           <button id="persistBtn" class="btn btn-primary btn-sm" title="Save to db" disabled="true">Persist</button>
 
-        </div>
+          
+
+      </div>
 
       <!-- RIGHT SIDE -->
       <div class="d-flex align-items-center gap-2">
@@ -285,10 +330,32 @@
 </div>
 
 
+<!-- Ruleset README Modal -->
+<div class="modal fade" id="rulesetReadmeModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="rulesetReadmeModalTitle">Ruleset README</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div id="rulesetReadmeContent">
+          <em>Select a ruleset to view documentation.</em>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
   <div id="loaderOverlay">
     <div class="spinner-border text-primary" role="status"></div>
     <div id="loaderMsg" style="margin-top: 10px; font-size: 0.9rem;"></div>
   </div>
+
 
   <footer class="app-footer">
     <div class="d-flex justify-content-between align-items-center px-3 py-2">
@@ -307,7 +374,7 @@
     </div>
   </footer>
 
-
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="./js/editor.js"></script>
   <script src="./js/tryit.js"></script>
 

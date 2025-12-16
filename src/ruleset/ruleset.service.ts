@@ -223,6 +223,37 @@ export class RuleSetService implements OnModuleInit {
     return logic;
     }
 
+    /**
+   * Get the readme content for a ruleset.
+   * - If it's a sample, read from file
+   * - Otherwise, pull from DB
+   */
+  async getReadme(rulesetName: string): Promise<string> {
+    
+    // Sample rulesets
+    if (this.sampleFiles.includes(rulesetName)) {
+      //const filename = this.normalizeName(rulesetName) + '.md';
+      const filePath = path.join(__dirname, '../../readme', `${rulesetName}.md`);
+
+      try {
+          const markdown = await fs.readFile(filePath, 'utf8');
+          return markdown;
+          } 
+        catch (err) {
+          throw new NotFoundException(`README file for sample "${rulesetName}" not found`);
+          }
+
+      }
+
+    // DB rulesets
+    const logic = await this.logicRepository.findOneBy({ name_of_ruleset: rulesetName });
+    if (!logic) {
+      throw new NotFoundException(`No saved logic for "${rulesetName}" found`);
+      }
+
+    return logic.read_me || '';
+  }
+
 
   async evaluate(setName: string, facts: Record<string, any>) {
 
