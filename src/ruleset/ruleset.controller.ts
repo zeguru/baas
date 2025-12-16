@@ -188,13 +188,24 @@ export class RuleSetController {
     return this.ruleSetsService.addFriendlyRule(setName, rule);
     }
 
+  @Get(':nameOfRuleSet/readme')
+  @ApiOperation({
+    summary: 'Get ReadMe',
+    description: 'Show markdown documentation for the `ruleset` ',
+    })
+  async getReadMe(@Param('nameOfRuleSet')setName: string) {
+    //return this.ruleSetsService.getReadme(setName);
+    const readme = await this.ruleSetsService.getReadme(setName);
+    return { read_me: readme }; 
+    }
+  
   //@ApiExcludeEndpoint() 
   @Get(':nameOfRuleSet/db/get')
   @ApiOperation({
     summary: 'Get saved logic',
     description: 'Show all saved rules in the `ruleset` ',
     })
-  async get(@Param('nameOfRuleSet')setName: string) {
+  async getBusinessLogic(@Param('nameOfRuleSet')setName: string) {
     return this.ruleSetsService.getBusinessLogic(setName);
     }
 
