@@ -17,5 +17,3 @@ This is a realistic example.
 ## Concepts
 - Intermediate / derived facts are those that were not supplied by user input
 - Base facts are those supplied by user input
-- Available **Operators** for use at **When** tab:
-  - `always`, `isDefined`,`lessThan`, `lessThanInclusive`, `greaterThan`, `greaterThanInclusive`, `equal`, `equalIgnoreCase`,`in`, `inIgnoreCase`, `notIn`, `notInIgnoreCase`
