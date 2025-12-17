@@ -11,22 +11,20 @@ export class CalculatorController {
 
     @Post(':nameOfRuleSet/compute')
     @ApiBody({
-        schema: {
+      schema: {
           type: 'object',
           example: { amount: 5500, category: 'VIP' },
           additionalProperties: { type: 'any' },
           },
         })
-
     @ApiOperation({
         summary: 'Run the business logic',
         description: 'Evaluate (compute) the business logic using the given set of facts',
         })
     async compute(
       @Param('nameOfRuleSet') setName: string,
-      @Body() facts: Record<string, any>,
-        ) {
-          return this.calculatorService.compute(setName, facts);
+      @Body() facts: Record<string, any>){
+        return this.calculatorService.compute(setName, facts);
         }
 
 }

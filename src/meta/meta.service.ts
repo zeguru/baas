@@ -10,7 +10,7 @@ export class MetaService {
     const pkgPath = path.resolve(process.cwd(), 'package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     this.version = pkg.version;
-  }
+    }
 
   getVersion() {
     return this.version;

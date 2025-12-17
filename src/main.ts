@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RuleSetModule } from './ruleset/ruleset.module';
 import { CalculatorModule } from './calculator/calculator.module';
-import * as basicAuth from 'express-basic-auth';
+// import * as basicAuth from 'express-basic-auth';
 import * as express from 'express';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -11,12 +11,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
   const context = 'baas'; 
 
   app.use(`/${context}/editor`, express.static(join(__dirname, '..', 'public')));
   app.use(`/${context}/welcome`, express.static(join(__dirname, '..', 'public')));
-
 
   const config = new DocumentBuilder()
     .setTitle('BaaS API')
