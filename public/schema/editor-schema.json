@@ -21,7 +21,11 @@
         "type": "object",
         "properties": {
           "fact": { "type": "string", "title": "Fact" },
-          "operator": { "type": "string", "title": "Operator" },
+          "operator": {
+             "type": "string", 
+             "title": "Operator",
+             "enum": ["always", "isDefined", "lessThan", "lessThanInclusive", "greaterThan", "greaterThanInclusive", "equal", "equalIgnoreCase","in", "inIgnoreCase", "notIn", "notInIgnoreCase"]
+            },
           "value": {"type": "string","title": "Value"}
         },
         "required": ["fact", "operator", "value"]
