@@ -38,7 +38,6 @@ export class SessionManager {
     if (!session) return undefined;
 
     if (session.expiresAt < Date.now()) {
-      //this.sessions.delete(sessionId);
       this.delete(sessionId);
       return undefined;
     }

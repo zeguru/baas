@@ -54,23 +54,8 @@ export class WithDto {
   @IsOptional()
   value?: any;
 
-  // @ApiPropertyOptional({
-  //   description: 'Tabular data. Mapping of codes, ranges, or nested category-range tables',
-  //   example: {
-  //     "VIP": { "0-40": 5500, "41-999": 8900 },
-  //     "BASIC": { "0-40": 6727, "41-999": 11643 }
-  //     }
-  //   })
   @IsOptional()
   table?: TableUnion;
-
-  // @ApiPropertyOptional({example: '1',description: 'Default value if no match is found. Usefull when working with `lookup` tables',})
-  // @IsOptional()
-  // default?: any;
-
-  // @ApiPropertyOptional({type: [String], example: ['subTotal', 'vat'], description: 'Facts or variables to be referenced when using `mode=expression`',})
-  // @IsOptional()
-  // context?: string[];
 
   @ApiProperty({description:'Describes the rule, step', example: 'Awesome, give 10% discount to PREMIUM and VIP.'})
   @IsString()

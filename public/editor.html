@@ -17,28 +17,27 @@
       font-family: system-ui, sans-serif;
       background: #fafafa;
       margin: 1rem;
-    }
+      }
+
     h2 { font-size: 1.4rem; margin-bottom: 1rem; }
 
     #layout {
       display: flex;
       gap: 0.75rem;
       align-items: flex-start;
-    }
-
+      }
 
     /* Target the container flex alignment */
     .rule-item.d-flex {
       align-items: flex-end !important; /* push buttons to bottom */
-    }
+      }
 
     /* Optional: ensure label wraps naturally */
     .rule-item span {
       display: inline-block;
       word-break: break-word;
       margin-bottom: 0.25rem; 
-    }
-
+      }
 
     .rule-buttons button {
       margin-left: 0.25rem;
@@ -49,7 +48,6 @@
       color: #212529 !important;           
       }
 
-
     #ruleList {
       width: 26%;
       max-height: 82vh;
@@ -58,7 +56,7 @@
       border-radius: 6px;
       box-shadow: 0 0 4px rgba(0,0,0,0.05);
       padding: 0.5rem;
-    }
+      }
 
     #editor_holder {
       flex: 1;
@@ -69,7 +67,7 @@
       border-radius: 6px;
       box-shadow: 0 0 5px rgba(0,0,0,0.08);
       overflow-y: auto;
-    }
+      }
 
     .rule-item {
       cursor: pointer;
@@ -77,57 +75,55 @@
       border-radius: 4px;
       margin-bottom: 2px;
       font-size: 0.9rem;
-    }
+      }
 
     .rule-item:hover {
       background: #f4f8ff;
-    }
+      }
 
     .rule-item.active {
       background: #007bff;
       color: white;
       font-weight: 500;
-    }
+      }
 
     /* Make JSON Editor more compact */
     .je-object__container {
       padding-left: 0.4rem !important;
-    }
+      }
 
     .form-control, select, textarea {
       padding: 0.25rem 0.5rem !important;
       font-size: 0.85rem !important;
-    }
+      }
 
     .je-indented-panel {
       margin-bottom: 0.4rem !important;
       padding: 0.4rem !important;
       border-radius: 4px !important;
-    }
+      }
 
     label.control-label {
       font-weight: 500;
       font-size: 0.85rem;
       margin-bottom: 2px;
-    }
+      }
 
     .je-header {
       font-size: 0.9rem;
       background: #f8f9fa;
       border-radius: 4px;
       padding: 0.3rem 0.5rem;
-    }
+      }
 
-    /* Shrink collapsible arrows and spacing */
     .json-editor-btn-collapse {
       transform: scale(0.8);
-    }
+      }
 
     .json-editor-btn-collapse + span {
       font-size: 0.85rem;
-    }
+      }
 
-    /* Loader (unchanged) */
     #loaderOverlay {
       position: fixed;
       top: 0;
@@ -140,26 +136,25 @@
       justify-content: center;
       z-index: 9999;
       flex-direction: column;
-    }
+      }
 
     #tryTab textarea {
       font-size: 0.85rem;
       line-height: 1.4;
-    }
+      }
 
     #tryOutput {
       background: #f8f9fa;
       font-family: monospace;
       white-space: pre-wrap;
-    }
+      }
 
     #ruleSetSelect {
       width: 200px !important;
       }
 
-
     /* Make Try It float right and visually distinct */
-  .try-it-tab {
+    .try-it-tab {
       background-color: #0d6efd;  /* Bootstrap primary blue */
       color: white;
       font-weight: 500;
@@ -167,36 +162,36 @@
       border: 1px solid #0d6efd;
       margin-left: 0.5rem;
       transition: background 0.2s;
-  }
+      }
 
-  .try-it-tab:hover {
+    .try-it-tab:hover {
       background-color: #0056b3;
       border-color: #0056b3;
-  }
+      }
 
-  .try-it-tab.active {
+    .try-it-tab.active {
       background-color: #0b5ed7;
       border-color: #0b5ed7;
-  }
+      }
 
-  .footer-link {
-    color: inherit;
-    text-decoration: none;
-    font-weight: 500;
-  }
+    .footer-link {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 500;
+      }
 
-  .footer-link:hover {
-    text-decoration: underline;
-  }
+    .footer-link:hover {
+      text-decoration: underline;
+      }
 
-#rulesetActionsBtn {
-  text-decoration: none;
-  color: #6c757d;
-}
+    #rulesetActionsBtn {
+      text-decoration: none;
+      color: #6c757d;
+      }
 
-#rulesetActionsBtn:hover {
-  color: #212529;
-}
+    #rulesetActionsBtn:hover {
+      color: #212529;
+      }
 
   </style>
 </head>
@@ -230,132 +225,119 @@
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <button class="dropdown-item" id="cloneRulesetAction" disabled>
-                Clone ruleset
-              </button>
-            </li>
-            <li>
               <button class="dropdown-item text-warning" id="disableRulesetAction" disabled>
                 Disable ruleset
               </button>
             </li>
-
+            <li>
+              <button class="dropdown-item text-danger" id="deleteRulesetAction" disabled>
+                Delete ruleset
+              </button>
+            </li>
           </ul>
         </div>
-
           <button id="loadSetBtn" class="btn btn-outline-primary btn-sm" title="Load definition from db">Load Rules</button>
-          <!-- <button id="duplicateRuleBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Duplicate the selected rule">Duplicate</button>
-          <button id="copyBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Copy selected rule">Copy Rule</button> -->
-          <!-- <button id="pasteBtn" class="btn btn-outline-secondary btn-sm ms-1" title="Paste next to the selected rule">Paste Rule</button> -->
-          <!-- <button id="deleteBtn" class="btn btn-outline-danger btn-sm ms-1" title="Delete selected rule">Delete Rule</button> -->
           <button id="updateAllBtn" class="btn btn-outline-success btn-sm" title="Sync local changes" disabled="true">Update</button>
           <button id="persistBtn" class="btn btn-primary btn-sm" title="Save to db" disabled="true">Persist</button>
-
-          
-
       </div>
 
       <!-- RIGHT SIDE -->
       <div class="d-flex align-items-center gap-2">
         <input id="newRuleSetName" class="form-control w-auto" placeholder="new-ruleset-name" />
-        <button id="createRuleSetBtn" class="btn btn-warning btn-sm">New RuleSet</button>
+        <button id="createRuleSetBtn" class="btn btn-outline-primary btn-sm">New RuleSet</button>
       </div>
 
     </div>
 
-<div id="layout">
-  <div id="ruleList" class="list-group"></div>
+  <div id="layout">
+    <div id="ruleList" class="list-group"></div>
 
-  <div id="editor_holder">
-    
+    <div id="editor_holder">
+      
       <ul class="nav nav-tabs d-flex justify-content-between" id="ruleTabs" role="tablist">
 
-        <div class="d-flex">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="when-tab" data-bs-toggle="tab" data-bs-target="#whenTab" type="button" role="tab">When</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
-          </li>
-        </div>
-
-        <div class="d-flex">
-          <li class="nav-item ms-auto" role="presentation">
-            <button class="nav-link try-it-tab" id="try-tab" data-bs-toggle="tab" data-bs-target="#tryTab" type="button" role="tab">
-              ▶ Try Ruleset
-            </button>
-          </li>
-        </div>
-    </ul>
-
-    <div class="tab-content p-2 border border-top-0 rounded-bottom" id="ruleTabsContent" style="background:white; min-height:70vh;">
-      <div class="tab-pane fade show active" id="whenTab" role="tabpanel"></div>
-      <div class="tab-pane fade" id="thenTab" role="tabpanel"></div>
-      <div class="tab-pane fade" id="metaTab" role="tabpanel"></div>
-
-      <div class="tab-pane fade" id="tryTab" role="tabpanel">
-      <div class="row g-2">
-          <div class="col-md-6">
-            
-            <label class="form-label small text-muted d-block">
-              POST :
-              /baas/calculator/<span id="activeRuleSet" class="badge bg-info text-dark">-</span>/compute
-            </label>
-
-            <label class="form-label fw-bold small text-muted">Input Facts (JSON)</label>
-            <textarea id="tryInput" class="form-control font-monospace" rows="16" spellcheck="false">
-              {
-               
-              }
-            </textarea>
-                <button id="runTryBtn" class="btn btn-primary btn-sm mt-2">Run Test</button>
-                <button id="resetTryBtn" class="btn btn-secondary btn-sm mt-2 ms-1">Reset</button>
-              </div>
-
-              <div class="col-md-6">
-                  <label class="form-label fw-bold small text-muted d-block">
-                    ...
-                  </label>
-
-                <label class="form-label fw-bold small text-muted">Response</label>
-                <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 520px; overflow-y:auto; font-size:0.85rem;"></pre>
-              </div>
-            </div>
+          <div class="d-flex">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="when-tab" data-bs-toggle="tab" data-bs-target="#whenTab" type="button" role="tab">When</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
+            </li>
           </div>
-      </div>
-  </div>
-</div>
 
+          <div class="d-flex">
+            <li class="nav-item ms-auto" role="presentation">
+              <button class="nav-link try-it-tab" id="try-tab" data-bs-toggle="tab" data-bs-target="#tryTab" type="button" role="tab">
+                ▶ Try Ruleset
+              </button>
+            </li>
+          </div>
+      </ul>
 
-<!-- Ruleset README Modal -->
-<div class="modal fade" id="rulesetReadmeModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
+      <div class="tab-content p-2 border border-top-0 rounded-bottom" id="ruleTabsContent" style="background:white; min-height:70vh;">
+        <div class="tab-pane fade show active" id="whenTab" role="tabpanel"></div>
+        <div class="tab-pane fade" id="thenTab" role="tabpanel"></div>
+        <div class="tab-pane fade" id="metaTab" role="tabpanel"></div>
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="rulesetReadmeModalTitle">Ruleset README</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+        <div class="tab-pane fade" id="tryTab" role="tabpanel">
+          <div class="row g-2">
+            <div class="col-md-6">
+              
+              <label class="form-label small text-muted d-block">
+                POST :
+                /baas/calculator/<span id="activeRuleSet" class="badge bg-info text-dark">-</span>/compute
+              </label>
 
-      <div class="modal-body">
-        <div id="rulesetReadmeContent">
-          <em>Select a ruleset to view documentation.</em>
+              <label class="form-label fw-bold small text-muted">Input Facts (JSON)</label>
+              <textarea id="tryInput" class="form-control font-monospace" rows="16" spellcheck="false">
+                {}
+              </textarea>
+              <button id="runTryBtn" class="btn btn-primary btn-sm mt-2">Run Test</button>
+              <button id="resetTryBtn" class="btn btn-secondary btn-sm mt-2 ms-1">Reset</button>
+            </div>
+
+          <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted d-block">
+                ...
+              </label>
+
+              <label class="form-label fw-bold small text-muted">Response</label>
+              <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 520px; overflow-y:auto; font-size:0.85rem;"></pre>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
+
+  <!-- Ruleset README Modal -->
+  <div class="modal fade" id="rulesetReadmeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="rulesetReadmeModalTitle">Ruleset README</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div id="rulesetReadmeContent">
+            <em>Select a RuleSet to view documentation.</em>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <div id="loaderOverlay">
     <div class="spinner-border text-primary" role="status"></div>
     <div id="loaderMsg" style="margin-top: 10px; font-size: 0.9rem;"></div>
   </div>
-
 
   <footer class="app-footer">
     <div class="d-flex justify-content-between align-items-center px-3 py-2">
@@ -379,14 +361,14 @@
   <script src="./js/tryit.js"></script>
 
   <script>
-  fetch('/baas/meta/version')
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('appVersion').textContent = `v${d.version}`;
-    })
-    .catch(() => {
-      document.getElementById('appVersion').textContent = 'unknown';
-    });
+    fetch('/baas/meta/version')
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById('appVersion').textContent = `v${d.version}`;
+      })
+      .catch(() => {
+        document.getElementById('appVersion').textContent = 'unknown';
+      });
 </script>
 
 </body>

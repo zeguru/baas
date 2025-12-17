@@ -3,7 +3,7 @@ const API_BASE = "/baas/ruleset";
 let editor;
 let schema;
 let currentRuleSetName = "";
-let rules = []; // full array from backend
+let rules = [];
 let selectedRuleIndex = -1;
 
 let whenEditor, thenEditor, metaEditor;
@@ -19,36 +19,11 @@ const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
 
-// After init() completes, attach the listener
-init().then(() => {
+const sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
 
-  ruleSetSelect.addEventListener("change", () => {
-
-    if (unsavedChanges) {
-        if (!confirm("You have out of sync rules. Discard updates and switch ruleset?")) {
-          ruleSetSelect.value = currentRuleSetName;
-          return;
-        }
-      }
-
-    updateActionButtons(true);
-
-    currentRuleSetName = ruleSetSelect.value;
-    rules = [];
-    selectedRuleIndex = -1;
-    ruleList.innerHTML = "";
-
-    // Clear editors
-    whenEditor.setValue({});
-    thenEditor.setValue({});
-    metaEditor.setValue({ priority: 0 });
-
-    // Optional: give feedback
-    //console.log(`RuleSet changed to: ${currentRuleSetName || "(none)"}`);
-  });
-});
-
+//INIT
 async function init() {
+
   // Load schema
   const schemaRes = await fetch("./schema/editor-schema.json");
   schema = await schemaRes.json();
@@ -61,20 +36,20 @@ async function init() {
     title: "Metadata",
     properties: {
       priority: schema.properties.priority,
-    }
-  };
+      }
+    };
 
   // Base JSON Editor options
   const opts = {
     disable_edit_json: false,
     disable_properties: false,
     disable_collapse: true,
+    disable_array_reorder:true,
     show_errors: "interaction",
     theme: "bootstrap5",
     object_layout: "normal", //or 'grid'
-  };
+    };
 
-  //const editorContainer = document.getElementById('editor_holder'); 
 
   // Create sub-editors
   whenEditor = new JSONEditor(document.getElementById("whenTab"), {
@@ -88,144 +63,117 @@ async function init() {
     ...opts,
     schema: thenSchema,
     startval: {},
-  });
+    });
 
   metaEditor = new JSONEditor(document.getElementById("metaTab"), {
     ...opts,
     schema: metaSchema,
     startval: {},
-  });
-
-
-
-  // editorContainer.addEventListener('input', () => {
-  //       console.log('Input detected!');
-  //       unsavedChanges = true;
-  //       },
-  //     true // 👈 capture phase
-  //   );
+    });
 
   const tabIds = ['whenTab', 'thenTab', 'metaTab'];
-  // Function to mark dirty
+
+  // Function to mark page dirty
   const markDirty = () => {
     unsavedChanges = true;
     console.log('User changed JSON!');
     };
 
-  // Attach input listener to all relevant tabs
+  // Attach input listener to all relevant tabs (excludes try-it)
   tabIds.forEach(id => {
     const tabEl = document.getElementById(id);
     if (!tabEl) return; // skip missing elements
-
-    // Use capture phase to catch all input events inside this tab
     tabEl.addEventListener('input', markDirty, true);
-  });
+    });
 
   await loadRuleSets();
 
-  //loadSetBtn.addEventListener("click", loadSelectedRuleSet);
   loadSetBtn.addEventListener("click", (e) => {
       loadSelectedRuleSet();
-      updateActionButtons(false);
+      disableActionButtons(false);
       unsavedChanges = false;
       });
   updateAllBtn.addEventListener("click", updateCurrentRuleSet);
   persistBtn.addEventListener("click", persistCurrentRuleset);
   }
 
+// AFTER INIT. After init() completes, attach change listener on dropdown
+init().then(() => {
 
-function updateActionButtons(flag) {
+  ruleSetSelect.addEventListener("change", () => {
+
+  if (unsavedChanges) {
+    if (!confirm("You have out-of-sync rules. Discard updates and switch ruleset?")) {
+      ruleSetSelect.value = currentRuleSetName;
+      return;
+      }
+    }
+
+  disableActionButtons(true);
+
+  currentRuleSetName = ruleSetSelect.value;
+  rules = [];
+  selectedRuleIndex = -1;
+  ruleList.innerHTML = "";
+
+  whenEditor.setValue({});
+  thenEditor.setValue({});
+  metaEditor.setValue({ priority: 0 });
+
+  });
+});
+
+
+//UTILITY FUNCTIONS 
+function disableActionButtons(flag) {
   persistBtn.disabled = flag;
   updateAllBtn.disabled = flag;
   rulesetActionsBtn.disabled = flag;
   }
 
-// Load available rule sets
-async function loadRuleSets() {
-  const res = await fetch(API_BASE);
-  const names = await res.json();
-  ruleSetSelect.innerHTML = '<option value="">-- Select RuleSet --</option>';
-  names.forEach((name) => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    ruleSetSelect.appendChild(opt);
-  });
-}
-
-
-async function loadSelectedRuleSet() {
-  const name = ruleSetSelect.value;
-  if (!name) return alert("Select a RuleSet first");
-  currentRuleSetName = name;
-
-  const res = await fetch(`${API_BASE}/${name}`);
-  rules = await res.json();
-
+// Select rule for editing
+function selectRule(index) {
+  selectedRuleIndex = index;
   renderRuleList();
 
-  const facts = extractFactsFromRules(rules);
-  const tryItObject = buildEmptyFactsObject(facts);
-
-  const tryInput = document.getElementById("tryInput");
-  if (tryInput) {
-    tryInput.value = JSON.stringify(tryItObject, null, 2);
+  const rule = rules[index] || {};
+  whenEditor.setValue(rule.when || {});
+  thenEditor.setValue(rule.then || {});
+  metaEditor.setValue({ priority: rule.priority ?? 0 });
   }
-
-  // Optional UI hint
-  // const badge = document.getElementById("activeRuleSet");
-  // if (badge) badge.textContent = name;
-
-  }
-
-async function duplicateSelectedRule(){
-  if (selectedRuleIndex == null || selectedRuleIndex < 0) {
-    alert("Select a rule to clone first.");
-    return;
-    }
-
-  // Deep clone the selected rule
-  const clonedRule = structuredClone(rules[selectedRuleIndex]);
-
-  // Optionally tweak something to avoid confusion
-  if (clonedRule.then?.with?.message) {
-    clonedRule.then.with.message += " (clone)";
-    }
-  if (clonedRule.priority !== undefined) {
-    clonedRule.priority = clonedRule.priority + 1;
-    }
-
-  // Insert the clone right after the original
-  rules.splice(selectedRuleIndex + 1, 0, clonedRule);
-
-  // Update UI
-  renderRuleList();
-
-  // Automatically select the cloned rule
-  selectRule(selectedRuleIndex + 1);
-
-  unsavedChanges = true;
-  }
-
-
 
 function renderRuleList() {
   ruleList.innerHTML = "";
 
   rules.forEach((r, i) => {
-    const label =
-      r.then?.with?.message ||
-      `Rule ${i + 1}` +
-        (r.priority ? ` (Priority ${r.priority})` : "");
 
     // Main rule item container
     const div = document.createElement("div");
     div.className = "rule-item list-group-item d-flex justify-content-between align-items-center";
     div.onclick = () => selectRule(i);
 
-    // Left: label
-    const labelSpan = document.createElement("span");
-    labelSpan.textContent = label;
+    // Left: number + message container
+    const labelSpan = document.createElement("div");
+    labelSpan.style.display = "flex";
+    labelSpan.style.alignItems = "flex-start";
+    labelSpan.style.gap = "0.25rem"; // space between number and message
+
+    // Number
+    const numberSpan = document.createElement("span");
+    numberSpan.textContent = `${i + 1}.`;
+    numberSpan.style.color = "#aaa";          // light gray
+    numberSpan.style.fontStyle = "italic";
+    numberSpan.style.fontWeight = "100";     // lighter weight
+    numberSpan.style.flex = "0 0 auto"; // fix width, prevents wrapping
+
+    // Message
+    const msgSpan = document.createElement("span");
+    msgSpan.style.flex = "1 1 auto"; // takes remaining width
+    msgSpan.style.whiteSpace = "pre-wrap"; // wraps naturally
+    msgSpan.textContent = r.then?.with?.message || `Rule ${i + 1}`;
+
+    labelSpan.appendChild(numberSpan);
+    labelSpan.appendChild(msgSpan);
     div.appendChild(labelSpan);
 
     // Right: buttons (only show for selected)
@@ -273,19 +221,61 @@ function renderRuleList() {
 }
 
 
-// Select rule for editing
-function selectRule(index) {
-  selectedRuleIndex = index;
+async function loadRuleSets() {
+  const res = await fetch(API_BASE);
+  const names = await res.json();
+  ruleSetSelect.innerHTML = '<option value="">-- Select RuleSet --</option>';
+  names.forEach((name) => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    ruleSetSelect.appendChild(opt);
+  });
+}
+
+//RULESET ACTIONS
+async function loadSelectedRuleSet() {
+  const name = ruleSetSelect.value;
+  if (!name) return alert("Select a RuleSet first");
+  currentRuleSetName = name;
+
+  const res = await fetch(`${API_BASE}/${name}`);
+  rules = await res.json();
+
   renderRuleList();
 
-  const rule = rules[index] || {};
-  whenEditor.setValue(rule.when || {});
-  thenEditor.setValue(rule.then || {});
-  metaEditor.setValue({ priority: rule.priority ?? 0 });
+  const facts = extractFactsFromRules(rules);
+  const tryItObject = buildEmptyFactsObject(facts);
+
+  const tryInput = document.getElementById("tryInput");
+  if (tryInput) {
+    tryInput.value = JSON.stringify(tryItObject, null, 2);
+    }
   }
 
-// Save all rules back
-async function updateCurrentRuleSet() {
+
+async function duplicateSelectedRule(){
+  if (selectedRuleIndex == null || selectedRuleIndex < 0) {
+    alert("Select a rule to duplicate.");
+    return;
+    }
+  const clonedRule = structuredClone(rules[selectedRuleIndex]);
+
+  if (clonedRule.then?.with?.message) {
+    clonedRule.then.with.message += " (duplicate)";
+    }
+  if (clonedRule.priority !== undefined) {
+    clonedRule.priority = clonedRule.priority + 1;
+    }
+
+  rules.splice(selectedRuleIndex + 1, 0, clonedRule);
+  renderRuleList();
+  selectRule(selectedRuleIndex + 1);
+
+  unsavedChanges = true;
+  }
+
+async function updateCurrentRuleSet() {   //Sync rules
 
   if (!currentRuleSetName) return alert("Select a RuleSet first");
 
@@ -312,32 +302,275 @@ async function updateCurrentRuleSet() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rules[i]),
-      });
+        });
       if (!res.ok) console.warn(`Rule ${i + 1} failed`);
       showLoader(true, `Updating rule ${i + 1}/${rules.length}`);
-      await new Promise((r) => setTimeout(r, 300));
-
+      //await new Promise((r) => setTimeout(r, 20));  //only necessary for showing progress to the user
       }
-
     showLoader(false);
-    alert("All rules synchronized!");
-
+    //alert("All rules synchronized!");
     loadSelectedRuleSet();
-
     unsavedChanges = false;
-
-  } catch (e) {
+    } 
+  catch (e) {
     console.error(e);
     showLoader(false);
-    alert("Save failed");
+    alert("Update failed");
+    }
   }
 
+
+
+
+let copiedRule = null;
+
+// reusable copy function that works for toolbar or inline buttons
+function copyRule(index) {
+  if (selectedRuleIndex == null || selectedRuleIndex < 0 || selectedRuleIndex >= rules.length) {
+    alert("No rule selected");
+    return;
+    }
+  copiedRule = structuredClone(rules[index]);
+  alert("Rule copied!\n\"" + (copiedRule.then?.with?.message || `Rule ${index+1}`) + "\"");
+  }
+
+
+async function pasteCopiedRuleToCurrentSet() {
+  if (!copiedRule) {
+    alert("No rule copied yet.");
+    return;
+    }
+
+  if(selectedRuleIndex < 0){
+    alert("Choose destination first");
+    return;
+    }
+
+  const pastedRule = structuredClone(copiedRule);
+
+  // Label it as pasted/copied for clarity
+  if (pastedRule.then?.with?.message) {
+    pastedRule.then.with.message += " (copy)";
+    }
+
+  // Insert at the end or right after currently selected one
+  const insertIndex = selectedRuleIndex != null ? selectedRuleIndex + 1 : rules.length;
+  rules.splice(insertIndex, 0, pastedRule);
+
+  // Refresh and select new rule
+  renderRuleList();
+  selectRule(insertIndex);
+  unsavedChanges = true;
+  }
+
+
+async function deleteSelectedRule() {
+  if (selectedRuleIndex == null || selectedRuleIndex < 0) {
+    alert("Select a rule to delete first.");
+    return;
+    }
+
+  const ruleToDelete = rules[selectedRuleIndex];
+  const confirmed = confirm("Delete this rule ?\n\"" +  ruleToDelete.then?.with?.message + "\"");
+  if (!confirmed) return;
+
+  // Remove from the rules array
+  rules.splice(selectedRuleIndex, 1);
+  renderRuleList();
+
+  // Reset or select the next available rule
+  if (rules.length > 0) {
+    const newIndex = Math.min(selectedRuleIndex, rules.length - 1);
+    selectRule(newIndex);
+    } 
+  else {
+    selectedRuleIndex = null;
+    // Optionally clear editor content
+    if (window.editorWhen) editorWhen.destroy();
+    if (window.editorThen) editorThen.destroy();
+    if (window.editorMeta) editorMeta.destroy();
+    }
+  unsavedChanges = true;
+  }
+
+const createBtn = document.getElementById("createRuleSetBtn");
+const newRuleSetNameInput = document.getElementById("newRuleSetName");
+createBtn.addEventListener("click", createEmptyRuleset);
+newRuleSetNameInput.addEventListener("input", forceKebabCase);
+
+async function forceKebabCase(){
+  newRuleSetNameInput.value = newRuleSetNameInput.value
+    .toLowerCase()              
+    .replace(/\s+/g, '-')       // replace spaces (one or more) with a single hyphen
+    .replace(/[^a-z0-9-]/g, '') // allow ONLY a-z, 0–9, and hyphen
+    .replace(/--+/g, '-')       // collapse multiple hyphens
+  }
+
+
+async  function createEmptyRuleset() {    //With a default rule !!!
+
+  const nameOfRuleset = newRuleSetNameInput.value.trim();
+
+  const defaultRule = {
+    when: { all: [ { fact: "always", operator: "always", value: "true" } ] },
+    then: { do: "validation", with: { break: true, message: "Default rule. Please add useful rules" } },
+    priority: 0
+    };
+
+  if (!nameOfRuleset) {
+    alert("Please enter a ruleset name ");
+    return;
+    }
+
+  try {
+    const response = await fetch(`${API_BASE}/${nameOfRuleset}/update`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(defaultRule)   // <— IMPORTANT: send as array of rules
+      });
+
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(txt || "Create failed");
+      }
+
+    alert(`Ruleset "${nameOfRuleset}" created successfully`);
+
+  // Refresh dropdown
+    await loadRuleSets();
+    newRuleSetNameInput.value = "";
+    } 
+  catch (err) {
+    alert("Error creating ruleset: " + err.message);
+    //hideLoader();
+    } 
+  finally {
+    hideLoader();
+  }
 }
 
 
-/* -----------------------------
-   Simple full-page loader overlay
---------------------------------*/
+async  function persistCurrentRuleset() {  
+
+  if (!currentRuleSetName) return alert("Select a RuleSet first");
+
+  if (sampleFiles.includes(currentRuleSetName)) {
+    alert("Overwriting sample RuleSets is not allowed");
+    return;
+    }
+
+  if (unsavedChanges) {
+    if (!confirm("You have out-of-sync rules. Proceed Anyway ?")) {
+      return;
+      }
+    }
+
+  try {
+    const response = await fetch(`${API_BASE}/${currentRuleSetName}/db/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      });
+
+    if (!response.ok) {
+      const responseText = await response.text();
+      const json = JSON.parse(responseText);
+      console.log(json);
+      throw new Error(json.message || "Persist failed");
+      }
+
+    alert(`Ruleset "${currentRuleSetName}" saved.`);
+
+    await loadRuleSets();
+    } 
+  catch (err) {
+    alert(err);
+    } 
+  finally {
+    }
+}
+
+
+//MISC FUNCTIONS
+function extractDerivedFacts(rules) {
+  const derived = new Set();
+  rules.forEach(rule => {
+    const item = rule?.then?.with?.item;
+    if (item) {
+      derived.add(item);
+      }
+    });
+  return derived;
+  }
+
+
+function extractFactsFromRules(rules) {
+  const facts = new Set();
+  const derivedFacts = extractDerivedFacts(rules);
+
+  function scan(node) {
+    if (!node || typeof node !== "object") return;
+
+    if (node.fact) {
+      const fact = node.fact;
+      // Ignore internal / engine-managed facts and derived facts
+      if ( fact === "always" || fact.startsWith("session.") || derivedFacts.has(fact)) {
+        return;
+        }
+      facts.add(fact);
+      return;
+      }
+
+    if (Array.isArray(node.all)) node.all.forEach(scan);
+    if (Array.isArray(node.any)) node.any.forEach(scan);
+    }
+
+  rules.forEach(rule => scan(rule.when));
+  return Array.from(facts);
+  }
+
+
+function buildEmptyFactsObject(facts) {
+  return facts.reduce((obj, fact) => {
+    obj[fact] = "";
+    return obj;
+    }, {});
+  }
+
+
+const readMeDoc = document.getElementById('viewReadmeAction')
+
+const readmeModalEl = document.getElementById('rulesetReadmeModal');
+const readmeModal = new bootstrap.Modal(readmeModalEl);
+const readmeContent = document.getElementById('rulesetReadmeContent');
+const readmeTitle = document.getElementById('rulesetReadmeModalTitle');
+
+readMeDoc.addEventListener('click', async () => {
+
+  console.log("ReadMe clicked");
+
+  const id = ruleSetSelect.value;
+  if (!id) return;
+
+    // Dynamically update modal title
+  const selectedName = ruleSetSelect.options[ruleSetSelect.selectedIndex].text;
+  readmeTitle.textContent = `${selectedName} README`;
+  readmeContent.innerHTML = '<em>Loading documentation…</em>';
+  readmeModal.show();
+
+  try {
+    const res = await fetch(`${API_BASE}/${encodeURIComponent(currentRuleSetName)}/readme`);
+    const { read_me } = await res.json();
+    readmeContent.innerHTML = marked.parse(
+      read_me || '_No documentation available._'
+      );
+    } 
+  catch {
+    readmeContent.innerHTML =
+      '<span class="text-danger">Failed to load README</span>';
+    }
+  });
+
+
 function showLoader(show, message = "Loading...") {
   let loader = document.getElementById("loaderOverlay");
 
@@ -369,287 +602,6 @@ function showLoader(show, message = "Loading...") {
     document.body.appendChild(loader);
   }
 
-  loader.querySelector("#loaderMsg").textContent = message;
-  loader.style.display = show ? "flex" : "none";
+loader.querySelector("#loaderMsg").textContent = message;
+loader.style.display = show ? "flex" : "none";
 }
-
-
-
-
-
-let copiedRule = null;
-
-// reusable copy function that works for toolbar or inline buttons
-function copyRule(index) {
-  if (selectedRuleIndex == null || selectedRuleIndex < 0 || selectedRuleIndex >= rules.length) {
-    alert("No rule selected");
-    return;
-  }
-  copiedRule = structuredClone(rules[index]);
-  alert("Rule copied!\n\"" + (copiedRule.then?.with?.message || `Rule ${index+1}`) + "\"");
-}
-
-
-
-async function pasteCopiedRuleToCurrentSet() {
-
-  if (!copiedRule) {
-    alert("No rule copied yet.");
-    return;
-    }
-
-  if(selectedRuleIndex < 0){
-    alert("Choose destination first");
-    return;
-    }
-
-  // Deep clone to avoid mutating original
-  const pastedRule = structuredClone(copiedRule);
-
-  // Label it as pasted for clarity
-  if (pastedRule.then?.with?.message) {
-    pastedRule.then.with.message += " (copy)";
-    }
-
-  // Insert at the end or right after currently selected one
-  const insertIndex = selectedRuleIndex != null ? selectedRuleIndex + 1 : rules.length;
-  rules.splice(insertIndex, 0, pastedRule);
-
-  // Refresh and select new rule
-  renderRuleList();
-  selectRule(insertIndex);
-
-  unsavedChanges = true;
-
-}
-
-
-async function deleteSelectedRule() {
-  if (selectedRuleIndex == null || selectedRuleIndex < 0) {
-    alert("Select a rule to delete first.");
-    return;
-    }
-
-  const ruleToDelete = rules[selectedRuleIndex];
-  const confirmed = confirm("Delete this rule ?\n\"" +  ruleToDelete.then?.with?.message + "\"");
-  if (!confirmed) return;
-
-  // Remove from the rules array
-  rules.splice(selectedRuleIndex, 1);
-
-  // Update UI
-  renderRuleList();
-
-  // Reset or select the next available rule
-  if (rules.length > 0) {
-    const newIndex = Math.min(selectedRuleIndex, rules.length - 1);
-    selectRule(newIndex);
-    } 
-  else {
-    selectedRuleIndex = null;
-    // Optionally clear editor content
-    if (window.editorWhen) editorWhen.destroy();
-    if (window.editorThen) editorThen.destroy();
-    if (window.editorMeta) editorMeta.destroy();
-    }
-
-  unsavedChanges = true;
-
-}
-
-
-
-const createBtn = document.getElementById("createRuleSetBtn");
-const newRuleSetNameInput = document.getElementById("newRuleSetName");
-
-createBtn.addEventListener("click", createEmptyRuleset);
-newRuleSetNameInput.addEventListener("input", forceKebabCase);
-
-async function forceKebabCase(){
-  // Convert to lowercase and remove invalid chars
-    newRuleSetNameInput.value = newRuleSetNameInput.value
-      .toLowerCase()              // enforce lowercase
-      .replace(/\s+/g, '-')       // replace spaces (one or more) with a single hyphen
-      .replace(/[^a-z0-9-]/g, '') // allow ONLY a-z, 0–9, and hyphen
-      .replace(/--+/g, '-')       // collapse multiple hyphens
-  }
-
-
-async  function createEmptyRuleset() {    //With a default rule !!!
-
-  const nameOfRuleset = newRuleSetNameInput.value.trim();
-
-  const defaultRule = {
-    when: { all: [ { fact: "always", operator: "always", value: "true" } ] },
-    then: { do: "validation", with: { break: true, message: "Default rule. Please add usefull rules" } },
-    priority: 0
-  };
-
-
-  if (!nameOfRuleset) {
-    alert("Please enter a ruleset name.");
-    return;
-    }
-
-  try {
-      //showLoader("Creating ruleset...");
-
-      const response = await fetch(`${API_BASE}/${nameOfRuleset}/update`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(defaultRule)   // <— IMPORTANT: send as array of rules
-      });
-
-      if (!response.ok) {
-        const txt = await response.text();
-        throw new Error(txt || "Create failed");
-        }
-
-      alert(`Ruleset "${nameOfRuleset}" created.`);
-
-    // Refresh dropdown
-      await loadRuleSets();
-      newRuleSetNameInput.value = "";
-      } 
-    catch (err) {
-      alert("Error creating ruleset: " + err.message);
-      //hideLoader();
-      } 
-    finally {
-      hideLoader();
-    }
-  }
-
-  const sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
-
-  async  function persistCurrentRuleset() {  
-
-    console.log("persisting.....")
-
-    if (!currentRuleSetName) return alert("Select a RuleSet first");
-
-    if (sampleFiles.includes(currentRuleSetName)) {
-      alert("Overwriting sample RuleSets is not allowed");
-      return;
-      }
-
-    if (unsavedChanges) {
-      if (!confirm("You have out of sync rules. Proceed Anyway ?")) {
-        return;
-        }
-      }
-
-    try {
-
-        const response = await fetch(`${API_BASE}/${currentRuleSetName}/db/save`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          //body: ""  
-          });
-
-        if (!response.ok) {
-          const responseText = await response.text();
-          const json = JSON.parse(responseText);
-          console.log(json);
-          throw new Error(json.message || "Persist failed");
-          }
-
-        alert(`Ruleset "${currentRuleSetName}" saved.`);
-
-      // Refresh dropdown
-        await loadRuleSets();
-        } 
-      catch (err) {
-        alert(err);
-        //hideLoader();
-        } 
-      finally {
-        //hideLoader();
-      }
-    }
-
-
-function extractDerivedFacts(rules) {
-  const derived = new Set();
-
-  rules.forEach(rule => {
-    const item = rule?.then?.with?.item;
-    if (item) {
-      derived.add(item);
-    }
-  });
-
-  return derived;
-  }
-
-
-function extractFactsFromRules(rules) {
-  const facts = new Set();
-  const derivedFacts = extractDerivedFacts(rules);
-
-  function scan(node) {
-    if (!node || typeof node !== "object") return;
-
-    if (node.fact) {
-      const fact = node.fact;
-
-      // Ignore internal / engine-managed facts and derived facts
-      if ( fact === "always" || fact.startsWith("session.") || derivedFacts.has(fact)) {
-        return;
-        }
-
-      facts.add(fact);
-      return;
-    }
-
-    if (Array.isArray(node.all)) node.all.forEach(scan);
-    if (Array.isArray(node.any)) node.any.forEach(scan);
-    }
-
-  rules.forEach(rule => scan(rule.when));
-  
-  return Array.from(facts);
-}
-
-function buildEmptyFactsObject(facts) {
-  return facts.reduce((obj, fact) => {
-    obj[fact] = "";
-    return obj;
-  }, {});
-}
-
-const readMeDoc = document.getElementById('viewReadmeAction')
-
-const readmeModalEl = document.getElementById('rulesetReadmeModal');
-const readmeModal = new bootstrap.Modal(readmeModalEl);
-const readmeContent = document.getElementById('rulesetReadmeContent');
-const readmeTitle = document.getElementById('rulesetReadmeModalTitle');
-
-readMeDoc.addEventListener('click', async () => {
-
-    console.log("ReadMe clicked");
-
-    const id = ruleSetSelect.value;
-    if (!id) return;
-
-      // Dynamically update modal title
-    const selectedName = ruleSetSelect.options[ruleSetSelect.selectedIndex].text;
-    readmeTitle.textContent = `${selectedName} README`;
-
-    readmeContent.innerHTML = '<em>Loading documentation…</em>';
-    readmeModal.show();
-
-    try {
-      //const res = await fetch(`${API_BASE}/${currentRuleSetName}/readme`);
-      const res = await fetch(`${API_BASE}/${encodeURIComponent(currentRuleSetName)}/readme`);
-
-      const { read_me } = await res.json();
-
-      readmeContent.innerHTML = marked.parse(
-        read_me || '_No documentation available._'
-      );
-    } catch {
-      readmeContent.innerHTML =
-        '<span class="text-danger">Failed to load README</span>';
-    }
-});

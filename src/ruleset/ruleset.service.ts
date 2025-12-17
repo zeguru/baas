@@ -8,19 +8,16 @@ import { transformWhenStringToJson } from '../common/util/misc-utils'
 import { registerCustomOperators } from '../common/util/custom-operators'
 import { DateUtils } from '../common/util/date-utils';
 import { capitalizeTableKeys } from '../common/util/misc-utils';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BusinessLogic } from './logic';
-
 
 @Injectable()
 export class RuleSetService implements OnModuleInit {
 
   private readonly logger = new Logger(RuleSetService.name);
-
   private ruleSets: Record<string, Rule[]> = {};
-  
+
   private sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
 
   constructor(
@@ -28,7 +25,6 @@ export class RuleSetService implements OnModuleInit {
     private readonly logicRepository: Repository<BusinessLogic>,
     ) {
 
-    //simplest Engine rule
     this.ruleSets['welcome'] = [
       new Rule({
         conditions: {
@@ -44,7 +40,6 @@ export class RuleSetService implements OnModuleInit {
     }
 
   async onModuleInit() {
-
     await this.loadAllRules();
     }
 
@@ -63,7 +58,7 @@ export class RuleSetService implements OnModuleInit {
     // 2️⃣ Load all sample rules from files
     for (const file of this.sampleFiles) {
       this.logger.log(`Loading sample ruleset from file: ${file}.json`);
-      if(!this.ruleSets[file]){   //do not load updated samples 
+      if(!this.ruleSets[file]){   //do not load updated samples (do not overwrite)
         await this.loadSample(file);
         }
     }

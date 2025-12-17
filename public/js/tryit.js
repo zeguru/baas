@@ -10,13 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const ruleSetSelect = document.getElementById("ruleSetSelect");
   const activeRuleSetLabel = document.getElementById("activeRuleSet");
 
-//   const sampleInput = 
-// `{
-//   "units":500
-// }`;
-
-  // Initial setup
-  // if (tryInput) tryInput.value = sampleInput;
   if (activeRuleSetLabel) activeRuleSetLabel.textContent = ruleSetSelect?.value || "—";
 
   // Update active ruleset display whenever user changes dropdown
@@ -36,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Run button
+  // Test Run button
   if (runTryBtn) {
     runTryBtn.addEventListener("click", async () => {
       const ruleSetName = ruleSetSelect?.value;

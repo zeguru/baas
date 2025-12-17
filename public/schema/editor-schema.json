@@ -33,7 +33,7 @@
     },
     "any": {
       "type": "array",
-      "title": "Any Conditions (OR)",
+      "title": "Any Condition (OR)",
       "format": "table",
       "options": {
         "compact": true
