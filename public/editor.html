@@ -49,7 +49,7 @@
       }
 
     #ruleList {
-      width: 26%;
+      width: 40%;
       max-height: 82vh;
       overflow-y: auto;
       background: white;
@@ -60,7 +60,7 @@
 
     #editor_holder {
       flex: 1;
-      max-width: 72%;
+      max-width: 60%;
       min-height: 82vh;
       background: white;
       padding: 0.75rem;
@@ -284,28 +284,40 @@
 
         <div class="tab-pane fade" id="tryTab" role="tabpanel">
           <div class="row g-2">
-            <div class="col-md-6">
+            <div class="col-md-5">
               
               <label class="form-label small text-muted d-block">
-                POST :
-                /baas/calculator/<span id="activeRuleSet" class="badge bg-info text-dark">-</span>/compute
+                POST : /baas/calculator/<span id="activeRuleSet" class="badge bg-info text-dark">-</span>/compute
               </label>
 
-              <label class="form-label fw-bold small text-muted">Input Facts (JSON)</label>
-              <textarea id="tryInput" class="form-control font-monospace" rows="16" spellcheck="false">
-                {}
-              </textarea>
+              <label class="form-label fw-bold small text-muted">Facts (Request)</label>
+              <!-- <textarea id="tryInput" class="form-control font-monospace" rows="16" spellcheck="false">{}
+              </textarea> -->
+
+              <textarea
+                id="tryInput"
+                class="font-monospace p-2 bg-light border rounded w-100"
+                style="
+                  height: 350px;
+                  overflow-y: auto;
+                  font-size: 0.65rem;
+                  resize: vertical;
+                  white-space: pre;
+                "
+                spellcheck="false"
+              >{}</textarea>
+
               <button id="runTryBtn" class="btn btn-primary btn-sm mt-2">Run Test</button>
-              <button id="resetTryBtn" class="btn btn-secondary btn-sm mt-2 ms-1">Reset</button>
+              <button id="resetTryBtn" class="btn btn-secondary btn-sm mt-2 ms-1">Clear</button>
             </div>
 
-          <div class="col-md-6">
+          <div class="col-md-7">
               <label class="form-label fw-bold small text-muted d-block">
                 ...
               </label>
 
               <label class="form-label fw-bold small text-muted">Response</label>
-              <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 520px; overflow-y:auto; font-size:0.85rem;"></pre>
+              <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 520px; overflow-y:auto; font-size:0.65rem;"></pre>
           </div>
         </div>
       </div>
