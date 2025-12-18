@@ -11,7 +11,7 @@ let whenEditor, thenEditor, metaEditor;
 let unsavedChanges = false;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
-const loadSetBtn = document.getElementById("loadSetBtn");
+// const loadSetBtn = document.getElementById("loadSetBtn");
 const updateAllBtn = document.getElementById("updateAllBtn");
 const persistBtn = document.getElementById("persistBtn");
 
@@ -71,11 +71,13 @@ async function init() {
     startval: {},
     });
 
+    
   const tabIds = ['whenTab', 'thenTab', 'metaTab'];
 
   // Function to mark page dirty
   const markDirty = () => {
     unsavedChanges = true;
+    updateActionButtons();
     console.log('User changed JSON!');
     };
 
@@ -88,11 +90,12 @@ async function init() {
 
   await loadRuleSets();
 
-  loadSetBtn.addEventListener("click", (e) => {
-      loadSelectedRuleSet();
-      disableActionButtons(false);
-      unsavedChanges = false;
-      });
+  // loadSetBtn.addEventListener("click", (e) => {
+  //     loadSelectedRuleSet();
+  //     updateActionButtons(false);
+  //     unsavedChanges = false;
+  //     });
+  
   updateAllBtn.addEventListener("click", updateCurrentRuleSet);
   persistBtn.addEventListener("click", persistCurrentRuleset);
   }
@@ -109,7 +112,7 @@ init().then(() => {
       }
     }
 
-  disableActionButtons(true);
+  //updateActionButtons(true);
 
   currentRuleSetName = ruleSetSelect.value;
   rules = [];
@@ -120,19 +123,43 @@ init().then(() => {
   thenEditor.setValue({});
   metaEditor.setValue({ priority: 0 });
 
+  loadSelectedRuleSet();
+  unsavedChanges = false;
+  updateActionButtons();
+
   });
 });
 
 
 //UTILITY FUNCTIONS 
-function disableActionButtons(flag) {
-  persistBtn.disabled = flag;
-  updateAllBtn.disabled = flag;
-  rulesetActionsBtn.disabled = flag;
+function updateActionButtons() {
+    if(unsavedChanges){
+      persistBtn.disabled = true;
+      updateAllBtn.disabled = false;
+      rulesetActionsBtn.disabled = true;
+      }
+    else{
+      persistBtn.disabled = false;
+      updateAllBtn.disabled = true;
+      rulesetActionsBtn.disabled = false;
+      }
   }
 
 // Select rule for editing
 function selectRule(index) {
+
+  console.log(`Selecting rule ${index + 1}`)
+
+  if (unsavedChanges) {
+    if (!confirm("You have unsaved changes. Proceed anyway ?")) {
+      console.log("Do not proceed")
+      return;
+      }
+    console.log("Proceed without saving");
+    unsavedChanges = false;
+    updateActionButtons();
+    }
+
   selectedRuleIndex = index;
   renderRuleList();
 
@@ -273,6 +300,7 @@ async function duplicateSelectedRule(){
   selectRule(selectedRuleIndex + 1);
 
   unsavedChanges = true;
+  updateActionButtons();
   }
 
 async function updateCurrentRuleSet() {   //Sync rules
@@ -311,6 +339,7 @@ async function updateCurrentRuleSet() {   //Sync rules
     //alert("All rules synchronized!");
     loadSelectedRuleSet();
     unsavedChanges = false;
+    updateActionButtons();
     } 
   catch (e) {
     console.error(e);
@@ -361,6 +390,7 @@ async function pasteCopiedRuleToCurrentSet() {
   renderRuleList();
   selectRule(insertIndex);
   unsavedChanges = true;
+  updateActionButtons();
   }
 
 
@@ -391,6 +421,7 @@ async function deleteSelectedRule() {
     if (window.editorMeta) editorMeta.destroy();
     }
   unsavedChanges = true;
+  updateActionButtons();
   }
 
 const createBtn = document.getElementById("createRuleSetBtn");
