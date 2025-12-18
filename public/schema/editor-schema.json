@@ -24,7 +24,7 @@
           "operator": {
              "type": "string", 
              "title": "Operator",
-             "enum": ["always", "isDefined", "lessThan", "lessThanInclusive", "greaterThan", "greaterThanInclusive", "equal", "equalIgnoreCase","in", "inIgnoreCase", "notIn", "notInIgnoreCase"]
+             "enum": ["always", "isDefined", "lessThan", "lessThanInclusive", "greaterThan", "greaterThanInclusive", "equal", "equalIgnoreCase", "notEqual", "notEqualIgnoreCase", "in", "inIgnoreCase", "notIn", "notInIgnoreCase"]
             },
           "value": {"type": "string","title": "Value"}
         },
