@@ -19,7 +19,7 @@ const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
 
-const sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
+const sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility','sample-statistics', 'sample-survey'];
 
 //INIT
 async function init() {

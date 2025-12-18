@@ -18,7 +18,7 @@ export class RuleSetService implements OnModuleInit {
   private readonly logger = new Logger(RuleSetService.name);
   private ruleSets: Record<string, Rule[]> = {};
 
-  private sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-survey'];
+  private sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-statistics', 'sample-survey'];
 
   constructor(
     @InjectRepository(BusinessLogic)

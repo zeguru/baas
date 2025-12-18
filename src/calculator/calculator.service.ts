@@ -6,7 +6,6 @@ import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
 import { registerCustomOperators } from '../common/util/custom-operators'
 import { coalesce } from '../common/util/misc-utils';
-
 import { SessionManager } from 'src/session/manager';
 
 @Injectable()
@@ -49,9 +48,8 @@ export class CalculatorService {
               });
             }
 
-
         registerCustomOperators(engine);
-        const context: Record<string, any> = { ...facts };
+        const context: Record<string, any> = { ...facts, session };
 
         const utils = {
             age: DateUtils.age,
@@ -120,7 +118,7 @@ export class CalculatorService {
                   }
                   
                 console.log(`context: value=${context}`);
-                value = evaluate(event.params.value, {...context, ...utils});
+                value = evaluate(event.params.value, { ...context, ...utils});
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
                 }
         
