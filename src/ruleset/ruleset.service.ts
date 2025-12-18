@@ -133,9 +133,9 @@ export class RuleSetService implements OnModuleInit {
       then: {
         do: rule.event.type,
         with: rule.event.params,
-      },
+        },
       priority: rule.priority,
-    })) as RuleDto[];
+      })) as RuleDto[];
 
   transformedRules.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
