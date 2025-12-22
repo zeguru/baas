@@ -1,0 +1,168 @@
+[
+    {
+        "when": {
+            "all": [
+                {"fact": "sessionID", "operator": "isDefined", "value": "true"},
+                {"fact": "input", "operator": "isDefined", "value": "true"},
+                {"fact": "session.state.step", "operator": "equalIgnoreCase","value": "DEFAULT"}
+                ]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "start",
+                "mode": "expression",
+                "value": "currentDateTime",
+                "message": "Setup Session",
+                "break": false
+                }
+            },
+        "priority": 500
+    },
+   
+    {
+        "when": {
+            "all": [{"fact": "session.state.step", "operator": "equalIgnoreCase", "value": "DEFAULT"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "count",
+                "mode": "fixed",
+                "value": "0",
+                "message": "Initialize Count",
+                "break": false
+                }
+            },
+        "priority": 400
+    },
+    {
+        "when": {
+            "all": [{"fact": "session.state.step", "operator": "equalIgnoreCase","value": "DEFAULT"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "sum",
+                "mode": "fixed",
+                "value": "0",
+                "message": "Initialize Sum",
+                "break": false
+                }
+            },
+        "priority": 400
+    },
+     {
+        "when": {
+            "all": [{"fact": "session.state.step", "operator": "equalIgnoreCase", "value": "DEFAULT"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "minValue",
+                "mode": "fixed",
+                "value": "999999",
+                "message": "Initialize Minimum Value",
+                "break": false
+                }
+            },
+        "priority": 400
+    },
+    {
+        "when": {
+            "all": [{"fact": "session.state.step", "operator": "equalIgnoreCase", "value": "DEFAULT"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "maxValue",
+                "mode": "fixed",
+                "value": "0",
+                "message": "Initialize Maximum Value",
+                "break": false
+                }
+            },
+        "priority": 400
+    },
+    {
+        "when": {
+            "all": [{ "fact": "always", "operator": "always", "value": "true"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Increment Count",
+                "break": false,
+                "item": "count",
+                "mode": "expression",
+                "value": "session.state.count + 1"
+                }
+            },
+        "priority": 300
+    },
+    {
+        "when": {
+            "all": [{ "fact": "always", "operator": "always", "value": "true"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Compute Sum",
+                "break": false,
+                "item": "sum",
+                "mode": "expression",
+                "value": "session.state.sum + input"
+            }
+        },
+        "priority": 200
+    },
+    {
+        "when": {
+            "all": [{ "fact": "always", "operator": "always", "value": "true"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Compute Mean",
+                "break": false,
+                "item": "mean",
+                "mode": "expression",
+                "value": "sum / count"
+                }
+            },
+        "priority": 100
+    },
+    {
+        "when": {
+            "all": [{ "fact": "always", "operator": "always", "value": "true"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "minValue",
+                "mode": "expression",
+                "value": "min(session.state.minValue,input)",
+                "message": "Compute Minimum Value",
+                "break": false
+                }
+            },
+        "priority": 102
+    },
+    {
+        "when": {
+            "all": [{ "fact": "always", "operator": "always", "value": "true"}]
+            },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "maxValue",
+                "mode": "expression",
+                "value": "max(session.state.maxValue,input)",
+                "message": "Compute Maximum Value",
+                "break": false
+                }
+            },
+        "priority": 101
+    }
+    
+]
