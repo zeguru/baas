@@ -25,6 +25,7 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY samples ./samples
 COPY public ./public
+COPY readme ./readme
 
 RUN mkdir -p /data
 
