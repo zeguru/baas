@@ -6,6 +6,8 @@ let currentRuleSetName = "";
 let rules = [];
 let selectedRuleIndex = -1;
 
+let draggedRuleIndex = null;
+
 let whenEditor, thenEditor, metaEditor;
 
 let unsavedChanges = false;
@@ -169,6 +171,31 @@ function selectRule(index) {
   metaEditor.setValue({ priority: rule.priority ?? 0 });
   }
 
+function reorderRules(fromIndex, toIndex) {
+  const moved = rules.splice(fromIndex, 1)[0];
+  rules.splice(toIndex, 0, moved);
+
+  // Reassign priorities: top = highest
+  const base = rules.length * 10;
+
+  rules.forEach((rule, index) => {
+    rule.priority = base - index * 10;
+  });
+
+  // Preserve selection
+  if (selectedRuleIndex === fromIndex) {
+    selectedRuleIndex = toIndex;
+  } else if (fromIndex < selectedRuleIndex && toIndex >= selectedRuleIndex) {
+    selectedRuleIndex--;
+  } else if (fromIndex > selectedRuleIndex && toIndex <= selectedRuleIndex) {
+    selectedRuleIndex++;
+  }
+
+  unsavedChanges = true;
+  updateActionButtons();
+  renderRuleList();
+  }
+
 function renderRuleList() {
   ruleList.innerHTML = "";
 
@@ -176,8 +203,44 @@ function renderRuleList() {
 
     // Main rule item container
     const div = document.createElement("div");
+    div.draggable = true;
+    div.dataset.index = i;
     div.className = "rule-item list-group-item d-flex justify-content-between align-items-center";
     div.onclick = () => selectRule(i);
+
+    div.addEventListener("dragstart", (e) => {
+      draggedRuleIndex = i;
+      div.classList.add("opacity-50");
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    div.addEventListener("dragend", () => {
+      draggedRuleIndex = null;
+      div.classList.remove("opacity-50");
+    });
+
+
+    div.addEventListener("dragover", (e) => {
+      e.preventDefault(); // required
+      div.classList.add("border", "border-primary");
+    });
+
+    div.addEventListener("dragleave", () => {
+      div.classList.remove("border", "border-primary");
+    });
+
+    div.addEventListener("drop", (e) => {
+      e.preventDefault();
+      div.classList.remove("border", "border-primary");
+
+      const targetIndex = i;
+      if (
+        draggedRuleIndex === null ||
+        draggedRuleIndex === targetIndex
+      ) return;
+
+      reorderRules(draggedRuleIndex, targetIndex);
+    });
 
     // Left: number + message container
     const labelSpan = document.createElement("div");
