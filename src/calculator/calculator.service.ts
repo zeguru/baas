@@ -6,7 +6,7 @@ import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
 import { registerCustomOperators } from '../common/util/custom-operators'
 import { coalesce } from '../common/util/misc-utils';
-import { SessionManager } from 'src/session/manager';
+import { SessionManager } from '../session/manager';
 
 @Injectable()
 export class CalculatorService {

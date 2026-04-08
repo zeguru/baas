@@ -1,22 +1,50 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Response } from 'express';
+import { join } from 'path';
 
 describe('AppController', () => {
-  let appController: AppController;
+  let controller: AppController;
+
+  // mock response
+  const mockResponse = () => {
+    const res: Partial<Response> = {};
+    res.sendFile = jest.fn();
+    return res as Response;
+  };
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    controller = module.get<AppController>(AppController);
   });
 
-  // describe('root', () => {
-  //   it('should return "Hello World!"', () => {
-  //     expect(appController.getHello()).toBe('Hello World!');
-  //   });
-  // });
+  // 🧪 getEditor
+  it('should send editor.html file', () => {
+    const res = mockResponse();
+
+    controller.getEditor(res);
+
+    expect(res.sendFile).toHaveBeenCalledWith(
+      join(__dirname, '..', 'public', 'editor.html'),
+    );
+  });
+
+  // 🧪 getWelcome
+  it('should send welcome.html file', () => {
+    const res = mockResponse();
+
+    controller.getWelcome(res);
+
+    expect(res.sendFile).toHaveBeenCalledWith(
+      join(__dirname, '..', 'public', 'welcome.html'),
+    );
+  });
+
+  // 🧪 getHello
+  it('should return Hello World!', () => {
+    expect(controller.getHello()).toBe('Hello World!');
+  });
 });

@@ -17,4 +17,9 @@ export class AppController {
   getWelcome(@Res() res: Response) {
     return res.sendFile(join(__dirname, '..', 'public', 'welcome.html'));
     }
+
+  @Get('hello')
+  getHello(): string {
+    return 'Hello World!';
+  }
 }
