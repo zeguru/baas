@@ -115,7 +115,7 @@
           "type": "string",
           "title": "Message",
           "format": "textarea",
-          "description": "Explanation of this step / rule",
+          "description": "Hint to LLM or user facing app",
           "options": {
             "inputAttributes": { "rows": 2, "style": "width: 100%;" }
           },
