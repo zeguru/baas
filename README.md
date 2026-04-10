@@ -44,14 +44,21 @@ Many cant be easily used for validating input / output of AI agents
 **Core flow:**
 
 1. Create a ruleset (identifier for a group of rules)
-2. Define rules 
-- via api
-    (via UI or API)
-2. Send input data
-3. Get:
-
-   * ✅ Result
-   * 🧠 Decision trace (step-by-step breakdown)
+2. Add new rules via
+    - rest api (advanced)
+    - copy from another ruleset and paste to destination (recommended)
+    - web form  (work in progress)
+3. Update ruleset
+4. Adjust execution order
+    - Meta > priority
+    - drag and drop
+5. Update ruleset
+6. Try Ruleset
+7. Review response
+   * ✅ Results: `derivedFacts`
+   * 🧠 Decision trace: `breakdown`
+8. Repeat
+9. Persist to save to db
 
 ---
 
@@ -449,17 +456,15 @@ Every evaluation includes a **breakdown**:
 
 ## 🧩 Use Cases
 
-* 🛒 Pricing & discounts
-* ⚙️ Workflow decisions
-* 💳 Payment & fraud rules
+* 🛒 Pricing & discount calculator
 * 🔐 Product logic
+* 💳 Quote Generator
 * 🤖 AI input/output guardrails
-* Quote Generator
-* Backend as a service
-* Add determinism in your AI agents for non-probabilistic business logic
-* Conversational SMS / USSD
-* State machines
-
+* 🚀 Add determinism in your AI agents for non-probabilistic business logic
+* 📸 Conversational SMS / USSD
+* ✅ Session management
+* 🤝 Serial input processing
+* ⚙️ Backend as a service
 
 
 
