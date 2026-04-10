@@ -43,11 +43,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Analyze with SonarCloud
+      - uses: actions/checkout@v4
+      
+      # ✅ 2. Setup Node (IMPORTANT)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # ✅ 3. Install deps
+      - name: Install dependencies
+        run: npm ci
+
+      # ✅ 4. Generate coverage (CRITICAL STEP)
+      - name: Run tests with coverage
+        run: npm run test:cov
+
+      # ✅ 5. Debug (optional but helps)
+      - name: Check coverage exists
+        run: ls -la coverage
+
+      - name: SonarCloud Scan
 
         # You can pin the exact commit or the version.
         # uses: SonarSource/sonarcloud-github-action@v2.2.0
-        uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
+        #uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
+        uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
         with:
