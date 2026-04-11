@@ -532,6 +532,8 @@ async  function createEmptyRuleset() {    //With a default rule !!!
 
   // Refresh dropdown
     await loadRuleSets();
+    ruleSetSelect.value = nameOfRuleset;
+    ruleSetSelect.dispatchEvent(new Event("change"));
     newRuleSetNameInput.value = "";
     } 
   catch (err) {
