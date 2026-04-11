@@ -202,6 +202,14 @@ function normalizeRulePriorities() {
 function renderRuleList() {
   ruleList.innerHTML = "";
 
+  if (rules.length === 0) {
+    ruleList.innerHTML = copiedRule
+      ? '<div class="list-group-item d-flex justify-content-between align-items-center text-muted">No rules yet.<button id="pasteIntoEmptyRulesetBtn" class="btn btn-sm paste-btn">📥 Paste here</button></div>'
+      : '<div class="list-group-item text-muted">No rules yet.</div>';
+    document.getElementById("pasteIntoEmptyRulesetBtn")?.addEventListener("click", pasteCopiedRuleToCurrentSet);
+    return;
+  }
+
   rules.forEach((r, i) => {
 
     // Main rule item container
