@@ -175,12 +175,7 @@ function reorderRules(fromIndex, toIndex) {
   const moved = rules.splice(fromIndex, 1)[0];
   rules.splice(toIndex, 0, moved);
 
-  // Reassign priorities: top = highest
-  const base = rules.length * 10;
-
-  rules.forEach((rule, index) => {
-    rule.priority = base - index * 10;
-  });
+  normalizeRulePriorities();
 
   // Preserve selection
   if (selectedRuleIndex === fromIndex) {
@@ -195,6 +190,14 @@ function reorderRules(fromIndex, toIndex) {
   updateActionButtons();
   renderRuleList();
   }
+
+function normalizeRulePriorities() {
+  const base = rules.length * 10;
+
+  rules.forEach((rule, index) => {
+    rule.priority = base - index * 10;
+  });
+}
 
 function renderRuleList() {
   ruleList.innerHTML = "";
@@ -433,7 +436,7 @@ async function pasteCopiedRuleToCurrentSet() {
     return;
     }
 
-  if(selectedRuleIndex < 0){
+  if (selectedRuleIndex < 0 && rules.length > 0) {
     alert("Choose destination first");
     return;
     }
@@ -445,9 +448,10 @@ async function pasteCopiedRuleToCurrentSet() {
     pastedRule.then.with.message += " (copy)";
     }
 
-  // Insert at the end or right after currently selected one
-  const insertIndex = selectedRuleIndex != null ? selectedRuleIndex + 1 : rules.length;
+  // Insert at the top for empty rulesets, otherwise right after the selected rule.
+  const insertIndex = selectedRuleIndex >= 0 ? selectedRuleIndex + 1 : 0;
   rules.splice(insertIndex, 0, pastedRule);
+  normalizeRulePriorities();
 
   // Refresh and select new rule
   renderRuleList();
