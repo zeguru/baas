@@ -6,9 +6,9 @@
 BaaS - Business logic As A Service
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=zeguru_baas)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=bugs)](https://sonarcloud.io/summary/new_code?id=zeguru_baas)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=zeguru_baas)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=coverage)](https://sonarcloud.io/summary/new_code?id=zeguru_baas)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=bugs)](https://sonarcloud.io/summary?id=zeguru_baas)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=code_smells)](https://sonarcloud.io/summary?id=zeguru_baas)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=coverage)](https://sonarcloud.io/summary?id=zeguru_baas)
 
 
 
@@ -20,9 +20,16 @@ Power business rules, workflows, and AI guardrails with a fully open-source, dev
 
 
 # Background
-Many awesome rule engienes lack a decent webui.
-May lack a decision trace. Why a specific decision was made
-Many cant be easily used for validating input / output of AI agents 
+There are many awesome rule engines, but
+
+- Expensive, not open source
+- Not stack agnostic
+- Require heavy coding
+- Some lack a decent webui
+- Others lack a decision trace
+- Hard to plug to context of AI agents 
+- Complex DSL
+
 
 
 ## ✨ Features
@@ -43,15 +50,15 @@ Many cant be easily used for validating input / output of AI agents
 
 **Core flow:**
 
-1. Create a ruleset (identifier for a group of rules)
-2. Add new rules via
+1. Create a ruleset (container for a group of rules)
+2. Add new rules, one by one, via
     - rest api (advanced)
     - copy from another ruleset and paste to destination (recommended)
     - web form  (work in progress)
 3. Update ruleset
 4. Adjust execution order
-    - Meta > priority
-    - drag and drop
+    - Meta -> priority
+    - Drag and drop
 5. Update ruleset
 6. Try Ruleset
 7. Review response
@@ -74,7 +81,7 @@ docker run -p 3000:3000 zeguru/baas:latest
 
 * API: http://localhost:3000/baas
 * Editor UI: http://localhost:3000/baas/editor
-* OpenApi Docs: http://localhost:3000/baas/docs
+* OpenApi: http://localhost:3000/baas/docs
 
 ---
 
@@ -89,12 +96,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=dev
 ```
 
 ---
 
-### Option: Contributors
+### From Source - advanced
 
 ```bash
 git clone https://github.com/zeguru/baas.git
@@ -108,8 +115,9 @@ docker-compose up --build
 ```
 
 ---
+## DSL 
 
-#### A. Rule Condition
+### A. Rule Condition
 
 Define preconditions for rule execution.
 
@@ -140,14 +148,22 @@ Rule Action: main options:
 - `validation`
 - `apply-adjustment`
 
-#### i. validation
+
+#### i. advice
+
+Simply logs a message.
+
+
+#### ii. validation
 
 Message with an option to `break`, ie stop the execution and return immediately.
 
 ![then](public/images/baas-then.png)
 
 
-#### ii. apply-adjustment
+#### iii. apply-adjustment
+
+Perform a calculation, transformation or a process.
 
 Modes available: 
 
@@ -172,7 +188,7 @@ Value Range Lookup
 
 ![value-range-lookup](public/images/baas-value-range-lookup.png)
 
-Try It
+Try It (sandbox)
 
 ![try-it](public/images/baas-try-it.png)
 ---
@@ -305,11 +321,7 @@ A single rule
 {
         "when": {
             "all": [
-                {
-                    "operator": "greaterThan",
-                    "value": 3,
-                    "fact": "numberOfCofeeCups"
-                }
+                { "fact": "numberOfCofeeCups","operator": "greaterThan","value": 3}
             ]
         },
         "then": {
@@ -329,12 +341,8 @@ A named group of rules, aka `ruleset`
     {
         "when": {
             "all": [
-                {
-                    "operator": "greaterThan",
-                    "value": 3,
-                    "fact": "numberOfCofeeCups"
-                }
-            ]
+                { "fact": "numberOfCofeeCups","operator": "greaterThan", "value": 3}
+                ]
         },
         "then": {
             "do": "advice",
@@ -347,11 +355,7 @@ A named group of rules, aka `ruleset`
     {
         "when": {
             "all": [
-                {
-                    "operator": "lessThan",
-                    "value": 1,
-                    "fact": "numberOfCommitsToday"
-                }
+                { "fact": "numberOfCommitsToday","operator": "lessThan","value": 1}
             ]
         },
         "then": {
@@ -366,9 +370,7 @@ A named group of rules, aka `ruleset`
         "when": {
             "all": [
                 {
-                    "operator": "greaterThanInclusive",
-                    "value": 1,
-                    "fact": "numberOfProductionIncidents"
+                    "fact": "numberOfProductionIncidents","operator": "greaterThanInclusive", "value": 1
                 }
             ]
         },
@@ -383,11 +385,7 @@ A named group of rules, aka `ruleset`
     {
         "when": {
             "all": [
-                {
-                    "operator": "equalIgnoreCase",
-                    "value": "Friday",
-                    "fact": "releaseDay"
-                }
+                {"fact": "releaseDay","operator": "equalIgnoreCase","value": "Friday"}
             ]
         },
         "then": {
@@ -401,26 +399,10 @@ A named group of rules, aka `ruleset`
     {
         "when": {
             "all": [
-                {
-                    "operator": "lessThanInclusive",
-                    "value": 3,
-                    "fact": "numberOfCofeeCups"
-                },
-                {
-                    "operator": "greaterThanInclusive",
-                    "value": 1,
-                    "fact": "numberOfCommitsToday"
-                },
-                {
-                    "operator": "lessThan",
-                    "value": 1,
-                    "fact": "numberOfProductionIncidents"
-                },
-                {
-                    "operator": "notEqualIgnoreCase",
-                    "value": "Friday",
-                    "fact": "releaseDay"
-                }
+                {"fact": "numberOfCofeeCups","operator": "lessThanInclusive","value": 3},
+                {"fact": "numberOfCommitsToday","operator": "greaterThanInclusive","value": 1},
+                {"fact": "numberOfProductionIncidents","operator": "lessThan","value": 1},
+                {"fact": "releaseDay","operator": "notEqualIgnoreCase","value": "Friday"}
             ]
         },
         "then": {
@@ -450,6 +432,7 @@ Every evaluation includes a **breakdown**:
 * Shows which rules were evaluated
 * Shows the order of evaluation
 * Shows the result at each step/rule
+* Human readable and usable in Agent context
 * Helps in explanations, auditing and debugging purposes
 
 ---
@@ -465,6 +448,7 @@ Every evaluation includes a **breakdown**:
 * ✅ Session management
 * 🤝 Serial input processing
 * ⚙️ Backend as a service
+* 🖥️ Educational purposes
 
 
 
@@ -521,40 +505,89 @@ BaaS aims for simplicity.
 ### How to contribute
 
 1. Fork the repository
-2. Create a feature branch
+
+2. Clone your fork
+
+    ```
+    git clone https://github.com/YOUR_USERNAME/baas.git
+    cd repo-name
+    ```
+
+3. Add upstream (important!)
+
+    This links your local repo to the original repo:
+
+    `git remote add upstream https://github.com/zeguru/baas.git`
+
+    Now you have
+
+        - Original repo → `upstream`
+        - Your fork → `origin`
+
+3. Create a feature branch
+
+    ```bash
+    git checkout -b feature/amazing-feature
+    ```
+
+4. Make changes and Commit
+
+    ```bash
+    git add .
+    git commit -m "Add amazing feature"
+    ```
+
+5. Push to your fork (not upstream!)
+
+    ```bash
+    git push origin feature/amazing-feature
+    ```
+
+6. Open a Pull Request 
+
+    From your fork
+
+    Target:
+
+        - base repo → original repo (upstream)
+        - head repo → your fork (origin)
+
+7. Fill the PR documentation
+
+### NOTEs
+
+Keep your fork updated
+
+a. Sync with upstream
 
 ```bash
-git checkout -b feature/amazing-feature
+git checkout main
+git fetch upstream
+git merge upstream/main
 ```
 
-3. Commit your changes
+b. Push updated main
 
-```bash
-git commit -m "Add amazing feature"
 ```
-
-4. Push to your fork
-
-```bash
-git push origin feature/amazing-feature
+git push origin main
 ```
-
-5. Open a Pull Request 🎉
 
 ---
 
 ### Contribution Guidelines
 
 * Keep PRs focused and small
+* Document your PR accordingly
 * Write clear commit messages
 * Add tests where applicable
-* Update documentation if needed
+* Your PR must reference an issue
 
 ---
 
 ## 🧪 Running Tests
 
 ```bash
+npm run test:cov
 npm run test
 ```
 
@@ -583,14 +616,17 @@ npm run test
 
 Built with:
 
-* NestJS
+* NestJS - https://nestjs.com/
 * TypeScript
 * Node.js
 * Json Editor - https://github.com/json-editor/json-editor?tab=readme-ov-file
-* Form example - https://json-editor.github.io/json-editor/
+* The awesome json-rules-engine - https://github.com/CacheControl/json-rules-engine/blob/master/docs/rules.md
+
 
 Inspired by the need for:
 
+* Stack flexibility 
+* Speed - zero deployment
 * Explainable product logic
 * Transparent decision-making
 * Developer-friendly rule systems
