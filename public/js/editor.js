@@ -203,11 +203,10 @@ function renderRuleList() {
   ruleList.innerHTML = "";
 
   if (rules.length === 0) {
-    ruleList.innerHTML = copiedRule
-      ? '<div class="list-group-item d-flex justify-content-between align-items-center text-muted">No rules yet.<button id="pasteIntoEmptyRulesetBtn" class="btn btn-sm paste-btn">📥 Paste here</button></div>'
-      : '<div class="list-group-item text-muted">No rules yet.</div>';
-    document.getElementById("pasteIntoEmptyRulesetBtn")?.addEventListener("click", pasteCopiedRuleToCurrentSet);
-    return;
+    const emptyState = document.createElement("div");
+    emptyState.className = "list-group-item text-muted";
+    emptyState.textContent = "No rules yet. Copy from other rulesets";
+    ruleList.appendChild(emptyState);
   }
 
   rules.forEach((r, i) => {
@@ -294,12 +293,6 @@ function renderRuleList() {
       copyBtn.innerHTML = "📋";
       copyBtn.onclick = (e) => { e.stopPropagation(); copyRule(i); };
 
-      const pasteBtn = document.createElement("button");
-      pasteBtn.className = "btn btn-sm paste-btn";
-      pasteBtn.title = "Paste from another Ruleset";
-      pasteBtn.innerHTML = "📥";
-      pasteBtn.onclick = (e) => { e.stopPropagation(); pasteCopiedRuleToCurrentSet(); };
-
       const deleteBtn = document.createElement("button");
       deleteBtn.className = "btn btn-sm delete-btn";
       deleteBtn.title = "Delete Rule";
@@ -308,7 +301,6 @@ function renderRuleList() {
 
       btnContainer.appendChild(duplicateBtn);
       btnContainer.appendChild(copyBtn);
-      btnContainer.appendChild(pasteBtn);
       btnContainer.appendChild(deleteBtn);
 
       div.appendChild(btnContainer);
@@ -319,6 +311,18 @@ function renderRuleList() {
 
     ruleList.appendChild(div);
   });
+
+  const pasteRow = document.createElement("div");
+  pasteRow.className = "ruleset-actions-row list-group-item d-flex justify-content-between align-items-center text-muted";
+  pasteRow.innerHTML = '<span>🛠️ Actions</span><button id="pasteToEndBtn" class="btn btn-sm paste-btn">📥 Paste rule</button>';
+  ruleList.appendChild(pasteRow);
+
+  const pasteToEndBtn = document.getElementById("pasteToEndBtn");
+  if (pasteToEndBtn) {
+    pasteToEndBtn.disabled = !copiedRule;
+    pasteToEndBtn.title = copiedRule ? "Paste copied rule at the end" : "Copy a rule first";
+    pasteToEndBtn.addEventListener("click", () => pasteCopiedRuleToCurrentSet(true));
+  }
 }
 
 
@@ -438,13 +442,13 @@ function copyRule(index) {
   }
 
 
-async function pasteCopiedRuleToCurrentSet() {
+async function pasteCopiedRuleToCurrentSet(insertAtEnd = false) {
   if (!copiedRule) {
     alert("No rule copied yet.");
     return;
     }
 
-  if (selectedRuleIndex < 0 && rules.length > 0) {
+  if (!insertAtEnd && selectedRuleIndex < 0 && rules.length > 0) {
     alert("Choose destination first");
     return;
     }
@@ -456,8 +460,10 @@ async function pasteCopiedRuleToCurrentSet() {
     pastedRule.then.with.message += " (copy)";
     }
 
-  // Insert at the top for empty rulesets, otherwise right after the selected rule.
-  const insertIndex = selectedRuleIndex >= 0 ? selectedRuleIndex + 1 : 0;
+  // Insert at end for the dedicated row, otherwise after selected (or top when empty).
+  const insertIndex = insertAtEnd
+    ? rules.length
+    : (selectedRuleIndex >= 0 ? selectedRuleIndex + 1 : 0);
   rules.splice(insertIndex, 0, pastedRule);
   normalizeRulePriorities();
 
