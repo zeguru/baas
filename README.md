@@ -5,7 +5,8 @@
 
 BaaS - Business logic As A Service
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=zeguru_baas)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=alert_status)](https://sonarcloud.io/summary?id=zeguru_baas)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=bugs)](https://sonarcloud.io/summary?id=zeguru_baas)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=code_smells)](https://sonarcloud.io/summary?id=zeguru_baas)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=zeguru_baas&metric=coverage)](https://sonarcloud.io/summary?id=zeguru_baas)
@@ -14,21 +15,25 @@ BaaS - Business logic As A Service
 
 # 🚀 BaaS
 
-**Explainable, deterministic rule engine with API and built-in UI**
+**Explainable, testable decision engine with API and built-in UI**
 
 Power business rules, workflows, and AI guardrails with a fully open-source, developer-friendly engine designed for clarity, control, and auditability.
 
 
 # Background
+The Rule Engine design pattern did not reach its full potential. 
+Not in terms of the vision but on adoption and implementation due to many practical limitations.
+
 There are many awesome rule engines, but
 
 - Expensive, not open source
-- Not stack agnostic
+- Not stack-agnostic
 - Require heavy coding
 - Some lack a decent webui
 - Others lack a decision trace
-- Hard to plug to context of AI agents 
+- Hard to plug in to context of AI agents 
 - Complex DSL
+- Fear of breaking things
 
 
 
@@ -42,7 +47,7 @@ There are many awesome rule engines, but
 * 🐳 Docker-ready for instant setup
 * 📦 Sample rules included
 * 🤖 Works great as guardrails for AI systems
-* Your choice. Create rules using json or a form.
+* Your choice. Create rules using json or a web form.
 
 ---
 
@@ -52,9 +57,9 @@ There are many awesome rule engines, but
 
 1. Create a ruleset (container for a group of rules)
 2. Add new rules, one by one, via
+    - UI
+    - copy from another ruleset and customize (recommended)
     - rest api (advanced)
-    - copy from another ruleset and paste to destination (recommended)
-    - web form  (work in progress)
 3. Update ruleset
 4. Adjust execution order
     - Meta -> priority
