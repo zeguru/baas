@@ -314,7 +314,7 @@ function renderRuleList() {
 
   const pasteRow = document.createElement("div");
   pasteRow.className = "ruleset-actions-row list-group-item d-flex justify-content-between align-items-center text-muted";
-  pasteRow.innerHTML = '<span>🛠️ Actions</span><button id="pasteToEndBtn" class="btn btn-sm paste-btn">📥 Paste rule</button>';
+  pasteRow.innerHTML = '<span>🛠️ Ruleset Actions</span><div class="d-flex gap-2 align-items-center"><button id="pasteToEndBtn" class="btn btn-sm paste-btn">📥 Paste</button><div class="dropdown dropup"><button id="addRuleDropdownBtn" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-placement="top" aria-expanded="false" title="Tip: For advanced rules (e.g., lookups), copy+paste a sample ruleset and customize">➕ Add rule</button><ul class="dropdown-menu"><li><button id="addAdviceRuleBtn" class="dropdown-item" type="button">Advice</button></li><li><button id="addValidationRuleBtn" class="dropdown-item" type="button">Validation</button></li><li><button id="addExpressionRuleBtn" class="dropdown-item" type="button">Expression</button></li><li><button id="addFixedRuleBtn" class="dropdown-item" type="button">Fixed</button></li></ul></div></div>';
   ruleList.appendChild(pasteRow);
 
   const pasteToEndBtn = document.getElementById("pasteToEndBtn");
@@ -323,6 +323,157 @@ function renderRuleList() {
     pasteToEndBtn.title = copiedRule ? "Paste copied rule at the end" : "Copy a rule first";
     pasteToEndBtn.addEventListener("click", () => pasteCopiedRuleToCurrentSet(true));
   }
+
+  const addRuleDropdownBtn = document.getElementById("addRuleDropdownBtn");
+  if (addRuleDropdownBtn) {
+    addRuleDropdownBtn.disabled = !currentRuleSetName;
+  }
+
+  const addAdviceRuleBtn = document.getElementById("addAdviceRuleBtn");
+  if (addAdviceRuleBtn) {
+    addAdviceRuleBtn.disabled = !currentRuleSetName;
+    addAdviceRuleBtn.addEventListener("click", () => addNewRule("advice"));
+  }
+
+  const addValidationRuleBtn = document.getElementById("addValidationRuleBtn");
+  if (addValidationRuleBtn) {
+    addValidationRuleBtn.disabled = !currentRuleSetName;
+    addValidationRuleBtn.addEventListener("click", () => addNewRule("validation"));
+  }
+
+  const addExpressionRuleBtn = document.getElementById("addExpressionRuleBtn");
+  if (addExpressionRuleBtn) {
+    addExpressionRuleBtn.disabled = !currentRuleSetName;
+    addExpressionRuleBtn.addEventListener("click", () => addNewRule("expression"));
+  }
+
+  const addFixedRuleBtn = document.getElementById("addFixedRuleBtn");
+  if (addFixedRuleBtn) {
+    addFixedRuleBtn.disabled = !currentRuleSetName;
+    addFixedRuleBtn.addEventListener("click", () => addNewRule("fixed"));
+  }
+}
+
+function addNewRule(ruleType) {
+  if (!currentRuleSetName) return alert("Select a RuleSet first");
+
+  const baseRule = {
+    when: { all: [{ fact: "always", operator: "always", value: true }] },
+    priority: 0,
+  };
+
+  if (ruleType === "advice") {
+    const newRule = {
+      ...baseRule,
+      then: {
+        do: "advice",
+        with: {
+          message: "Advice: add your message here",
+        },
+      },
+    };
+
+    rules.push(newRule);
+  } else if (ruleType === "validation") {
+    const newRule = {
+      ...baseRule,
+      then: {
+        do: "validation",
+        with: {
+          break: true,
+          message: "Validation: add your validation message here",
+        },
+      },
+    };
+
+    rules.push(newRule);
+  } else if (ruleType === "expression") {
+    // Find next expN index among existing expression rules.
+    let maxExpN = 0;
+    rules.forEach((r) => {
+      const item = r?.then?.with?.item;
+      const mode = r?.then?.with?.mode;
+      if (r?.then?.do !== "apply-adjustment" || mode !== "expression" || typeof item !== "string") return;
+      const match = item.match(/^exp(\d+)$/i);
+      if (!match) return;
+      const n = Number.parseInt(match[1], 10);
+      if (!Number.isNaN(n) && n > maxExpN) maxExpN = n;
+    });
+
+    const nextExpN = maxExpN + 1;
+    const expItem = `exp${nextExpN}`;
+
+    const newRule = {
+      ...baseRule,
+      then: {
+        do: "apply-adjustment",
+        with: {
+          item: expItem,
+          mode: "expression",
+          value: "2 * 1.5",
+          message: `Expression: compute ${expItem} using 2 * 1.5`,
+        },
+      },
+    };
+
+    rules.push(newRule);
+  } else if (ruleType === "fixed") {
+    // Find next itemN index among existing fixed rules.
+    let maxItemN = 0;
+    rules.forEach((r) => {
+      const item = r?.then?.with?.item;
+      const mode = r?.then?.with?.mode;
+      if (r?.then?.do !== "apply-adjustment" || mode !== "fixed" || typeof item !== "string") return;
+      const match = item.match(/^item(\d+)$/i);
+      if (!match) return;
+      const n = Number.parseInt(match[1], 10);
+      if (!Number.isNaN(n) && n > maxItemN) maxItemN = n;
+    });
+
+    const nextItemN = maxItemN + 1;
+    const itemName = `item${nextItemN}`;
+
+    const newRule = {
+      ...baseRule,
+      then: {
+        do: "apply-adjustment",
+        with: {
+          item: itemName,
+          mode: "fixed",
+          value: 100,
+          message: `Fixed: set ${itemName} to 100`,
+        },
+      },
+    };
+
+    rules.push(newRule);
+  } else {
+    alert(`Unknown rule type: ${ruleType}`);
+    return;
+  }
+  normalizeRulePriorities();
+
+  const newIndex = rules.length - 1;
+  selectedRuleIndex = newIndex;
+
+  renderRuleList();
+
+  // Directly update editors to avoid the unsaved-change confirmation flow.
+  const rule = rules[newIndex] || {};
+  whenEditor.setValue(rule.when || {});
+  thenEditor.setValue(rule.then || {});
+  metaEditor.setValue({ priority: rule.priority ?? 0 });
+
+  // UX: scroll + briefly highlight the newly added rule.
+  const ruleEl = ruleList.querySelector(`.rule-item[data-index="${newIndex}"]`);
+  if (ruleEl) {
+    ruleEl.classList.add("just-added");
+    ruleEl.scrollIntoView({ block: "center", behavior: "smooth" });
+    window.setTimeout(() => ruleEl.classList.remove("just-added"), 2000);
+  }
+
+  unsavedChanges = true;
+  updateActionButtons();
 }
 
 
@@ -507,7 +658,8 @@ async function deleteSelectedRule() {
 
 const createBtn = document.getElementById("createRuleSetBtn");
 const newRuleSetNameInput = document.getElementById("newRuleSetName");
-createBtn.addEventListener("click", createEmptyRuleset);
+createBtn.addEventListener("click", createNewRuleset);
+
 newRuleSetNameInput.addEventListener("input", forceKebabCase);
 
 async function forceKebabCase(){
@@ -519,15 +671,53 @@ async function forceKebabCase(){
   }
 
 
-async  function createEmptyRuleset() {    //With a default rule !!!
+async  function createNewRuleset() {    //With a default rule !!!
 
   const nameOfRuleset = newRuleSetNameInput.value.trim();
 
-  const defaultRule = {
-    when: { all: [ { fact: "always", operator: "always", value: "true" } ] },
-    then: { do: "validation", with: { break: true, message: "Default rule. Please add useful rules" } },
-    priority: 0
+  const baseRule = {
+    when: { all: [{ fact: "always", operator: "always", value: true }] },
+    //priority: 0,
     };
+
+  const newAdviceRule = {
+      ...baseRule,
+      then: {
+        do: "advice",
+        with: {
+          message: "Advice: add your message here",
+          },
+        },
+      priority: 300
+    };
+
+  const newValidationRule = {
+      ...baseRule,
+      then: {
+        do: "validation",
+        with: {
+          break: true,
+          message: "Validation: add your validation message here",
+        },
+      },
+    priority: 200
+    };
+
+    const newFixedRule = {
+      ...baseRule,
+      then: {
+        do: "apply-adjustment",
+        with: {
+          item: 'minimumAge',
+          mode: "fixed",
+          value: 18,
+          message: `Fixed: set minimumAge to 18`,
+        },
+      },
+    priority: 100
+    };
+
+
 
   if (!nameOfRuleset) {
     alert("Please enter a ruleset name ");
@@ -535,15 +725,19 @@ async  function createEmptyRuleset() {    //With a default rule !!!
     }
 
   try {
-    const response = await fetch(`${API_BASE}/${nameOfRuleset}/update`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(defaultRule)   // <— IMPORTANT: send as array of rules
-      });
 
-    if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(txt || "Create failed");
+    for (const rule of [newAdviceRule, newValidationRule, newFixedRule]) {
+      const response = await fetch(`${API_BASE}/${nameOfRuleset}/update`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rule)   // <— IMPORTANT: send as array of rules
+        });
+
+      if (!response.ok) {
+        const txt = await response.text();
+        throw new Error(txt || "Create failed");
+        }
+
       }
 
     alert(`Ruleset "${nameOfRuleset}" created successfully`);
