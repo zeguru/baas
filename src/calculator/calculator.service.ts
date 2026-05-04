@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
-import { evaluate } from 'mathjs';
+import { evaluate, create, all, type MathNode, parse } from "mathjs";
+
 import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
@@ -26,6 +27,8 @@ export class CalculatorService {
     async compute(setName: string, facts: Record<string, any>) {
 
       let engine: Engine | null = null;
+
+      const math = create(all);
 
       try {
         
@@ -112,6 +115,14 @@ export class CalculatorService {
 
                 for (const sym of symbols) {
                   console.log(`sym = ${sym}`)
+
+                    // 🚫 Skip mathjs built-ins (sin, tan, min, etc.)
+  if (sym in math) continue;
+
+  // 🚫 Skip your custom functions
+  if (sym in utils) continue;
+
+
                   if (!(sym in context)) {  //if not set
                     context[sym] = 0;        
                     }

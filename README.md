@@ -177,7 +177,11 @@ Modes available:
 - `expression`
 - Lookups: `value-lookup`, `range-lookup`, `value-range-lookup`
 
-Expression
+
+
+Expression 
+
+Powered by MathJS (https://mathjs.org/) 
 
 ![expression](public/images/baas-expression.png)
 
