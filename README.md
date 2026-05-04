@@ -621,9 +621,10 @@ npm run test
 
 Built with:
 
-* NestJS - https://nestjs.com/
-* TypeScript
 * Node.js
+* NestJS - https://nestjs.com/
+* MathJS - https://mathjs.org/
+* Marked - https://github.com/markedjs/marked
 * Json Editor - https://github.com/json-editor/json-editor?tab=readme-ov-file
 * The awesome json-rules-engine - https://github.com/CacheControl/json-rules-engine/blob/master/docs/rules.md
 
