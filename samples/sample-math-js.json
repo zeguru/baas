@@ -1,0 +1,188 @@
+[
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": true,
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "advice",
+            "with": {
+                "message": "Demonstrating MathJS expressions. Do not over do this !"
+            }
+        },
+        "priority": 100
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'a'",
+                "item": "a",
+                "mode": "fixed",
+                "value": 2
+            }
+        },
+        "priority": 90
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'b'",
+                "item": "b",
+                "mode": "fixed",
+                "value": 3
+            }
+        },
+        "priority": 80
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'c'",
+                "item": "c",
+                "mode": "fixed",
+                "value": 5
+            }
+        },
+        "priority": 70
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'd'",
+                "item": "d",
+                "mode": "fixed",
+                "value": 8
+            }
+        },
+        "priority": 60
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'e'",
+                "item": "e",
+                "mode": "fixed",
+                "value": 10
+            }
+        },
+        "priority": 50
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "nested",
+                "mode": "expression",
+                "value": "sqrt(pow(a, 2) + pow(b, 2))",
+                "message": "Expression: nested functions"
+            }
+        },
+        "priority": 40
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "bodmas",
+                "mode": "expression",
+                "value": "(a + b) * c - d / e",
+                "message": "Expression: Operator precedence "
+            }
+        },
+        "priority": 30
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "bodmas",
+                "mode": "expression",
+                "value": "sin(45) + cos(60) - tan(90)",
+                "message": "Expression: Trigonometry"
+            }
+        },
+        "priority": 20
+    }
+]

@@ -116,13 +116,12 @@ export class CalculatorService {
                 for (const sym of symbols) {
                   console.log(`sym = ${sym}`)
 
-                    // 🚫 Skip mathjs built-ins (sin, tan, min, etc.)
-  if (sym in math) continue;
+                  // 🚫 Skip mathjs built-ins (sin, tan, min, etc.)
+                  if (sym in math) continue;
 
-  // 🚫 Skip your custom functions
-  if (sym in utils) continue;
-
-
+                  // 🚫 Skip custom functions
+                  if (sym in utils) continue;
+https://files.slack.com/files-pri/TMY3YEPP0-F0B1D1Z9YCV/image.png
                   if (!(sym in context)) {  //if not set
                     context[sym] = 0;        
                     }
@@ -130,6 +129,11 @@ export class CalculatorService {
                   
                 console.log(`context: value=${context}`);
                 value = evaluate(event.params.value, { ...context, ...utils});
+                  // @ts-ignore - data property always exists for DenseMatrix
+                  // Handle mathjs DenseMatrix responses
+                  if (value && value['mathjs'] === 'DenseMatrix') {
+                    value = (value as any).data;
+                  }
                 console.log(`[DEBUG] Experssion mode: value=${value}`);
                 }
         
