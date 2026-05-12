@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
-import { evaluate, create, all, type MathNode, parse } from "mathjs";
+import { evaluate, create, all } from "mathjs";
 
 import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
@@ -97,16 +97,15 @@ export class CalculatorService {
                 }
             else if (event.params.mode === 'range-lookup') {
                 const base = await almanac.factValue(event.params.base) as number;
-                value = await CalcUtils.handleRangeLookup(base, event.params.table, event.params.default);
+                value = CalcUtils.handleRangeLookup(base, event.params.table, event.params.default);
                 console.log(`[DEBUG] Range lookup mode: value=${value}`);
                 }
             else if (event.params.mode === 'value-range-lookup') {
                 const base = await almanac.factValue(event.params.base) as number;
                 const key = await almanac.factValue(event.params.key) as string;
-                value = await CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
+                value = CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
                 console.log(`[DEBUG] Value Range lookup mode: value=${value}, key=${key}, base = ${base}`);
                 }
-            //TODO: use `base` for context. This will enforce uniformity of syntax and semantics    
             else if(event.params.mode === 'expression') {
 
                 console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
@@ -142,11 +141,11 @@ export class CalculatorService {
                 }
         
           
-                console.log(`[DEBUG] typeof value:`, typeof value);
-                console.log("DEBUG] mathjs tag:", value?.mathjs);
-                console.log("DEBUG] keys:", value && typeof value === "object" ? Object.keys(value) : null);
+            console.log(`[DEBUG] typeof value:`, typeof value);
+            console.log("DEBUG] mathjs tag:", value?.mathjs);
+            console.log("DEBUG] keys:", value && typeof value === "object" ? Object.keys(value) : null);
 
-            await almanac.addRuntimeFact(event.params.item, value);
+            almanac.addRuntimeFact(event.params.item, value);
             console.log(`[DEBUG] Added runtime fact: ${event.params.item}=${value}`);
 
             context[event.params.item] = value;
@@ -173,10 +172,6 @@ export class CalculatorService {
           try {
             allFacts[fact] = await result.almanac.factValue(fact);
 
-            // derivedFacts = Object.fromEntries(
-            //     Object.entries(allFacts).filter(([k]) => !(k in baseFacts))
-            //   );
-            
             function serialize(value: any) {
               if (value && typeof value === "object" && "_data" in value) {
                 return (value as any)._data; // keep matrix shape
