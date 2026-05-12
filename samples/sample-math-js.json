@@ -1,0 +1,440 @@
+[
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "advice",
+            "with": {
+                "message": "Advice: Lets do mathematics. Kindly do not over do. This is not a scripting engine !"
+            }
+        },
+        "priority": 210
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'a'",
+                "item": "a",
+                "mode": "fixed",
+                "value": 2
+            }
+        },
+        "priority": 200
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'b'",
+                "item": "b",
+                "mode": "fixed",
+                "value": 3
+            }
+        },
+        "priority": 190
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'c'",
+                "item": "c",
+                "mode": "fixed",
+                "value": 5
+            }
+        },
+        "priority": 180
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'd'",
+                "item": "d",
+                "mode": "fixed",
+                "value": 8
+            }
+        },
+        "priority": 170
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Fixed: set 'e'",
+                "item": "e",
+                "mode": "fixed",
+                "value": 10
+            }
+        },
+        "priority": 160
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "f",
+                "mode": "expression",
+                "value": "\"good morning\"",
+                "message": "Fixed: initialize variable 'f' with string"
+            }
+        },
+        "priority": 150
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "nested",
+                "mode": "expression",
+                "value": "sqrt(pow(a, 2) + pow(b, 2))",
+                "message": "Expression: Nested math functions"
+            }
+        },
+        "priority": 140
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "trig",
+                "mode": "expression",
+                "value": "sin(45) + cos(60) - tan(90)",
+                "message": "Expression: Trigonometry"
+            }
+        },
+        "priority": 130
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "bodmas",
+                "mode": "expression",
+                "value": "(a + b) * c - d / 5",
+                "message": "Expression: Operator precedence "
+            }
+        },
+        "priority": 120
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "matrixA",
+                "mode": "expression",
+                "value": "[[1,2,3],[2+2,5,6]]",
+                "message": "Expression: Initialize a 2D matrix. Always 1 based. Compute on the fly"
+            }
+        },
+        "priority": 110
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "cellValue",
+                "mode": "expression",
+                "value": "matrixA[2, 3]",
+                "message": "Expression: Get value from matrix. Row 2, column 3"
+            }
+        },
+        "priority": 100
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "simp",
+                "mode": "expression",
+                "value": "simplify(\"2x + x\")",
+                "message": "Expression: Algebra. simplify '2x + x'"
+            }
+        },
+        "priority": 90
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "deriv",
+                "mode": "expression",
+                "value": "derivative(\"2x^2 + 3x + 4\", \"x\")",
+                "message": "Expression: Derivative of '2x^2 + 3x + 4'"
+            }
+        },
+        "priority": 80
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "const",
+                "mode": "expression",
+                "value": "pi + phi",
+                "message": "Expression: Mathematical constants"
+            }
+        },
+        "priority": 70
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "helloWorld",
+                "mode": "expression",
+                "value": "concat(f, \" world\")",
+                "message": "Expression: String concatenation"
+            }
+        },
+        "priority": 60
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "substr",
+                "mode": "expression",
+                "value": "helloWorld[1:5]",
+                "message": "Expression: Get a substring"
+            }
+        },
+        "priority": 50
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "numberSequence",
+                "mode": "expression",
+                "value": "range(1, 12, 1)",
+                "message": "Expression: create a sequence from 1 to 12 in steps of 1"
+            }
+        },
+        "priority": 40
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "matrixFromSequence",
+                "mode": "expression",
+                "value": "[numberSequence,numberSequence*2]",
+                "message": "Expression: Create a matrix from sequences."
+            }
+        },
+        "priority": 30
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "transP",
+                "mode": "expression",
+                "value": "transpose(matrixFromSequence)",
+                "message": "Expression: Transpose a matrix"
+            }
+        },
+        "priority": 20
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "conv",
+                "mode": "expression",
+                "value": "to(100 cm, m)",
+                "message": "Expression: Convert value in cm to meters"
+            }
+        },
+        "priority": 10
+    }
+]

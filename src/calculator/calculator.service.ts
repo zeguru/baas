@@ -1,11 +1,12 @@
 import { Injectable, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
-import { evaluate } from 'mathjs';
+import { evaluate, create, all } from "mathjs";
+
 import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
 import { registerCustomOperators } from '../common/util/custom-operators'
-import { coalesce } from '../common/util/misc-utils';
+import { coalesce, looksLikeMatrix, normalizeMatrixSyntax } from '../common/util/misc-utils';
 import { SessionManager } from '../session/manager';
 
 @Injectable()
@@ -26,6 +27,8 @@ export class CalculatorService {
     async compute(setName: string, facts: Record<string, any>) {
 
       let engine: Engine | null = null;
+
+      const math = create(all);
 
       try {
         
@@ -76,7 +79,7 @@ export class CalculatorService {
 
             console.log('[DEBUG] Event triggered:', event);
 
-            let value = 0;
+            let value:any;
 
             if (event.params.mode === 'rate') {
                 const base = await almanac.factValue(event.params.base) as number;
@@ -94,16 +97,15 @@ export class CalculatorService {
                 }
             else if (event.params.mode === 'range-lookup') {
                 const base = await almanac.factValue(event.params.base) as number;
-                value = await CalcUtils.handleRangeLookup(base, event.params.table, event.params.default);
+                value = CalcUtils.handleRangeLookup(base, event.params.table, event.params.default);
                 console.log(`[DEBUG] Range lookup mode: value=${value}`);
                 }
             else if (event.params.mode === 'value-range-lookup') {
                 const base = await almanac.factValue(event.params.base) as number;
                 const key = await almanac.factValue(event.params.key) as string;
-                value = await CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
+                value = CalcUtils.handleValueRangeLookup(key, base, event.params.table, event.params.default);
                 console.log(`[DEBUG] Value Range lookup mode: value=${value}, key=${key}, base = ${base}`);
                 }
-            //TODO: use `base` for context. This will enforce uniformity of syntax and semantics    
             else if(event.params.mode === 'expression') {
 
                 console.log(`[DEBUG] Expression mode: expression=${event.params?.value}`);
@@ -112,17 +114,38 @@ export class CalculatorService {
 
                 for (const sym of symbols) {
                   console.log(`sym = ${sym}`)
+
+                  // 🚫 Skip mathjs built-ins (sin, tan, min, etc.)
+                  if (sym in math) continue;
+
+                  // 🚫 Skip custom functions
+                  if (sym in utils) continue;
+                  //https://files.slack.com/files-pri/TMY3YEPP0-F0B1D1Z9YCV/image.png
+
                   if (!(sym in context)) {  //if not set
                     context[sym] = 0;        
                     }
                   }
                   
-                console.log(`context: value=${context}`);
-                value = evaluate(event.params.value, { ...context, ...utils});
-                console.log(`[DEBUG] Experssion mode: value=${value}`);
+                let expression = event.params.value;
+
+                if (looksLikeMatrix(expression)) {
+                  console.log("[DEBUG] detected a matrix... " + expression)
+                  expression = normalizeMatrixSyntax(expression);
+                  console.log("[DEBUG] transformed a matrix... " + expression)
+                  }
+
+                console.log(`[DEBUG] context: value=${context}`);
+                value = evaluate(expression, { ...context, ...utils});
+                console.log(`[DEBUG] Expression mode: value=${value}`);
                 }
         
-            await almanac.addRuntimeFact(event.params.item, value);
+          
+            console.log(`[DEBUG] typeof value:`, typeof value);
+            console.log("DEBUG] mathjs tag:", value?.mathjs);
+            console.log("DEBUG] keys:", value && typeof value === "object" ? Object.keys(value) : null);
+
+            almanac.addRuntimeFact(event.params.item, value);
             console.log(`[DEBUG] Added runtime fact: ${event.params.item}=${value}`);
 
             context[event.params.item] = value;
@@ -148,10 +171,21 @@ export class CalculatorService {
             ]) {
           try {
             allFacts[fact] = await result.almanac.factValue(fact);
+
+            function serialize(value: any) {
+              if (value && typeof value === "object" && "_data" in value) {
+                return (value as any)._data; // keep matrix shape
+              }
+              return value.toString();
+            }
+            
             derivedFacts = Object.fromEntries(
-                Object.entries(allFacts).filter(([k]) => !(k in baseFacts))
-              );
-            derivedFacts.timestamp = utils.currentDateTime
+              Object.entries(allFacts)
+                .filter(([k]) => !(k in baseFacts))
+                .map(([k, v]) => [k, serialize(v)])
+            );
+            
+            derivedFacts.timestamp = utils.currentDateTime;
             } 
           catch {
             console.log(`Skipping = ${fact}`);

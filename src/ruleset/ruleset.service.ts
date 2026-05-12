@@ -4,10 +4,8 @@ import { Engine, Rule } from 'json-rules-engine';
 import * as path from 'path';
 import { RuleMapper } from '../common/util/rule-mapper';
 import { RuleDto } from '../common/dto/rule';
-import { transformWhenStringToJson } from '../common/util/misc-utils'
+import { transformWhenStringToJson, capitalizeTableKeys } from '../common/util/misc-utils'
 import { registerCustomOperators } from '../common/util/custom-operators'
-import { DateUtils } from '../common/util/date-utils';
-import { capitalizeTableKeys } from '../common/util/misc-utils';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BusinessLogic } from './logic';
@@ -18,7 +16,7 @@ export class RuleSetService implements OnModuleInit {
   private readonly logger = new Logger(RuleSetService.name);
   private ruleSets: Record<string, Rule[]> = {};
 
-  private sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-statistics', 'sample-survey'];
+  private readonly sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility', 'sample-statistics', 'sample-survey', 'sample-math-js'];
 
   constructor(
     @InjectRepository(BusinessLogic)
@@ -51,7 +49,7 @@ export class RuleSetService implements OnModuleInit {
       this.logger.log(`Loading ruleset from DB: ${ruleset.name_of_ruleset} with ${ruleset.rules.length} rules`);
       const engineRules = RuleMapper.mapArrayToEngine(ruleset.rules);
       for (const rule of engineRules) {
-        await this.addEngineRule(ruleset.name_of_ruleset, rule);
+        this.addEngineRule(ruleset.name_of_ruleset, rule);
         }
       }
 
@@ -83,7 +81,7 @@ export class RuleSetService implements OnModuleInit {
             this.logger.error(`Invalid rule format in ${fullFileName}`)
             throw new Error(`Invalid rule format in ${fullFileName}`);
             }
-          await this.addEngineRule(setName, rule);
+          this.addEngineRule(setName, rule);
           }
 
       return { success:true,  ruleSet: setName, count:engineRules };
@@ -111,7 +109,7 @@ export class RuleSetService implements OnModuleInit {
     return { success: true, ruleSet: name };
     }
 
-  listRuleSets():String[] {
+  listRuleSets():string[] {
     return Object.keys(this.ruleSets);
     }
 
@@ -192,18 +190,17 @@ export class RuleSetService implements OnModuleInit {
 
     let logic = await this.logicRepository.findOneBy({ name_of_ruleset: setName });
 
-    if (!logic) {
+  
+    if(logic){
+      this.logger.debug('Updating existing logic entry');
+      logic.rules = rules;
+      }
+  else{
       this.logger.debug('Creating new logic entry');
       logic = this.logicRepository.create({
         name_of_ruleset: setName,
         rules: rules,
-        //is_enabled: enabled
         });
-      }
-    else{
-      this.logger.debug('Updating existing logic entry');
-      logic.rules = rules;
-      //logic.is_enabled = enabled;
       }
 
      return this.logicRepository.save(logic);
@@ -227,7 +224,6 @@ export class RuleSetService implements OnModuleInit {
     
     // Sample rulesets
     if (this.sampleFiles.includes(rulesetName)) {
-      //const filename = this.normalizeName(rulesetName) + '.md';
       const filePath = path.join(__dirname, '../../readme', `${rulesetName}.md`);
 
       try {
@@ -235,6 +231,9 @@ export class RuleSetService implements OnModuleInit {
           return markdown;
           } 
         catch (err) {
+          if (err.code === 'ENOENT') {
+            return '# Documentation not found';
+            }
           throw new NotFoundException(`README file for sample "${rulesetName}" not found`);
           }
 
@@ -245,7 +244,6 @@ export class RuleSetService implements OnModuleInit {
     if (!logic) {
       throw new NotFoundException(`No saved logic for "${rulesetName}" found`);
       }
-
     return logic.read_me || '';
   }
 
@@ -259,17 +257,6 @@ export class RuleSetService implements OnModuleInit {
 
         const engine = new Engine(rules, { allowUndefinedFacts: false });
         registerCustomOperators(engine);
-
-        const utils = {
-            age: DateUtils.age,
-            daysBetween: DateUtils.daysBetween,
-            addDays: DateUtils.addDays,
-            currentYear: DateUtils.currentYear,
-            currentMonth: DateUtils.currentMonth,
-            currentDay: DateUtils.currentDay,
-            currentDate: DateUtils.currentDate,
-            currentDateTime: DateUtils.currentDateTime
-            };
 
         let stopped = false;
 

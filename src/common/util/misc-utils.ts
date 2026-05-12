@@ -17,7 +17,7 @@ export function transformWhenStringToJson(conditions: unknown): Record<string, a
     }
 
   return serialized;
-}
+  }
 
 
 /**
@@ -27,10 +27,10 @@ export function transformWhenStringToJson(conditions: unknown): Record<string, a
 export function coalesce<T = number>(...values: (T | undefined | null)[]): T {
   for (const v of values) {
     if (v !== undefined && v !== null) return v;
-  }
+    }
   // fallback if all values are undefined/null
   return 0 as unknown as T;
-}
+  }
 
 
 
@@ -42,12 +42,23 @@ export function capitalizeTableKeys<T extends Record<string, any>>(obj: T): Reco
 
     if (result[upperKey]) {
       throw new Error(`Duplicate key after uppercasing: "${key}" -> "${upperKey}"`);
-    }
+      }
 
     result[upperKey] = value;
-  });
+    });
 
   return result;
-}
+  }
+
+export function looksLikeMatrix(expr: string): boolean {
+  //starts with [[, ends with ]]
+  return /^\s*\[\[.*\]\]\s*$/.test(expr);
+  }
 
 
+export function normalizeMatrixSyntax(expr: string): string {
+  if (expr.startsWith("[[") && expr.endsWith("]]")) {
+    return "[" + expr.slice(2, -2).replace(/\],\s*\[/g, ";") + "]";
+    }
+  return expr;
+  }
