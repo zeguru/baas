@@ -1,7 +1,7 @@
 {
   "name": "baas",
-  "version": "0.48",
-  "description": "Business Logic As A Service. Rules Engine",
+  "version": "0.49",
+  "description": "Business Logic As A Service. Decision Engine",
   "author": "ZeGuru",
   "private": true,
   "license": "UNLICENSED",
