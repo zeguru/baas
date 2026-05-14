@@ -13,7 +13,6 @@ let whenEditor, thenEditor, metaEditor;
 let unsavedChanges = false;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
-// const loadSetBtn = document.getElementById("loadSetBtn");
 const updateAllBtn = document.getElementById("updateAllBtn");
 const persistBtn = document.getElementById("persistBtn");
 
@@ -92,11 +91,6 @@ async function init() {
 
   await loadRuleSets();
 
-  // loadSetBtn.addEventListener("click", (e) => {
-  //     loadSelectedRuleSet();
-  //     updateActionButtons(false);
-  //     unsavedChanges = false;
-  //     });
   const updateAllBtn = document.getElementById("updateAllBtn");
 
   updateAllBtn.addEventListener("click", updateCurrentRuleSet);
@@ -114,8 +108,6 @@ init().then(() => {
       return;
       }
     }
-
-  //updateActionButtons(true);
 
   currentRuleSetName = ruleSetSelect.value;
   rules = [];
@@ -340,7 +332,6 @@ function renderRuleList() {
   if (pasteToEndBtn) {
     pasteToEndBtn.disabled = !copiedRule;
     pasteToEndBtn.title = copiedRule ? "Paste copied rule at the end" : "Copy a rule first";
-    //pasteToEndBtn.addEventListener("click", () => pasteCopiedRuleToCurrentSet(true));
     pasteToEndBtn.onclick = () => pasteCopiedRuleToCurrentSet(true);
 
   }
@@ -353,21 +344,18 @@ function renderRuleList() {
   const addAdviceRuleBtn = document.getElementById("addAdviceRuleBtn");
   if (addAdviceRuleBtn) {
     addAdviceRuleBtn.disabled = !currentRuleSetName;
-    //addAdviceRuleBtn.addEventListener("click", () => addNewRule("advice"));
     addAdviceRuleBtn.onclick      = () => addNewRule("advice");
   }
 
   const addValidationRuleBtn = document.getElementById("addValidationRuleBtn");
   if (addValidationRuleBtn) {
     addValidationRuleBtn.disabled = !currentRuleSetName;
-    //addValidationRuleBtn.addEventListener("click", () => addNewRule("validation"));
     addValidationRuleBtn.onclick  = () => addNewRule("validation");
   }
 
   const addExpressionRuleBtn = document.getElementById("addExpressionRuleBtn");
   if (addExpressionRuleBtn) {
     addExpressionRuleBtn.disabled = !currentRuleSetName;
-    //addExpressionRuleBtn.addEventListener("click", () => addNewRule("expression"));
     addExpressionRuleBtn.onclick  = () => addNewRule("expression");
 
   }
@@ -375,7 +363,6 @@ function renderRuleList() {
   const addFixedRuleBtn = document.getElementById("addFixedRuleBtn");
   if (addFixedRuleBtn) {
     addFixedRuleBtn.disabled = !currentRuleSetName;
-    //addFixedRuleBtn.addEventListener("click", () => addNewRule("fixed"));
     addFixedRuleBtn.onclick       = () => addNewRule("fixed");
 
   }

@@ -24,8 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Reset button
   if (resetTryBtn) {
     resetTryBtn.addEventListener("click", () => {
-      tryInput.value = `{}`;
+      // tryInput.value = `{}`;
       tryOutput.textContent = "";
+      loadSelectedRuleSet();
     });
   }
 
