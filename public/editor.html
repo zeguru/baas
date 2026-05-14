@@ -2,16 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BaaS | Advanced Ruleset Editor</title>
+  <title>BaaS | Low Code Editor</title>
 
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
   />
-  
+
   <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+  <script>
+
+    function copyCode() {
+      const code = document.getElementById('tryOutput').innerText;
+      navigator.clipboard.writeText(code);
+      
+      const copySpan = document.getElementById('copyText');
+      const originalText = copySpan.innerText;
+      copySpan.innerText = 'Copied!';
+      setTimeout(() => copySpan.innerText = originalText, 2000);
+      }
+
+  </script>
+    
   <style>
     body {
       font-family: system-ui, sans-serif;
@@ -235,7 +249,6 @@
       <div class="d-flex align-items-center gap-2">
           <select id="ruleSetSelect" class="form-select w-auto"></select>
           
-          <!-- Three-dot actions -->
         <div class="dropdown">
           <button
             class="btn btn-link p-0"
@@ -267,7 +280,6 @@
             </li>
           </ul>
         </div>
-          <!-- <button id="loadSetBtn" class="btn btn-outline-primary btn-sm" title="Load definition from db">Load Rules</button> -->
           <button id="updateAllBtn" class="btn btn-outline-success btn-sm" title="Sync local changes" disabled="true">Update</button>
           <button id="persistBtn" class="btn btn-primary btn-sm" title="Save to db" disabled="true">Persist</button>
       </div>
@@ -295,14 +307,14 @@
               <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Meta</button>
+              <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Metadata</button>
             </li>
           </div>
 
           <div class="d-flex">
             <li class="nav-item ms-auto" role="presentation">
               <button class="nav-link try-it-tab" id="try-tab" data-bs-toggle="tab" data-bs-target="#tryTab" type="button" role="tab">
-                ▶ Try Ruleset
+                ▶ Sandbox
               </button>
             </li>
           </div>
@@ -318,37 +330,51 @@
             <div class="col-md-5">
               
               <label class="form-label small text-muted d-block">
-                POST : /baas/calculator/<span id="activeRuleSet" class="badge bg-info text-dark">-</span>/compute
+                POST : /baas/calculator/<span id="activeRuleSet" class="badge bg-secondary color-contrast-light">-</span>/compute
               </label>
 
-              <label class="form-label fw-bold small text-muted">Request (Facts)</label>
-              <!-- <textarea id="tryInput" class="form-control font-monospace" rows="16" spellcheck="false">{}
-              </textarea> -->
-
-              <textarea
-                id="tryInput"
-                class="font-monospace p-2 bg-light border rounded w-100"
-                style="
-                  height: 350px;
-                  overflow-y: auto;
-                  font-size: 0.65rem;
-                  resize: vertical;
-                  white-space: pre;
-                "
-                spellcheck="false"
-              >{}</textarea>
-
-              <button id="runTryBtn" class="btn btn-primary btn-sm mt-2">Run Test</button>
-              <button id="resetTryBtn" class="btn btn-secondary btn-sm mt-2 ms-1">Clear</button>
+              <div style="height: 520px; overflow-y:auto; font-size:0.65rem; position: relative; background: #f2f2f2; border-radius: 8px; margin: 16px 0; overflow: auto;">
+                <!-- Language label -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: #6c757d; border-bottom: 1px solid #3d3d3d;">
+                  <span style="color: #ffffff; font-size: 12px; font-family: monospace;">Request (Facts)</span>
+                  <button id="resetTryBtn" style="background: transparent; border: none; color: #ffffff; cursor: pointer; font-size: 12px; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M23 4v6h-6"></path>
+                      <path d="M1 20v-6h6"></path>
+                      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                      <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                    </svg>
+                    <span id="clearText">Refresh</span>
+                  </button>
+                </div>
+                <!-- Code content -->
+                <textarea id="tryInput" style="background: #f2f2f2; color: #000000; font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', 'Fira Code', 'Courier New', monospace; font-size: 0.65rem; padding: 16px; border: none; width: 100%; height: 520px; resize: vertical;"></textarea>
+                
+              </div>
+              <button id="runTryBtn" class="btn btn-secondary btn-sm mt-2">▶ Run</button>
             </div>
 
           <div class="col-md-7">
               <label class="form-label fw-bold small text-muted d-block">
-                ...
+                ℹ
               </label>
 
-              <label class="form-label fw-bold small text-muted">Response (Decision + Trace)</label>
-              <pre id="tryOutput" class="p-2 bg-light border rounded" style="height: 520px; overflow-y:auto; font-size:0.65rem;"></pre>
+
+              <div style="height: 520px; overflow-y:auto; font-size:0.65rem; position: relative; background: #f2f2f2; border-radius: 8px; margin: 16px 0; overflow: auto;">
+                <!-- Language label -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: #6c757d; border-bottom: 1px solid #3d3d3d;">
+                  <span style="color: #ffffff; font-size: 12px; font-family: monospace;">Response (Result + Trace)</span>
+                  <button onclick="copyCode()" style="background: transparent; border: none; color: #ffffff; cursor: pointer; font-size: 12px; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span id="copyText">Copy</span>
+                  </button>
+                </div>
+                <!-- Code content -->
+                <pre id="tryOutput" style="margin: 0; padding: 16px; overflow-x: auto; font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', 'Fira Code', 'Courier New', monospace; color: #d4d4d4; background: #f2f2f2;"></pre>
+              </div>
           </div>
         </div>
       </div>
