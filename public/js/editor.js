@@ -35,7 +35,7 @@ async function init() {
   const thenSchema = schema.properties.then;
   const metaSchema = {
     type: "object",
-    title: "Metadata",
+    title: "Options",
     properties: {
       priority: schema.properties.priority,
       }
@@ -97,7 +97,8 @@ async function init() {
   //     updateActionButtons(false);
   //     unsavedChanges = false;
   //     });
-  
+  const updateAllBtn = document.getElementById("updateAllBtn");
+
   updateAllBtn.addEventListener("click", updateCurrentRuleSet);
   persistBtn.addEventListener("click", persistCurrentRuleset);
   }
@@ -319,7 +320,20 @@ function renderRuleList() {
 
   const pasteRow = document.createElement("div");
   pasteRow.className = "ruleset-actions-row list-group-item d-flex justify-content-between align-items-center text-muted";
-  pasteRow.innerHTML = '<span>🛠️ Ruleset Actions</span><div class="d-flex gap-2 align-items-center"><button id="pasteToEndBtn" class="btn btn-sm paste-btn">📥 Paste</button><div class="dropdown dropup"><button id="addRuleDropdownBtn" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-placement="top" aria-expanded="false" title="Tip: For advanced rules (e.g., lookups), copy+paste a sample ruleset and customize">➕ Add rule</button><ul class="dropdown-menu"><li><button id="addAdviceRuleBtn" class="dropdown-item" type="button">Advice</button></li><li><button id="addValidationRuleBtn" class="dropdown-item" type="button">Validation</button></li><li><button id="addExpressionRuleBtn" class="dropdown-item" type="button">Expression</button></li><li><button id="addFixedRuleBtn" class="dropdown-item" type="button">Fixed</button></li></ul></div></div>';
+  pasteRow.innerHTML = `<span>🛠️ Ruleset Actions</span>
+                          <div class="d-flex gap-2 align-items-center">
+                              <button id="pasteToEndBtn" class="btn btn-sm paste-btn">📥 Paste</button>
+                              <div class="dropdown dropup">
+                                  <button id="addRuleDropdownBtn" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-placement="top" aria-expanded="false" title="Tip: For advanced rules (e.g., lookups), copy+paste a sample ruleset and customize">➕ Add rule</button>
+                                  <ul class="dropdown-menu">
+                                    <li><button id="addAdviceRuleBtn" class="dropdown-item" type="button">Advice</button></li>
+                                    <li><button id="addValidationRuleBtn" class="dropdown-item" type="button">Validation</button></li>
+                                    <li><button id="addExpressionRuleBtn" class="dropdown-item" type="button">Expression</button></li>
+                                    <li><button id="addFixedRuleBtn" class="dropdown-item" type="button">Fixed</button></li>
+                                  </ul>
+                              </div>
+                          </div>
+                        `;
   ruleList.appendChild(pasteRow);
 
   const pasteToEndBtn = document.getElementById("pasteToEndBtn");
