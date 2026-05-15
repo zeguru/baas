@@ -560,6 +560,7 @@ async function updateCurrentRuleSet() {   //Sync rules
       };
     }
 
+
   showLoader(true, `Clearing ${currentRuleSetName}...`);
 
   try {
@@ -574,15 +575,21 @@ async function updateCurrentRuleSet() {   //Sync rules
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rules[i]),
         });
-      if (!res.ok) console.warn(`Rule ${i + 1} failed`);
+      //if rule contains an expression this is where we validate by calling evaluate()
+      
+      if (!res.ok) {
+        console.warn(`Rule ${i + 1} failed`);
+        //need to undo by reloading ruleset....
+        }
       showLoader(true, `Updating rule ${i + 1}/${rules.length}`);
       //await new Promise((r) => setTimeout(r, 20));  //only necessary for showing progress to the user
       }
-    showLoader(false);
     //alert("All rules synchronized!");
     await loadSelectedRuleSet();
     unsavedChanges = false;
     updateActionButtons();
+    showLoader(false);
+
     } 
   catch (e) {
     console.error(e);

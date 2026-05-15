@@ -78,11 +78,10 @@
           "description": "How to get to the result",
           "enum": [
             "fixed",
-            "rate",
+            "expression",
             "range-lookup",
             "value-lookup",
-            "value-range-lookup",
-            "expression"
+            "value-range-lookup"
           ],
           "propertyOrder": 20
         },
