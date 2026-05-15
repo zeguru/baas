@@ -5,6 +5,7 @@ Fixes # (issue)
 
 ## Type of change
 - [ ] Bug fix
+- [ ] Enhancement
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update

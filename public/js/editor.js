@@ -13,7 +13,6 @@ let whenEditor, thenEditor, metaEditor;
 let unsavedChanges = false;
 
 const ruleSetSelect = document.getElementById("ruleSetSelect");
-const updateAllBtn = document.getElementById("updateAllBtn");
 const persistBtn = document.getElementById("persistBtn");
 
 const ruleList = document.getElementById("ruleList");
@@ -43,7 +42,7 @@ async function init() {
   // Base JSON Editor options
   const opts = {
     disable_edit_json: false,
-    disable_properties: false,
+    disable_properties: true,
     disable_collapse: true,
     disable_array_reorder:true,
     show_errors: "interaction",
@@ -91,9 +90,7 @@ async function init() {
 
   await loadRuleSets();
 
-  const updateAllBtn = document.getElementById("updateAllBtn");
-
-  updateAllBtn.addEventListener("click", updateCurrentRuleSet);
+  //updateAllBtn.addEventListener("click", updateCurrentRuleSet);
   persistBtn.addEventListener("click", persistCurrentRuleset);
   }
 
@@ -120,7 +117,7 @@ init().then(() => {
 
   loadSelectedRuleSet();
   unsavedChanges = false;
-  updateActionButtons();
+  //updateActionButtons();
 
   });
 });
@@ -314,27 +311,31 @@ function renderRuleList() {
   pasteRow.className = "ruleset-actions-row list-group-item d-flex justify-content-between align-items-center text-muted";
   pasteRow.innerHTML = `<span>🛠️ Ruleset Actions</span>
                           <div class="d-flex gap-2 align-items-center">
-                              <button id="pasteToEndBtn" class="btn btn-sm paste-btn">📥 Paste</button>
+                              <button id="updateAllBtn" class="btn btn-outline-secondary btn-sm" title="Sync local changes" >Update</button>
+                              <button id="pasteToEndBtn" class="btn btn-sm paste-btn" >📥 Paste</button>
                               <div class="dropdown dropup">
-                                  <button id="addRuleDropdownBtn" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-placement="top" aria-expanded="false" title="Tip: For advanced rules (e.g., lookups), copy+paste a sample ruleset and customize">➕ Add rule</button>
+                                  <button id="addRuleDropdownBtn" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-placement="top" aria-expanded="false" title="Tip: For advanced rules, copy+paste from a sample ruleset then customize">➕ Add rule</button>
                                   <ul class="dropdown-menu">
                                     <li><button id="addAdviceRuleBtn" class="dropdown-item" type="button">Advice</button></li>
                                     <li><button id="addValidationRuleBtn" class="dropdown-item" type="button">Validation</button></li>
-                                    <li><button id="addExpressionRuleBtn" class="dropdown-item" type="button">Expression</button></li>
                                     <li><button id="addFixedRuleBtn" class="dropdown-item" type="button">Fixed</button></li>
+                                    <li><button id="addExpressionRuleBtn" class="dropdown-item" type="button">Expression</button></li>
                                   </ul>
                               </div>
                           </div>
                         `;
+
   ruleList.appendChild(pasteRow);
+
+  const updateAllBtn = document.getElementById("updateAllBtn");
+  updateAllBtn.onclick = () => updateCurrentRuleSet();
 
   const pasteToEndBtn = document.getElementById("pasteToEndBtn");
   if (pasteToEndBtn) {
     pasteToEndBtn.disabled = !copiedRule;
     pasteToEndBtn.title = copiedRule ? "Paste copied rule at the end" : "Copy a rule first";
     pasteToEndBtn.onclick = () => pasteCopiedRuleToCurrentSet(true);
-
-  }
+    }
 
   const addRuleDropdownBtn = document.getElementById("addRuleDropdownBtn");
   if (addRuleDropdownBtn) {

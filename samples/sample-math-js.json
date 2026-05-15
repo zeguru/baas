@@ -114,27 +114,6 @@
         "then": {
             "do": "apply-adjustment",
             "with": {
-                "message": "Fixed: set 'e'",
-                "item": "e",
-                "mode": "fixed",
-                "value": 10
-            }
-        },
-        "priority": 160
-    },
-    {
-        "when": {
-            "all": [
-                {
-                    "operator": "always",
-                    "value": "true",
-                    "fact": "always"
-                }
-            ]
-        },
-        "then": {
-            "do": "apply-adjustment",
-            "with": {
                 "item": "f",
                 "mode": "expression",
                 "value": "\"good morning\"",
@@ -305,8 +284,8 @@
             "with": {
                 "item": "const",
                 "mode": "expression",
-                "value": "pi + phi",
-                "message": "Expression: Mathematical constants"
+                "value": "pi + phi + e",
+                "message": "Expression: Mathematical constants. pi, e, phi"
             }
         },
         "priority": 70
