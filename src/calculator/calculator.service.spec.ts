@@ -85,40 +85,6 @@ import {
         });
       });
   
-      it('should compute rate adjustment', async () => {
-        mockRuleSetService.getRules.mockReturnValue([
-          {
-            conditions: {
-              all: [
-                {
-                  fact: 'salary',
-                  operator: 'greaterThan',
-                  value: 0,
-                },
-              ],
-            },
-            event: {
-              type: 'apply-adjustment',
-              params: {
-                item: 'tax',
-                mode: 'rate',
-                base: 'salary',
-                value: 0.1,
-                break: false,
-                message: '10% tax',
-              },
-            },
-            priority: 1,
-          },
-        ]);
-  
-        const result = await service.compute('tax-rules', {
-          salary: 1000,
-        });
-  
-        expect(result.derivedFacts.tax).toBe('100');
-      });
-  
       it('should compute expression adjustment', async () => {
         mockRuleSetService.getRules.mockReturnValue([
           {

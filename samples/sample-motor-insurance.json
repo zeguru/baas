@@ -232,7 +232,7 @@
     "when": {"all": [{ "fact":"always", "operator": "always", "value": true }] },
     "then": { 
       "do": "apply-adjustment", 
-      "with": { "item": "itl", "mode": "rate", "base": "basePremium", "value": 0.002,  "message":"Add Training Levy. 0.2% of basePremium"  } 
+      "with": { "item": "itl", "mode": "expression", "value": "basePremium * 0.002", "message":"Add Training Levy. 0.2% of basePremium"  } 
       },
     "priority": 50
   },
@@ -241,7 +241,7 @@
     "when": { "all": [{ "fact":"always", "operator": "always", "value": true }] },
     "then": { 
       "do": "apply-adjustment", 
-      "with": { "item": "phcf", "mode": "rate", "base": "basePremium", "value": 0.0025, "message":"Add PHCF 0.25% of basePremium"  } 
+      "with": { "item": "phcf", "mode": "expression", "value": "basePremium * 0.0025", "message":"Add PHCF 0.25% of basePremium"  } 
       },
     "priority": 50
   },

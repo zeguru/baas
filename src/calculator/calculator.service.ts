@@ -81,12 +81,7 @@ export class CalculatorService {
 
             let value:any;
 
-            if (event.params.mode === 'rate') {
-                const base = await almanac.factValue(event.params.base) as number;
-                value = base * event.params.value;
-                console.log(`[DEBUG] Rate mode: base=${base}, rate=${event.params.rate}, value=${value}`);
-                } 
-            else if (event.params.mode === 'fixed') {
+            if (event.params.mode === 'fixed') {
                 value = event.params.value ?? 0;
                 console.log(`[DEBUG] Fixed mode: value=${value}`);
                 }
