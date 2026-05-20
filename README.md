@@ -43,7 +43,7 @@ There are many awesome rule engines, but
 * 🧠 Explainable **decision traces** (see exactly *why* a rule passed or failed)
 * 🔌 API-first design
 * 🖥️ Built-in UI for rule creation and testing
-* 🧪 Interactive “try-it” sandbox
+* 🧪 Interactive Sandbox
 * 🐳 Docker-ready for instant setup
 * 📦 Sample rules included
 * 🤖 Works great as guardrails for AI systems
@@ -197,9 +197,9 @@ Value Range Lookup
 
 ![value-range-lookup](public/images/baas-value-range-lookup.png)
 
-Try It (sandbox)
+Sandbox
 
-![try-it](public/images/baas-try-it.png)
+![try-it](public/images/baas-sandbox.png)
 ---
 
 ## 🧪 Example Usage
