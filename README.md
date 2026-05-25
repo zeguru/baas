@@ -15,7 +15,7 @@ BaaS - Business logic As A Service
 
 # 🚀 BaaS
 
-**Explainable, testable decision engine with API and built-in UI**
+**Explainable, low-code decision engine with API and built-in UI**
 
 Power business rules, workflows, and AI guardrails with a fully open-source, developer-friendly engine designed for clarity, control, and auditability.
 
@@ -40,14 +40,13 @@ There are many awesome rule engines, but
 ## ✨ Features
 
 * ⚡ Deterministic rule evaluation
-* 🧠 Explainable **decision traces** (see exactly *why* a rule passed or failed)
+* 🧠 Explainable **decision traces**
 * 🔌 API-first design
 * 🖥️ Built-in UI for rule creation and testing
 * 🧪 Interactive Sandbox
 * 🐳 Docker-ready for instant setup
 * 📦 Sample rules included
 * 🤖 Works great as guardrails for AI systems
-* Your choice. Create rules using json or a web form.
 
 ---
 
@@ -57,8 +56,8 @@ There are many awesome rule engines, but
 
 1. Create a ruleset (container for a group of rules)
 2. Add new rules, one by one, via
-    - UI
-    - copy from another ruleset and customize (recommended)
+    - Web UI
+    - copy from another ruleset and customize 
     - rest api (advanced)
 3. Update ruleset
 4. Adjust execution order
@@ -173,10 +172,8 @@ Perform a calculation, transformation or a process.
 Modes available: 
 
 - `fixed`
-- `rate`
 - `expression`
 - Lookups: `value-lookup`, `range-lookup`, `value-range-lookup`
-
 
 
 Expression 
@@ -589,7 +586,7 @@ git push origin main
 * Document your PR accordingly
 * Write clear commit messages
 * Add tests where applicable
-* Your PR must reference an issue
+* Your PR must reference an open issue
 
 ---
 
@@ -608,7 +605,7 @@ npm run test
 * [ ] Execution Stats
 * [ ] Support more databases
 * [ ] Api key and JWT
-* [ ] Rule templates
+* [ ] ENVIRONMENT VARIABLES for tuning runtime behaviour
 * [ ] SDK
 * [ ] Headless mode (run without editor/docs)
 

@@ -32,6 +32,12 @@ export class CalculatorService {
 
       try {
         
+        Object.entries(facts).forEach(([key, value]) => {
+          if (!value || (typeof value === 'string' && value.trim() === '')) {
+            throw new Error(`Fact '${key}' should not have an empty value`);
+            }
+          });
+
         const baseFacts: Record<string, any> = { ...facts };
 
         const rules = this.ruleSetService.getRules(setName);
