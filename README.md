@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="public/images/baas-auto-generated.png" alt="Nest Logo" /></a>
+  <a href="https://vimeo.com/1200036752" target="blank"><img src="public/images/baas-gears.png" alt="Nest Logo" /></a>
 </p>
 
 
@@ -39,14 +39,14 @@ There are many awesome rule engines, but
 
 ## ✨ Features
 
-* ⚡ Deterministic rule evaluation
-* 🧠 Explainable **decision traces**
-* 🔌 API-first design
-* 🖥️ Built-in UI for rule creation and testing
-* 🧪 Interactive Sandbox
-* 🐳 Docker-ready for instant setup
-* 📦 Sample rules included
-* 🤖 Works great as guardrails for AI systems
+* Deterministic rule evaluation
+* Explainable **decision traces**
+* API-first design
+* Built-in UI for rule creation and testing
+* Interactive Sandbox
+* Docker-ready for instant setup
+* Sample rules included
+* Works great as guardrails for AI systems
 
 ---
 
