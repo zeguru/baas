@@ -14,8 +14,12 @@ import { MetaModule } from './meta/meta.module';
 @Module({
   imports: [ 
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: './data/baas.db',
+      type: (process.env.DB_TYPE as any) ?? 'sqlite',
+      database: process.env.DB_DATABASE ?? './data/baas.db',
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true, // auto generate tables in dev
       }),

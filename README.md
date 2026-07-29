@@ -73,7 +73,7 @@ There are many awesome rule engines, but
 
 ---
 
-## 🚀 Quick Start 
+## 🚀 Quick Start - for the inpatient
 
 ### 1. Run with Docker
 
@@ -105,17 +105,78 @@ services:
 
 ---
 
-### From Source - advanced
+## Production Setup 
+
+### 1. Using Docker
 
 ```bash
-git clone https://github.com/zeguru/baas.git
-cd baas
+    docker run -d \
+    -p 3000:3000 \
+    -e DB_TYPE=mysql \
+    -e DB_HOST=server.xyz.com \
+    -e DB_PORT=3306 \
+    -e DB_DATABASE=baas \
+    -e DB_USERNAME=user \
+    -e DB_PASSWORD=password \
+    zeguru/baas:0.57     
 ```
 
-### Run with Docker
+```text
+NB: adjust accordingly:
+        eg image -> zeguru/baas:latest
+        eg port -> 80
+        eg dbtype -> mariadb|postgres|oracledb|mssql
+```
+
+
+### 2. Access the app
+
+* API: http://BASE_URL:3000/baas
+* Editor UI: http://BASE_URL:3000/baas/editor
+
+---
+
+## Docker Compose
+
+```yaml
+version: "3.9"
+
+services:
+  app:
+    image: zeguru/baas:latest
+    container_name: baas-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: baas
+      DB_USERNAME: root
+      DB_PASSWORD: secret
+
+```
+NB: using a .env file
+
+```yaml
+version: "3.9"
+
+services:
+  app:
+    image: zeguru/baas:latest
+    container_name: baas-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+```
+
+### Run 
 
 ```bash
-docker-compose up --build
+docker-compose up -d
 ```
 
 ---
