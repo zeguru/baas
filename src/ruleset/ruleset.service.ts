@@ -192,11 +192,11 @@ export class RuleSetService implements OnModuleInit {
 
   
     if(logic){
-      this.logger.debug('Updating existing logic entry');
+      this.logger.debug('Updating existing product logic');
       logic.rules = rules;
       }
   else{
-      this.logger.debug('Creating new logic entry');
+      this.logger.debug('Creating new product logic');
       logic = this.logicRepository.create({
         name_of_ruleset: setName,
         rules: rules,
