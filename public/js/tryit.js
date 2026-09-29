@@ -41,6 +41,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (activeRuleSetLabel) activeRuleSetLabel.textContent = ruleSetName;
 
+      // If we're in Visual mode, first capture the form values.
+        if (sandboxView === "visual") {
+
+          const form = document.querySelector("#formInput form");
+
+          if (form && !form.reportValidity()) {
+              return;
+            }
+
+            syncFormToJson();
+          }
+
+        const requestData = JSON.parse(
+            document.getElementById("tryInput").value
+         );
+
+        console.log("Running with:", requestData);
+
+
       let payload;
       try {
         payload = JSON.parse(tryInput.value);
@@ -65,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await response.json();
         tryOutput.textContent = JSON.stringify(result, null, 2);
+        renderResponseReceipt(result);
 
         // Highlight in red if stopped=true
         if (result.stopped === true) {

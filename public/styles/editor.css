@@ -1,0 +1,210 @@
+body {
+      font-family: system-ui, sans-serif;
+      background: #fafafa;
+      margin: 1rem;
+      }
+
+    h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+
+    #layout {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      }
+
+    /* Target the container flex alignment */
+    .rule-item.d-flex {
+      align-items: flex-end !important; /* push buttons to bottom */
+      }
+
+    /* Optional: ensure label wraps naturally */
+    .rule-item span {
+      display: inline-block;
+      word-break: break-word;
+      margin-bottom: 0.25rem; 
+      }
+
+    .rule-buttons button {
+      margin-left: 0.25rem;
+      }
+
+    .list-group-item.active {
+      background-color: #e9ecef !important; 
+      color: #212529 !important;           
+      }
+
+    #ruleList {
+      width: 40%;
+      max-height: 82vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.05);
+      padding: 0.5rem;
+      }
+
+    .ruleset-actions-row {
+      position: sticky;
+      bottom: 0;
+      z-index: 3;
+      background: #fff;
+      border-top: 1px solid #e9ecef;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+      margin-top: 0.35rem;
+    }
+
+    .rule-item.just-added {
+      outline: 2px solid rgba(13, 110, 253, 0.75);
+      outline-offset: 2px;
+      background: rgba(13, 110, 253, 0.08) !important;
+      animation: justAddedPulse 1.2s ease-in-out 1;
+    }
+
+    @keyframes justAddedPulse {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.01); }
+      100% { transform: scale(1); }
+    }
+
+    #editor_holder {
+      flex: 1;
+      max-width: 60%;
+      min-height: 82vh;
+      background: white;
+      padding: 0.75rem;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.08);
+      overflow-y: auto;
+      }
+
+    .rule-item {
+      cursor: pointer;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      font-size: 0.9rem;
+      }
+
+    .rule-item:hover {
+      background: #f4f8ff;
+      }
+
+    .rule-item.active {
+      background: #007bff;
+      color: white;
+      font-weight: 500;
+      }
+
+    /* Make JSON Editor more compact */
+    .je-object__container {
+      padding-left: 0.4rem !important;
+      }
+
+    .form-control, select, textarea {
+      padding: 0.25rem 0.5rem !important;
+      font-size: 0.85rem !important;
+      }
+
+    .je-indented-panel {
+      margin-bottom: 0.4rem !important;
+      padding: 0.4rem !important;
+      border-radius: 4px !important;
+      }
+
+    label.control-label {
+      font-weight: 500;
+      font-size: 0.85rem;
+      margin-bottom: 2px;
+      }
+
+    .je-header {
+      font-size: 0.9rem;
+      background: #f8f9fa;
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem;
+      }
+
+    .json-editor-btn-collapse {
+      transform: scale(0.8);
+      }
+
+    .json-editor-btn-collapse + span {
+      font-size: 0.85rem;
+      }
+
+    #loaderOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+      }
+
+    #tryTab textarea {
+      font-size: 0.85rem;
+      line-height: 1.4;
+      }
+
+    #tryOutput {
+      background: #f8f9fa;
+      font-family: monospace;
+      white-space: pre-wrap;
+      }
+
+    #ruleSetSelect {
+      width: 200px !important;
+      }
+
+    /* Make Try It float right and visually distinct */
+    .try-it-tab {
+      background-color: #0d6efd;  /* Bootstrap primary blue */
+      color: white;
+      font-weight: 500;
+      border-radius: 4px 4px 0 0;
+      border: 1px solid #0d6efd;
+      margin-left: 0.5rem;
+      transition: background 0.2s;
+      }
+
+    .try-it-tab:hover {
+      background-color: #ffffff;
+      border-color: #0056b3;
+      }
+
+    .try-it-tab.active {
+      background-color: #0b5ed7;
+      border-color: #0b5ed7;
+      }
+
+    .footer-link {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 500;
+      }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      }
+
+    #rulesetActionsBtn {
+      text-decoration: none;
+      color: #6c757d;
+      }
+
+    #rulesetActionsBtn:hover {
+      color: #212529;
+      }
+
+      .rule-item.opacity-50 {
+          opacity: 0.4;
+        }
+
+        .rule-item.border-primary {
+          border: 1px dashed #0d6efd !important;
+        }

@@ -519,9 +519,18 @@ async function loadSelectedRuleSet() {
   const tryItObject = buildEmptyFactsObject(facts);
 
   const tryInput = document.getElementById("tryInput");
-  if (tryInput) {
-    tryInput.value = JSON.stringify(tryItObject, null, 2);
+
+  let currentView = getSandboxView()
+
+  tryInput.value = JSON.stringify(tryItObject, null, 2);
+
+  if (currentView === "json") {
+    setSandboxView("json")
     }
+  else{
+    syncJsonToForm()
+    }
+
   }
 
 
@@ -934,3 +943,14 @@ function showLoader(show, message = "Loading...") {
 loader.querySelector("#loaderMsg").textContent = message;
 loader.style.display = show ? "flex" : "none";
 }
+
+
+function copyCode() {
+    const code = document.getElementById('tryOutput').innerText;
+    navigator.clipboard.writeText(code);
+    
+    const copySpan = document.getElementById('copyText');
+    const originalText = copySpan.innerText;
+    copySpan.innerText = 'Copied!';
+    setTimeout(() => copySpan.innerText = originalText, 2000);
+    }

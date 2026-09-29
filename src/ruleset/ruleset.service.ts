@@ -42,7 +42,7 @@ export class RuleSetService implements OnModuleInit {
     }
 
   async loadAllRules() {
-    // 1️⃣ Load all enabled rules from DB
+    // 1 Load all enabled rules from DB
     const enabledDbRulesets = await this.logicRepository.find({ where: { is_enabled: true } });
 
     for (const ruleset of enabledDbRulesets) {
@@ -53,7 +53,7 @@ export class RuleSetService implements OnModuleInit {
         }
       }
 
-    // 2️⃣ Load all sample rules from files
+    // 2 Load all sample rules from files
     for (const file of this.sampleFiles) {
       this.logger.log(`Loading sample ruleset from file: ${file}.json`);
       if(!this.ruleSets[file]){   //do not load updated samples (do not overwrite)
