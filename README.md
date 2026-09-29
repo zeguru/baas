@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://vimeo.com/1200036752" target="blank"><img src="public/images/baas-gears.png" alt="Nest Logo" /></a>
+  <a href="https://vimeo.com/1200036752" target="_blank"><img src="public/images/baas-gears.png" alt="Nest Logo" /></a>
 </p>
 
 

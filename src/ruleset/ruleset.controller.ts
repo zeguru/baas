@@ -194,7 +194,6 @@ export class RuleSetController {
     description: 'Show markdown documentation for the `ruleset` ',
     })
   async getReadMe(@Param('nameOfRuleSet')setName: string) {
-    //return this.ruleSetsService.getReadme(setName);
     const readme = await this.ruleSetsService.getReadme(setName);
     return { read_me: readme }; 
     }
