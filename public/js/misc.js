@@ -118,12 +118,22 @@ function setSandboxView(view) {
 function renderResponseReceipt(data) {
     const container = document.getElementById("responseReceipt");
 
+    const hasSessionState = !!data.session?.state;
+
     if (!container) {
         return;
     }
 
     const baseFacts = data.baseFacts || {};
-    const derivedFacts = data.derivedFacts || {};
+    // const derivedFacts = data.derivedFacts || {};
+    const derivedFacts = {
+        ...(data.derivedFacts || {}),
+        ...(data.session?.state || {})
+    };
+
+    console.log("derivedFacts")
+    console.log(derivedFacts)
+
     const breakdown = Array.isArray(data.breakdown)
         ? data.breakdown
         : [];
@@ -178,9 +188,12 @@ function renderResponseReceipt(data) {
                         </span>
                     </div>
 
-                    <div class="response-receipt__item-result">
-                        ${formatValue(item.result)}
-                    </div>
+
+                    ${!hasSessionState ? `
+                        <div class="response-receipt__item-result">
+                            ${formatValue(item.result)}
+                        </div>
+                    ` : ""}
                 </div>
             `;
         })
@@ -194,9 +207,11 @@ function renderResponseReceipt(data) {
     let resultKey = ""
     let resultValue = null;
 
-
-
-    if(!data.stopped){
+    if(hasSessionState){
+        resultKey = "step";
+        resultValue = data.session?.state?.step || null;
+        }
+    else if(!data.stopped){ //not session and not stopped 
         resultKey = derivedKeys[derivedKeys.length - 2];
 
         resultValue = resultKey
@@ -214,7 +229,7 @@ function renderResponseReceipt(data) {
 
             <div class="response-receipt__header">
                 <div class="response-receipt__title">
-                    Calculator Result
+                    ${hasSessionState ? "Session" : "Calculator Result"}
                 </div>
 
                 <div class="response-receipt__ruleset">
@@ -222,7 +237,7 @@ function renderResponseReceipt(data) {
                 </div>
 
                 <div class="response-receipt__status">
-                    ${data.stopped ? "Stopped" : "Completed"}
+                    ${data.stopped ? (hasSessionState ? "Waiting for input" : "Stopped") : "Completed"}
                 </div>
             </div>
 
@@ -242,7 +257,7 @@ function renderResponseReceipt(data) {
                 <div class="response-receipt__section">
 
                     <div class="response-receipt__section-title">
-                        Calculation
+                    ${hasSessionState ? "State Machine" : "Calculation"}
                     </div>
 
                     ${rows(
@@ -283,11 +298,11 @@ function renderResponseReceipt(data) {
             ` : ""}
 
 
-            ${derivedFacts.timestamp ? `
+        
                 <div class="response-receipt__footer">
-                    ${derivedFacts.timestamp}
+                    ${hasSessionState ? "Expires with 30 minutes of inactivity" : derivedFacts.timestamp}
                 </div>
-            ` : ""}
+
 
         </div>
     `;
