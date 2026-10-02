@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     runTryBtn.addEventListener("click", async () => {
       const ruleSetName = ruleSetSelect?.value;
       if (!ruleSetName) {
-        alert("Please select a RuleSet first.");
+        showToast("Please select a RuleSet first.", "warning");
         return;
       }
 
@@ -53,20 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
             syncFormToJson();
           }
 
-        const requestData = JSON.parse(
-            document.getElementById("tryInput").value
-         );
-
-        console.log("Running with:", requestData);
-
-
       let payload;
       try {
         payload = JSON.parse(tryInput.value);
       } catch (err) {
-        alert("Invalid JSON input. Please fix and try again.");
+        showToast("Invalid JSON input. Please fix and try again.", "danger");
         return;
       }
+
+      console.log("Running with:", payload);
 
       document.getElementById("loaderMsg").innerText = "Running test...";
       document.getElementById("loaderOverlay").style.display = "flex";
