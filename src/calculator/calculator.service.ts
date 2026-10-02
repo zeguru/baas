@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Engine } from 'json-rules-engine';
 import { evaluate, create, all } from "mathjs";
-
+import { distance } from 'fastest-levenshtein';
 import { DateUtils } from '../common/util/date-utils';
 import { CalcUtils } from '../common/util/calc-utils';
 import { RuleSetService } from '../ruleset/ruleset.service';
@@ -69,7 +69,9 @@ export class CalculatorService {
             currentMonth: DateUtils.currentMonth,
             currentDay: DateUtils.currentDay,
             currentDate: DateUtils.currentDate,
-            currentDateTime: DateUtils.currentDateTime
+            currentDateTime: DateUtils.currentDateTime,
+
+            typo: distance, //number of edits 
             };
 
         let stopped = false;
