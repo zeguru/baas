@@ -205,7 +205,7 @@ function renderResponseReceipt(data) {
         }
 
     if(data.code == 'ENGINE_ERROR'){
-        alert(data.message);
+        showToast(data.message, "danger");
         return;
         }
 

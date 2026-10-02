@@ -370,7 +370,7 @@ function renderRuleList() {
 }
 
 function addNewRule(ruleType) {
-  if (!currentRuleSetName) return alert("Select a RuleSet first");
+  if (!currentRuleSetName) return showToast("Select a RuleSet first", "warning");
 
   const baseRule = {
     when: { all: [{ fact: "always", operator: "always", value: true }] },
@@ -463,7 +463,7 @@ function addNewRule(ruleType) {
 
     rules.push(newRule);
   } else {
-    alert(`Unknown rule type: ${ruleType}`);
+    showToast(`Unknown rule type: ${ruleType}`, "danger");
     return;
   }
   normalizeRulePriorities();
@@ -507,7 +507,7 @@ async function loadRuleSets() {
 //RULESET ACTIONS
 async function loadSelectedRuleSet() {
   const name = ruleSetSelect.value;
-  if (!name) return alert("Select a RuleSet first");
+  if (!name) return showToast("Select a RuleSet first", "warning");
   currentRuleSetName = name;
 
   const res = await fetch(`${API_BASE}/${name}`);
@@ -536,7 +536,7 @@ async function loadSelectedRuleSet() {
 
 async function duplicateSelectedRule(){
   if (selectedRuleIndex == null || selectedRuleIndex < 0) {
-    alert("Select a rule to duplicate.");
+    showToast("Select a rule to duplicate.", "warning");
     return;
     }
   const clonedRule = structuredClone(rules[selectedRuleIndex]);
@@ -558,7 +558,7 @@ async function duplicateSelectedRule(){
 
 async function updateCurrentRuleSet() {   //Sync rules
 
-  if (!currentRuleSetName) return alert("Select a RuleSet first");
+  if (!currentRuleSetName) return showToast("Select a RuleSet first", "warning");
 
   // capture current edited rule
   if (selectedRuleIndex >= 0) {
@@ -593,7 +593,7 @@ async function updateCurrentRuleSet() {   //Sync rules
       showLoader(true, `Updating rule ${i + 1}/${rules.length}`);
       //await new Promise((r) => setTimeout(r, 20));  //only necessary for showing progress to the user
       }
-    //alert("All rules synchronized!");
+    showToast("All rules synchronized!", "success");
     await loadSelectedRuleSet();
     unsavedChanges = false;
     updateActionButtons();
@@ -603,7 +603,7 @@ async function updateCurrentRuleSet() {   //Sync rules
   catch (e) {
     console.error(e);
     showLoader(false);
-    alert("Update failed");
+    showToast("Update failed", "danger");
     }
   }
 
@@ -615,22 +615,22 @@ let copiedRule = null;
 // reusable copy function that works for toolbar or inline buttons
 function copyRule(index) {
   if (selectedRuleIndex == null || selectedRuleIndex < 0 || selectedRuleIndex >= rules.length) {
-    alert("No rule selected");
+    showToast("No rule selected", "warning");
     return;
     }
   copiedRule = structuredClone(rules[index]);
-  alert("Rule copied!\n\"" + (copiedRule.then?.with?.message || `Rule ${index+1}`) + "\"");
+  showToast("Rule copied!\n\"" + (copiedRule.then?.with?.message || `Rule ${index+1}`) + "\"", "success");
   }
 
 
 async function pasteCopiedRuleToCurrentSet(insertAtEnd = false) {
   if (!copiedRule) {
-    alert("No rule copied yet.");
+    showToast("No rule copied yet.", "warning");
     return;
     }
 
   if (!insertAtEnd && selectedRuleIndex < 0 && rules.length > 0) {
-    alert("Choose destination first");
+    showToast("Choose destination first", "warning");
     return;
     }
 
@@ -658,7 +658,7 @@ async function pasteCopiedRuleToCurrentSet(insertAtEnd = false) {
 
 async function deleteSelectedRule() {
   if (selectedRuleIndex == null || selectedRuleIndex < 0) {
-    alert("Select a rule to delete first.");
+    showToast("Select a rule to delete first.", "warning");
     return;
     }
 
@@ -750,7 +750,7 @@ async  function createNewRuleset() {    //With a default rule !!!
 
 
   if (!nameOfRuleset) {
-    alert("Please enter a ruleset name ");
+    showToast("Please enter a ruleset name", "warning");
     return;
     }
 
@@ -770,7 +770,7 @@ async  function createNewRuleset() {    //With a default rule !!!
 
       }
 
-    alert(`Ruleset "${nameOfRuleset}" created successfully`);
+    showToast(`Ruleset "${nameOfRuleset}" created successfully`, "success");
 
   // Refresh dropdown
     await loadRuleSets();
@@ -779,7 +779,7 @@ async  function createNewRuleset() {    //With a default rule !!!
     newRuleSetNameInput.value = "";
     } 
   catch (err) {
-    alert("Error creating ruleset: " + err.message);
+    showToast("Error creating ruleset: " + err.message, "danger");
     //hideLoader();
     } 
   finally {
@@ -790,10 +790,10 @@ async  function createNewRuleset() {    //With a default rule !!!
 
 async  function persistCurrentRuleset() {  
 
-  if (!currentRuleSetName) return alert("Select a RuleSet first");
+  if (!currentRuleSetName) return showToast("Select a RuleSet first", "warning");
 
   if (sampleFiles.includes(currentRuleSetName)) {
-    alert("Overwriting sample RuleSets is not allowed");
+    showToast("Overwriting sample RuleSets is not allowed", "warning");
     return;
     }
 
@@ -816,12 +816,12 @@ async  function persistCurrentRuleset() {
       throw new Error(json.message || "Persist failed");
       }
 
-    alert(`Ruleset "${currentRuleSetName}" saved.`);
+    showToast(`Ruleset "${currentRuleSetName}" saved.`, "success");
 
     await loadRuleSets();
     } 
   catch (err) {
-    alert(err);
+    showToast(err.message || String(err), "danger");
     } 
   finally {
     }
