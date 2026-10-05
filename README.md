@@ -669,7 +669,8 @@ npm run test
 * [ ] Headless mode (run without editor/docs)
 * [ ] Api key and JWT
 * [ ] Maker Checker mode
-* [ ] Support for ImmuDB
+* [ ] Configure Rulesets
+
 
 ---
 

@@ -4,11 +4,13 @@
 
 ### Session management
 
-This sample ruleset shows an arbitrary session / state management.
+This sample ruleset shows how to process serial input.
 
-User supplies numeric values, one by one, using the `input` fact.
+User supplies numeric values, one by one, using the `input` fact. 
 
 The ruleset keeps track of common statistics relating to those numbers... count, sum, mean, min, and max
+
+This is an example of a session based ruleset that fires ALL its rules all the time without a single `break` 
 
 ## Logic
 - First rule ensures the user provides `sessionID` and `input` inorder to track changing state.
@@ -24,6 +26,8 @@ The ruleset keeps track of common statistics relating to those numbers... count,
 - User input/feedback is received through only one fact:- `input`. Because this is sequential logic.
 - The current step is available at `session.state.step`
 - The first step is always `DEFAULT`
-- Step is automatically updated to the **Item** of the **Then**
-- Session state is maintained at `session.state.*`
+- Since this example has no `break` the `session.state.step` will always point to the last rule executed.
+- Session state is maintained at `session.state.*` 
+- `session.state` tracks the sticky variables while the classic `derivedFacts` shows the instantenous variables
+- `derivedFacts` are less usefull in a session sensitive ruleset
 

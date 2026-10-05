@@ -8,9 +8,11 @@ This sample ruleset shows an arbitrary session / state management.
 
 This two/way ruleset demonstrates how you can stop to ask for user input before proceeding with the 'conversation'.
 
+This is an example of a session based ruleset that fires specific rules based on the value of the `session.state.step` then stop to ask for user input by using `break:true` 
+
 Also demonstrates branching based on previous input. 
 
-Response is highlighed in red whenever it contains `stopped:true` meaning it fired a rule with `break=true`
+In JSON mode the response is highlighed in red whenever it contains `stopped:true` meaning it fired a rule with `break=true`
 
 Useful for session management, conversational SMS and USSD menus.
 
@@ -18,7 +20,7 @@ Useful for session management, conversational SMS and USSD menus.
 - Initialized the first rule execution with `currentDateTime` to track session start. 
 - To ask for user input we stop the rule by setting `break=true` on that rule.
 - For failed validation we set `break=true` so that users can correct their input.
-- For state awareness rules have a When condition on `session.state.step` 
+- To provide state-awareness, rules have a When condition based on `session.state.step` 
 - The last successful rule is also updated to `currentDateTime` to track session end. 
 - Background execution does not set `break=true`
 
