@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Simplest RuleSet.
+The Simplest Ruleset.
 
 This sample ruleset shows what makes a good day in a developers life. 
 

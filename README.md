@@ -13,7 +13,7 @@ BaaS - Business logic As A Service
 
 
 
-# 🚀 BaaS
+# BaaS
 
 **Explainable, low-code decision engine with API and built-in UI**
 
@@ -21,8 +21,7 @@ Power business rules, workflows, and AI guardrails with a fully open-source, dev
 
 
 # Background
-The Rule Engine design pattern did not reach its full potential. 
-Not in terms of the vision but on adoption and implementation due to many practical limitations.
+The Rule Engine design pattern is, now more than ever, necessary for workflows (or steps) that are inherently deterministic.
 
 There are many awesome rule engines, but
 
@@ -33,11 +32,11 @@ There are many awesome rule engines, but
 - Others lack a decision trace
 - Hard to plug in to context of AI agents 
 - Complex DSL
-- Fear of breaking things
+- Lack safe sandbox
 
 
 
-## ✨ Features
+## BaaS Features
 
 * Deterministic rule evaluation
 * Explainable **decision traces**
@@ -50,7 +49,7 @@ There are many awesome rule engines, but
 
 ---
 
-## 📸 Overview
+## Overview
 
 **Core flow:**
 
@@ -58,22 +57,20 @@ There are many awesome rule engines, but
 2. Add new rules, one by one, via
     - Web UI
     - copy from another ruleset and customize 
-    - rest api (advanced)
+    - rest api (advanced usage)
 3. Update ruleset
-4. Adjust execution order
-    - Meta -> priority
-    - Drag and drop
+4. Adjust execution order via Drag and drop
 5. Update ruleset
-6. Try Ruleset
+6. Try Ruleset via Sandbox
 7. Review response
-   * ✅ Results: `derivedFacts`
-   * 🧠 Decision trace: `breakdown`
+   * Results: `derivedFacts`
+   * Decision trace: `breakdown`
 8. Repeat
 9. Persist to save to db
 
 ---
 
-## 🚀 Quick Start - for the inpatient
+## Quick Start - for the inpatient
 
 ### 1. Run with Docker
 
@@ -83,7 +80,7 @@ docker run -p 3000:3000 zeguru/baas:latest
 
 ### 2. Access the app
 
-* API: http://localhost:3000/baas
+* Home: http://localhost:3000/baas
 * Editor UI: http://localhost:3000/baas/editor
 * OpenApi: http://localhost:3000/baas/docs
 
@@ -115,7 +112,7 @@ services:
     -e DB_TYPE=mysql \
     -e DB_HOST=server.xyz.com \
     -e DB_PORT=3306 \
-    -e DB_DATABASE=baas \
+    -e DB_DATABASE=localhost \
     -e DB_USERNAME=user \
     -e DB_PASSWORD=password \
     zeguru/baas:0.57     
@@ -131,7 +128,7 @@ NB: adjust accordingly:
 
 ### 2. Access the app
 
-* API: http://BASE_URL:3000/baas
+* Home: http://BASE_URL:3000/baas
 * Editor UI: http://BASE_URL:3000/baas/editor
 
 ---
@@ -258,9 +255,14 @@ Value Range Lookup
 Sandbox
 
 ![try-it](public/images/baas-sandbox.png)
+
+
+Beginner Friendly Sandbox
+
+![friendly-sandbox](public/images/baas-beginner-friendly-sandbox.png)
 ---
 
-## 🧪 Example Usage
+## Example Usage
 
 ### Evaluate Business Logic: Calculate Net Pay 
 
@@ -492,7 +494,7 @@ All the `facts` defined in the `ruleset` must be set and sent as a request. Foun
 ---
 
 
-## 🧠 Decision Trace (Explainability)
+## Decision Trace (Explainability)
 
 Every evaluation includes a **breakdown**:
 
@@ -504,7 +506,7 @@ Every evaluation includes a **breakdown**:
 
 ---
 
-## 🧩 Use Cases
+## Use Cases
 
 * 🛒 Pricing & discount calculator
 * 🔐 Product logic
@@ -537,7 +539,7 @@ npm run start:dev
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 /public         # Editor
@@ -553,7 +555,7 @@ npm run start:dev
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome and encouraged!
 
@@ -651,7 +653,7 @@ git push origin main
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 ```bash
 npm run test:cov
@@ -660,26 +662,25 @@ npm run test
 
 ---
 
-## 📌 Roadmap
+## Roadmap
 
 * [ ] Rule versioning
 * [ ] Execution Stats
-* [ ] Support more databases
-* [ ] Api key and JWT
-* [ ] ENVIRONMENT VARIABLES for tuning runtime behaviour
-* [ ] SDK
 * [ ] Headless mode (run without editor/docs)
+* [ ] Api key and JWT
+* [ ] Maker Checker mode
+* [ ] Support for ImmuDB
 
 ---
 
-## 💬 Feedback & Discussions
+## Feedback & Discussions
 
 * Open an issue for bugs or feature requests
 * Use discussions for questions and ideas
 
 ---
 
-## 🙌 Credits
+## Credits
 
 Built with:
 
@@ -702,13 +703,13 @@ Inspired by the need for:
 
 ---
 
-## 📄 License
+## License
 
 GNU Affero General Public License v3 (AGPL)
 
 ---
 
-## ⭐ Support
+## Support
 
 If you find this project useful:
 
@@ -718,10 +719,10 @@ If you find this project useful:
 
 ---
 
-## 🔥 Final Note
+## Final Note
 
 This project aims to be the **decision layer for modern applications**—from traditional systems to AI-powered workflows.
 
-Resist all temptations to make this tool complex !
+Resist any temptations to make this tool complex !
 
 ---

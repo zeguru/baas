@@ -5,7 +5,7 @@
 This sample ruleset shows how to arrive to premiums for health benefits defined in a tabular format.
 Uses `value-lookup` and `value-range-lookup`.
 
-This is WIP
+This doc is WIP
 
 ## Logic
 - Validate input
