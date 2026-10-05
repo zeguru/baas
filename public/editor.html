@@ -207,6 +207,25 @@
     </div>
   </div>
 
+  <!-- Reusable confirm dialog (replaces native confirm()) -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalTitle">Please confirm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalMessage" class="mb-0" style="white-space: pre-line;"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="confirmCancelBtn" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmOkBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="loaderOverlay">
     <div class="spinner-border text-primary" role="status"></div>
     <div id="loaderMsg" style="margin-top: 10px; font-size: 0.9rem;"></div>
@@ -231,6 +250,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="./js/toast.js"></script>
+  <script src="./js/confirm.js"></script>
   <script src="./js/editor.js"></script>
   <script src="./js/tryit.js"></script>
   <script src="./js/misc.js"></script>
