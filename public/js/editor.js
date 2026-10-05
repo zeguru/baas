@@ -100,11 +100,10 @@ init().then(() => {
   ruleSetSelect.addEventListener("change", async () => {
 
   if (unsavedChanges) {
-    const ok = await confirmDialog({
+    const ok = await confirmWarning({
       title: "Discard unsaved changes?",
       message: "You have out-of-sync rules. Discard updates and switch ruleset?",
       okText: "Discard & switch",
-      variant: "warning",
     });
     if (!ok) {
       ruleSetSelect.value = currentRuleSetName;
@@ -149,11 +148,10 @@ async function selectRule(index) {
   console.log(`Selecting rule ${index + 1}`)
 
   if (unsavedChanges) {
-    const ok = await confirmDialog({
+    const ok = await confirmWarning({
       title: "Unsaved changes",
       message: "You have unsaved changes. Proceed anyway?",
       okText: "Proceed",
-      variant: "warning",
     });
     if (!ok) {
       console.log("Do not proceed")
@@ -223,7 +221,7 @@ function renderRuleList() {
     div.draggable = true;
     div.dataset.index = i;
     div.className = "rule-item list-group-item d-flex justify-content-between align-items-center";
-    div.onclick = () => selectRule(i);
+    div.onclick = () => { selectRule(i).catch(console.error); };
 
     div.addEventListener("dragstart", (e) => {
       draggedRuleIndex = i;
@@ -688,7 +686,6 @@ async function deleteSelectedRule() {
   renderRuleList();
 
   // Reset or select the next available rule
-  // Clear dirty flag first so selecting the next rule does not prompt again.
   unsavedChanges = false;
   if (rules.length > 0) {
     const newIndex = Math.min(selectedRuleIndex, rules.length - 1);
@@ -817,11 +814,10 @@ async  function persistCurrentRuleset() {
     }
 
   if (unsavedChanges) {
-    const ok = await confirmDialog({
+    const ok = await confirmWarning({
       title: "Out-of-sync rules",
       message: "You have out-of-sync rules. Proceed anyway?",
       okText: "Proceed",
-      variant: "warning",
     });
     if (!ok) {
       return;
