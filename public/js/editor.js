@@ -97,10 +97,15 @@ async function init() {
 // AFTER INIT. After init() completes, attach change listener on dropdown
 init().then(() => {
 
-  ruleSetSelect.addEventListener("change", () => {
+  ruleSetSelect.addEventListener("change", async () => {
 
   if (unsavedChanges) {
-    if (!confirm("You have out-of-sync rules. Discard updates and switch ruleset?")) {
+    const ok = await confirmWarning({
+      title: "Discard unsaved changes?",
+      message: "You have out-of-sync rules. Discard updates and switch ruleset?",
+      okText: "Discard & switch",
+    });
+    if (!ok) {
       ruleSetSelect.value = currentRuleSetName;
       return;
       }
@@ -138,12 +143,17 @@ function updateActionButtons() {
   }
 
 // Select rule for editing
-function selectRule(index) {
+async function selectRule(index) {
 
   console.log(`Selecting rule ${index + 1}`)
 
   if (unsavedChanges) {
-    if (!confirm("You have unsaved changes. Proceed anyway ?")) {
+    const ok = await confirmWarning({
+      title: "Unsaved changes",
+      message: "You have unsaved changes. Proceed anyway?",
+      okText: "Proceed",
+    });
+    if (!ok) {
       console.log("Do not proceed")
       return;
       }
@@ -211,7 +221,7 @@ function renderRuleList() {
     div.draggable = true;
     div.dataset.index = i;
     div.className = "rule-item list-group-item d-flex justify-content-between align-items-center";
-    div.onclick = () => selectRule(i);
+    div.onclick = () => { selectRule(i).catch(console.error); };
 
     div.addEventListener("dragstart", (e) => {
       draggedRuleIndex = i;
@@ -550,7 +560,7 @@ async function duplicateSelectedRule(){
 
   rules.splice(selectedRuleIndex + 1, 0, clonedRule);
   renderRuleList();
-  selectRule(selectedRuleIndex + 1);
+  await selectRule(selectedRuleIndex + 1);
 
   unsavedChanges = true;
   updateActionButtons();
@@ -650,7 +660,7 @@ async function pasteCopiedRuleToCurrentSet(insertAtEnd = false) {
 
   // Refresh and select new rule
   renderRuleList();
-  selectRule(insertIndex);
+  await selectRule(insertIndex);
   unsavedChanges = true;
   updateActionButtons();
   }
@@ -663,7 +673,12 @@ async function deleteSelectedRule() {
     }
 
   const ruleToDelete = rules[selectedRuleIndex];
-  const confirmed = confirm("Delete this rule ?\n\"" +  ruleToDelete.then?.with?.message + "\"");
+  const confirmed = await confirmDialog({
+    title: "Delete rule?",
+    message: `Delete this rule?\n"${ruleToDelete.then?.with?.message || `Rule ${selectedRuleIndex + 1}`}"`,
+    okText: "Delete",
+    variant: "danger",
+  });
   if (!confirmed) return;
 
   // Remove from the rules array
@@ -671,9 +686,10 @@ async function deleteSelectedRule() {
   renderRuleList();
 
   // Reset or select the next available rule
+  unsavedChanges = false;
   if (rules.length > 0) {
     const newIndex = Math.min(selectedRuleIndex, rules.length - 1);
-    selectRule(newIndex);
+    await selectRule(newIndex);
     } 
   else {
     selectedRuleIndex = null;
@@ -798,7 +814,12 @@ async  function persistCurrentRuleset() {
     }
 
   if (unsavedChanges) {
-    if (!confirm("You have out-of-sync rules. Proceed Anyway ?")) {
+    const ok = await confirmWarning({
+      title: "Out-of-sync rules",
+      message: "You have out-of-sync rules. Proceed anyway?",
+      okText: "Proceed",
+    });
+    if (!ok) {
       return;
       }
     }
