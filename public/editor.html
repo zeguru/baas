@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="./styles/editor.css">
   <link rel="stylesheet" href="./styles/misc.css">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -40,7 +42,10 @@
             aria-expanded="false"
             title="User Guides and more"
             >
-            <span style="font-size: 1.8rem; line-height: 1;">⋮</span>
+            <span style="font-size: 1.2rem; line-height: 1;">
+              <i class="fa fa-tasks"></i>
+            </span>
+            
           </button>
 
           <ul class="dropdown-menu">
@@ -49,7 +54,13 @@
                 View README
               </button>
             </li>
+            <li>
+              <button class="dropdown-item" id="configureAction" disabled>
+                Configure
+              </button>
+            </li>
             <li><hr class="dropdown-divider"></li>
+            
             <li>
               <button class="dropdown-item text-warning" id="disableRulesetAction" disabled>
                 Disable ruleset
@@ -85,10 +96,10 @@
               <button class="nav-link active" id="when-tab" data-bs-toggle="tab" data-bs-target="#whenTab" type="button" role="tab">When</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Then</button>
+              <button class="nav-link" id="then-tab" data-bs-toggle="tab" data-bs-target="#thenTab" type="button" role="tab">Do</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Metadata</button>
+              <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#metaTab" type="button" role="tab">Options</button>
             </li>
           </div>
 
@@ -199,7 +210,7 @@
 
         <div class="modal-body">
           <div id="rulesetReadmeContent">
-            <em>Select a RuleSet to view documentation.</em>
+            <em>Select a Ruleset to view documentation.</em>
           </div>
         </div>
 
