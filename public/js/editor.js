@@ -18,6 +18,7 @@ const persistBtn = document.getElementById("persistBtn");
 const ruleList = document.getElementById("ruleList");
 const editorHolder = document.getElementById("editor_holder");
 const duplicateRuleBtn = document.getElementById("duplicateRuleBtn");
+const shareReceiptImageBtn = document.getElementById("shareReceiptImageBtn");
 
 const sampleFiles = ['sample-netpay-calc', 'sample-utility-bill',  'sample-table-lookup', 'sample-good-life',  'sample-motor-insurance','sample-health-insurance','sample-loan-eligibility','sample-statistics', 'sample-survey'];
 
@@ -111,6 +112,8 @@ init().then(() => {
       }
     }
 
+  shareReceiptImageBtn.addEventListener("click", shareReceiptImage);
+  
   currentRuleSetName = ruleSetSelect.value;
   rules = [];
   selectedRuleIndex = -1;
@@ -975,3 +978,78 @@ function copyCode() {
     copySpan.innerText = 'Copied!';
     setTimeout(() => copySpan.innerText = originalText, 2000);
     }
+
+
+async function shareReceiptImage(){
+    const receipt = document.getElementById("responseReceipt");
+    const button = this;
+
+    if (!receipt || !receipt.innerText.trim()) {
+        showToast("No image is available to share.", "warning");
+        return;
+    }
+
+    if (receipt.getClientRects().length === 0) {
+        showToast("Please run the ruleset before sharing image.", "warning");
+        return;
+    }
+
+    try {
+        button.disabled = true;
+        button.innerHTML = "Preparing image...";
+
+        const canvas = await html2canvas(receipt, {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            useCORS: true,
+            logging: false
+        });
+
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob(image => {
+                if (image) resolve(image);
+                else reject(new Error("Could not create the image."));
+            }, "image/png");
+        });
+
+        const file = new File(
+            [blob],
+            "BaaS Calculator Results.png",
+            { type: "image/png" }
+        );
+
+        // Share the actual PNG image on supported devices.
+        if (
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({ files: [file] })
+        ) {
+            await navigator.share({
+                files: [file],
+                title: "Baas",
+                text: "Calculator Results"
+            });
+        } else {
+            // Fallback: download the screenshot.
+            const imageUrl = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = imageUrl;
+            link.download = "BaaS Calculator Results.png";
+            link.click();
+
+            setTimeout(() => URL.revokeObjectURL(imageUrl), 1000);
+
+            showToast("Image downloaded. You can now share it from your gallery.", "success");
+        }
+
+    } catch (error) {
+        if (error.name !== "AbortError") {
+            console.error("Image sharing failed:", error);
+            showToast("Unable to create or share the image.", "warning");
+        }
+    } finally {
+        button.disabled = false;
+        button.innerHTML = '<i class="fa fa-share-alt"></i> Share';
+    }
+  }
