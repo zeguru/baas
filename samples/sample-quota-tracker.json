@@ -1,0 +1,180 @@
+[
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                }
+            ]
+        },
+        "then": {
+            "do": "advice",
+            "with": {
+                "message": "Advice: The first 'input' is the allocation. the rest consumption"
+            }
+        },
+        "priority": 90
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "isDefined",
+                    "value": "true",
+                    "fact": "sessionID"
+                },
+                {
+                    "operator": "isDefined",
+                    "value": "true",
+                    "fact": "input"
+                },
+                {
+                    "operator": "equalIgnoreCase",
+                    "value": "DEFAULT",
+                    "fact": "session.state.step"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "start",
+                "mode": "expression",
+                "value": "currentDateTime",
+                "message": "Setup The Session",
+                "break": false
+            }
+        },
+        "priority": 80
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "equalIgnoreCase",
+                    "value": "DEFAULT",
+                    "fact": "session.state.step"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "allocation",
+                "mode": "expression",
+                "value": "input",
+                "message": "Initialize: The Allocation or Quota being tracked. Uses the first input",
+                "break": false
+            }
+        },
+        "priority": 70
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "equalIgnoreCase",
+                    "value": "DEFAULT",
+                    "fact": "session.state.step"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "totalConsumption",
+                "mode": "fixed",
+                "value": "0",
+                "message": "Initialize: Initialize the total consumption",
+                "break": false
+            }
+        },
+        "priority": 60
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                },
+                {
+                    "operator": "notEqualIgnoreCase",
+                    "value": "DEFAULT",
+                    "fact": "session.state.step"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "totalConsumption",
+                "mode": "expression",
+                "value": "session.state.totalConsumption + input",
+                "message": "Compute total consumption",
+                "break": false
+            }
+        },
+        "priority": 50
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "always",
+                    "value": "true",
+                    "fact": "always"
+                },
+                {
+                    "operator": "notEqualIgnoreCase",
+                    "value": "DEFAULT",
+                    "fact": "session.state.step"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "item": "percentUtilization",
+                "mode": "expression",
+                "message": "Compute percentage utilization",
+                "value": "round((session.state.totalConsumption / session.state.allocation) * 100)",
+                "break": false
+            }
+        },
+        "priority": 40
+    },
+    {
+        "when": {
+            "all": [
+                {
+                    "operator": "notEqualIgnoreCase",
+                    "value": "DEFAULT",
+                    "fact": "session.state.step"
+                }
+            ]
+        },
+        "then": {
+            "do": "apply-adjustment",
+            "with": {
+                "message": "Calculate status based on utilization",
+                "item": "usageStatus",
+                "mode": "range-lookup",
+                "base": "percentUtilization",
+                "default": 0,
+                "table": {
+                    "0-24": "UNDER",
+                    "25-49": "LOW",
+                    "50-74": "AVERAGE",
+                    "75-100": "HIGH",
+                    "101-99999": "OVER"
+                }
+            }
+        },
+        "priority": 30
+    }
+
+]

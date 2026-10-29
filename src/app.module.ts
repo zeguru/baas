@@ -21,7 +21,7 @@ import { MetaModule } from './meta/meta.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
-      synchronize: true, // auto generate tables in dev
+      synchronize: false, // auto generate tables in dev
       }),
     RuleSetModule, 
     CalculatorModule, SessionModule, MetaModule],
