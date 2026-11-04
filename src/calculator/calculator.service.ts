@@ -53,7 +53,7 @@ export class CalculatorService {
 
             //add session related facts to engine 
             Object.entries(session.state).forEach(([key, value]) => {
-                  engine.addFact(`session.state.${key}`, value);
+                engine.addFact(`session.state.${key}`, value);
               });
             }
 
