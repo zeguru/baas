@@ -1,6 +1,6 @@
 {
   "name": "baas",
-  "version": "0.62",
+  "version": "0.64",
   "description": "Business Logic As A Service. A Decision Engine",
   "author": "ZeGuru",
   "private": true,
